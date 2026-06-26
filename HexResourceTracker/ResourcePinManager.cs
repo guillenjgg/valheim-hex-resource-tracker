@@ -95,7 +95,7 @@ namespace HexResourceTracker
                     continue;
                 }
 
-                if (model.ItemPrefabName == "TurnipSeeds")
+                if (model.ItemPrefabName == "TurnipSeeds" || model.ItemPrefabName == "CarrotSeeds")
                 {
                     pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 32);
                     pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 32);

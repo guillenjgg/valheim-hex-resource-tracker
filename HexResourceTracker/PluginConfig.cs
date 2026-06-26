@@ -27,10 +27,10 @@ namespace HexResourceTracker
             BindResource(config, "Pickable_Thistle", "Thistle");
             BindResource(config, "Pickable_SeedCarrot", "Carrot Seeds");
             BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
-            BindResource(config, "Pickable_Flax", "Flax");
-            BindResource(config, "Pickable_Flax_Wild", "Wild Flax");
-            BindResource(config, "Pickable_Barley", "Barley");
-            BindResource(config, "Pickable_Barley_Wild", "Wild Barley");
+            //BindResource(config, "Pickable_Flax", "Flax");
+            BindResource(config, "Pickable_Flax_Wild", "Flax");
+            //BindResource(config, "Pickable_Barley", "Barley");
+            BindResource(config, "Pickable_Barley_Wild", "Barley");
             BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
         }
 
