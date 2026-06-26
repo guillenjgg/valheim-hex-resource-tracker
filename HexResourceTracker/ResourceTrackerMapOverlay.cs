@@ -22,8 +22,6 @@ namespace HexResourceTracker.UI
                 return;
             }
 
-            Plugin.Log.LogInfo("Creating map overlay.");
-
             _panel = new GameObject("HexResourceTrackerOverlay");
             _panel.transform.SetParent(Minimap.instance.m_largeRoot.transform, false);
 
@@ -32,7 +30,7 @@ namespace HexResourceTracker.UI
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 270f);
+            panelRect.sizeDelta = new Vector2(180f, 290f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -40,14 +38,15 @@ namespace HexResourceTracker.UI
             AddTitle();
 
             AddResourceToggle("Pickable_Mushroom", "Mushrooms", -35f);
-            AddResourceToggle("RaspberryBush", "Raspberries", -60f);
-            AddResourceToggle("BlueberryBush", "Blueberries", -85f);
-            AddResourceToggle("Pickable_Thistle", "Thistle", -110f);
-            AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -135f);
-            AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -160f);
-            AddResourceToggle("Pickable_Flax_Wild", "Flax", -185f);
-            AddResourceToggle("Pickable_Barley_Wild", "Barley", -210f);
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -235f);
+            AddResourceToggle("Pickable_Dandelion", "Dandelions", -60f);
+            AddResourceToggle("RaspberryBush", "Raspberries", -85f);
+            AddResourceToggle("BlueberryBush", "Blueberries", -110f);
+            AddResourceToggle("Pickable_Thistle", "Thistle", -135f);
+            AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -160f);
+            AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -185f);
+            AddResourceToggle("Pickable_Flax_Wild", "Flax", -210f);
+            AddResourceToggle("Pickable_Barley_Wild", "Barley", -235f);
+            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -260f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
@@ -69,17 +68,45 @@ namespace HexResourceTracker.UI
             titleObject.transform.SetParent(_panel.transform, false);
 
             RectTransform titleRect = titleObject.AddComponent<RectTransform>();
-            titleRect.anchorMin = Vector2.zero;
-            titleRect.anchorMax = Vector2.one;
-            titleRect.offsetMin = new Vector2(10f, 10f);
-            titleRect.offsetMax = new Vector2(-10f, -10f);
+            titleRect.anchorMin = new Vector2(0f, 1f);
+            titleRect.anchorMax = new Vector2(1f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.anchoredPosition = Vector2.zero;
+            titleRect.sizeDelta = new Vector2(0f, 28f);
 
-            TextMeshProUGUI title = titleObject.AddComponent<TextMeshProUGUI>();
+            Image dragTarget = titleObject.AddComponent<Image>();
+            dragTarget.color = new Color(0.10f, 0.07f, 0.04f, 0.95f);
+            dragTarget.raycastTarget = true;
+
+            titleObject.AddComponent<ResourceTrackerDragHandler>();
+
+            GameObject titleTextObject = new GameObject("TitleText");
+            titleTextObject.transform.SetParent(titleObject.transform, false);
+
+            RectTransform titleTextRect = titleTextObject.AddComponent<RectTransform>();
+            titleTextRect.anchorMin = Vector2.zero;
+            titleTextRect.anchorMax = Vector2.one;
+            titleTextRect.offsetMin = Vector2.zero;
+            titleTextRect.offsetMax = Vector2.zero;
+
+            TextMeshProUGUI title = titleTextObject.AddComponent<TextMeshProUGUI>();
             title.font = Minimap.instance.m_biomeNameLarge.font;
-            title.text = "Track";
+            title.text = "Track Resources";
             title.fontSize = 12f;
-            title.alignment = TextAlignmentOptions.Top;
+            title.alignment = TextAlignmentOptions.Center;
             title.color = Color.white;
+
+            GameObject separator = new GameObject("Separator");
+            separator.transform.SetParent(titleObject.transform, false);
+
+            RectTransform separatorRect = separator.AddComponent<RectTransform>();
+            separatorRect.anchorMin = new Vector2(0f, 0f);
+            separatorRect.anchorMax = new Vector2(1f, 0f);
+            separatorRect.pivot = new Vector2(0.5f, 0f);
+            separatorRect.sizeDelta = new Vector2(0f, 2f);
+
+            Image separatorImage = separator.AddComponent<Image>();
+            separatorImage.color = new Color(0.6f, 0.5f, 0.3f, 0.8f);
         }
 
         private static void AddResourceToggle(string prefabName, string displayName, float yPosition)

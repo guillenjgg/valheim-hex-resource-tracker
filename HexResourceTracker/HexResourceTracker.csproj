@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ResourceTrackerDragHandler.cs" />
     <Compile Include="Patches\PatchMinimapRemovePin.cs" />
     <Compile Include="Patches\PatchMinimapStart.cs" />
     <Compile Include="Patches\PatchPickableSetPicked.cs" />

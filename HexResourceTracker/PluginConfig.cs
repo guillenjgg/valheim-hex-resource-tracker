@@ -22,6 +22,7 @@ namespace HexResourceTracker
                 "Enable or disable the HexResourceTracker mod.");
 
             BindResource(config, "Pickable_Mushroom", "Mushrooms");
+            BindResource(config, "Pickable_Dandelion", "Dandelions");
             BindResource(config, "RaspberryBush", "Raspberries");
             BindResource(config, "BlueberryBush", "Blueberries");
             BindResource(config, "Pickable_Thistle", "Thistle");
