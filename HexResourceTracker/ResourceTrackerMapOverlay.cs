@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ namespace HexResourceTracker.UI
     internal static class ResourceTrackerMapOverlay
     {
         private static GameObject _panel;
+        private static readonly Dictionary<string, Toggle> ResourceToggles = new Dictionary<string, Toggle>();
 
         internal static void Create()
         {
@@ -46,6 +48,19 @@ namespace HexResourceTracker.UI
             AddResourceToggle("Pickable_Flax_Wild", "Flax", -185f);
             AddResourceToggle("Pickable_Barley_Wild", "Barley", -210f);
             AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -235f);
+        }
+
+        internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
+        {
+            if (string.IsNullOrWhiteSpace(prefabName))
+            {
+                return;
+            }
+
+            if (ResourceToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
+            {
+                toggle.SetIsOnWithoutNotify(isEnabled);
+            }
         }
 
         private static void AddTitle()
@@ -127,6 +142,7 @@ namespace HexResourceTracker.UI
 
             bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
             toggle.SetIsOnWithoutNotify(isEnabled);
+            ResourceToggles[prefabName] = toggle;
 
             toggle.onValueChanged.AddListener(delegate (bool value)
             {
