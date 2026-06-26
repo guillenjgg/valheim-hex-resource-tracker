@@ -24,7 +24,7 @@ namespace HexResourceTracker
                 return false;
             }
 
-            ZNetView nview = pickable.GetComponent<ZNetView>();
+            var nview = pickable.GetComponent<ZNetView>();
 
             if (nview == null || !nview.IsValid())
             {
@@ -106,7 +106,7 @@ namespace HexResourceTracker
 
             if (!isEnabled)
             {
-                List<ZDOID> zdoIdsToRemove = new List<ZDOID>();
+                var zdoIdsToRemove = new List<ZDOID>();
 
                 foreach (KeyValuePair<ZDOID, ResourcePinModel> entry in ResourcePinByZdoId)
                 {
@@ -129,7 +129,7 @@ namespace HexResourceTracker
                 return;
             }
 
-            Pickable[] pickables = Object.FindObjectsOfType<Pickable>();
+            Pickable[] pickables = Object.FindObjectsByType<Pickable>(FindObjectsSortMode.None);
 
             foreach (Pickable pickable in pickables)
             {

@@ -8,6 +8,11 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix()
         {
+            if (!PluginConfig.IsModEnabled.Value)
+            {
+                return;
+            }
+
             ResourceTrackerMapOverlay.Create();
         }
     }

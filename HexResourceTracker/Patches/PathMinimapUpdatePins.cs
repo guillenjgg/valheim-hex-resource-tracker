@@ -7,6 +7,11 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix(Minimap __instance)
         {
+            if (!PluginConfig.IsModEnabled.Value)
+            {
+                return;
+            }
+
             ResourcePinManager.UpdateResourcePinVisuals(__instance);
         }
     }

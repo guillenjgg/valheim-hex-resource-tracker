@@ -7,6 +7,11 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix(Pickable __instance)
         {
+            if (!PluginConfig.IsModEnabled.Value)
+            {
+                return;
+            }
+
             ResourcePinManager.TryAddResourcePinFromPickable(__instance);
         }
     }

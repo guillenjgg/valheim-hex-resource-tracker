@@ -8,6 +8,11 @@ namespace HexResourceTracker.Patches
     {
         private static bool Prefix(Vector3 pos, float radius, ref bool __result)
         {
+            if (!PluginConfig.IsModEnabled.Value)
+            {
+                return true;
+            }
+
             if (ResourcePinManager.RemoveClosestResourcePin(pos, radius))
             {
                 __result = true;

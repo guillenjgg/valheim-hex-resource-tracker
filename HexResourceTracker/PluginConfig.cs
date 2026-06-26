@@ -50,6 +50,7 @@ namespace HexResourceTracker
             entry.SettingChanged += delegate
             {
                 ResourceTrackerMapOverlay.HandleResourceTrackingChanged(prefabName, entry.Value);
+
                 ResourcePinManager.HandleResourceTrackingChanged(
                     prefabName,
                     entry.Value);
