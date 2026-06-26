@@ -9,6 +9,8 @@ namespace HexResourceTracker
 {
     internal static class ResourcePinManager
     {
+        private const float ClusterRadius = 25f;
+
         internal static readonly float ResourcePinSize = 20f;
 
         private static readonly Dictionary<string, Sprite> ResourceSprites = new Dictionary<string, Sprite>();
@@ -171,12 +173,63 @@ namespace HexResourceTracker
 
         internal static void HandleResourceTrackingChanged(string pickablePrefabName, bool isEnabled)
         {
-            if (isEnabled)
+            if (!isEnabled)
             {
+                RemoveResourcePinsByPickablePrefab(pickablePrefabName);
                 return;
             }
 
-            RemoveResourcePinsByPickablePrefab(pickablePrefabName);
+            RescanLoadedPickables(pickablePrefabName);
+        }
+
+        internal static bool TryAddResourcePinFromPickable(Pickable pickable)
+        {
+            if (pickable == null || Minimap.instance == null)
+            {
+                return false;
+            }
+
+            ZNetView nview = pickable.GetComponent<ZNetView>();
+
+            if (nview == null || !nview.IsValid())
+            {
+                return false;
+            }
+
+            if (!pickable.CanBePicked())
+            {
+                return false;
+            }
+
+            string pickablePrefabName = pickable.gameObject.name
+                .Replace("(Clone)", "")
+                .Trim();
+
+            if (!IsTrackedPickablePrefab(pickablePrefabName))
+            {
+                return false;
+            }
+
+            if (pickable.m_itemPrefab == null)
+            {
+                return false;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return false;
+            }
+
+            ResourcePinModel model = new ResourcePinModel(
+                zdo.m_uid,
+                pickablePrefabName,
+                pickable.m_itemPrefab.name,
+                pickable.transform.position,
+                ClusterRadius);
+
+            return TryAddResourcePin(model);
         }
 
         private static void RemoveResourcePinsByPickablePrefab(string pickablePrefabName)
@@ -262,6 +315,30 @@ namespace HexResourceTracker
             }
 
             MPinUpdateRequired.SetValue(Minimap.instance, true);
+        }
+
+        private static void RescanLoadedPickables(string pickablePrefabName)
+        {
+            Pickable[] pickables = Object.FindObjectsByType<Pickable>(FindObjectsSortMode.None);
+
+            foreach (Pickable pickable in pickables)
+            {
+                if (pickable == null)
+                {
+                    continue;
+                }
+
+                string currentPrefabName = pickable.gameObject.name
+                    .Replace("(Clone)", "")
+                    .Trim();
+
+                if (currentPrefabName != pickablePrefabName)
+                {
+                    continue;
+                }
+
+                TryAddResourcePinFromPickable(pickable);
+            }
         }
     }
 }
