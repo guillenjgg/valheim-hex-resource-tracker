@@ -31,8 +31,8 @@ namespace HexResourceTracker.UI
             panelRect.anchorMin = new Vector2(1f, 1f);
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
-            panelRect.anchoredPosition = new Vector2(-20f, -20f);
-            panelRect.sizeDelta = new Vector2(280f, 270f);
+            panelRect.anchoredPosition = new Vector2(-20f, -50f);
+            panelRect.sizeDelta = new Vector2(180f, 270f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
