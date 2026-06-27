@@ -289,7 +289,7 @@ namespace HexResourceTracker
                 return null;
             }
 
-            ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
+            var itemDrop = prefab.GetComponent<ItemDrop>();
 
             if (itemDrop == null)
             {

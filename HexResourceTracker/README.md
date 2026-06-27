@@ -1,35 +1,93 @@
-﻿# $projectname$
+﻿# HexResourceTracker
 
-A Valheim mod using BepInEx and Harmony.
+Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, and other gatherables. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.
 
-## Development Setup
+## Features
 
-### Option 1: Environment Variable (Recommended)
-Set a system environment variable:
-```
-VALHEIM_INSTALL=C:\Program Files (x86)\Steam\steamapps\common\Valheim
-```
+- Automatically adds minimap pins for tracked resources.
+- Pins are removed when resources are harvested.
+- Pins are automatically restored when resources respawn.
+- Configurable resource tracking.
+- Draggable map overlay for managing tracked resources in-game. Click and drag the overlay title bar to move it around.
 
-### Option 2: User Project File
-Create `$safeprojectname$.csproj.user` with your Valheim installation path.
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_1.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_2.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_3.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_4.png)
 
-### Option 3: Auto-Detection
-The project will automatically search common Steam library locations.
+## Tracked Resources
 
-## Building
+### Meadows
+- Mushrooms
+- Raspberries
+- Dandelions
 
-- **Debug Build**: Automatically deploys to `BepInEx\plugins\$safeprojectname$`
-- **Release Build**: Creates package in `bin\Release`
+### Black Forest
+- Blueberries
+- Thistle
+- Carrot Seeds
 
-## Plugin Information
+### Swamp
+- Turnip Seeds
 
-- **GUID**: `com.$username$.$safeprojectname$`
-- **Name**: `$projectname$`
-- **Version**: `1.0.0`
+### Plains
+- Wild Flax
+- Wild Barley
 
-## Debugging
+### Mistlands
+- Jotun Puffs
 
-1. Build in Debug configuration
-2. Launch Valheim
-3. Attach Visual Studio debugger to `valheim.exe`
-4. Set breakpoints in your patches
+## Configuration
+
+The following resources can be individually enabled or disabled:
+
+- Mushrooms
+- Raspberries
+- Blueberries
+- Thistle
+- Carrot Seeds
+- Turnip Seeds
+- Wild Flax
+- Wild Barley
+- Jotun Puffs
+- Dandelions
+
+Settings can be configured through:
+
+- BepInEx configuration file
+- In-game draggable map overlay
+
+## Installation
+
+### Manual Installation
+
+1. Install BepInEx for Valheim.
+2. Extract the mod into your Valheim `BepInEx/plugins` folder.
+3. Launch the game.
+
+### Thunderstore / r2modman
+
+1. Install using Thunderstore Mod Manager or r2modman.
+2. Launch the game.
+
+## Compatibility
+
+- Client-side only.
+- Has not been tested in multiplayer, or on a dedicated server.
+
+## Known Limitations
+
+- Only tracks currently supported gatherable resources.
+- Resources must be loaded by Valheim before pins can be displayed.
+- Pins do not persist across game sessions.
+- Pins are clustered to reduce map clutter in dense resource areas.
+
+## Feedback & Support
+
+Report bugs, request features, or provide feedback through Discord:
+
+https://discord.gg/wU2FXD94v4
+
+## Source Code
+
+https://github.com/guillenjgg/valheim-hex-resource-tracker

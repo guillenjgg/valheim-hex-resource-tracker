@@ -30,7 +30,7 @@ namespace HexResourceTracker.UI
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 290f);
+            panelRect.sizeDelta = new Vector2(180f, 335f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -46,7 +46,9 @@ namespace HexResourceTracker.UI
             AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -185f);
             AddResourceToggle("Pickable_Flax_Wild", "Flax", -210f);
             AddResourceToggle("Pickable_Barley_Wild", "Barley", -235f);
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -260f);
+            AddResourceToggle("CloudberryBush", "Cloudberries", -260f);
+            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -285f);
+            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -310f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)

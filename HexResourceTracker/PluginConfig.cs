@@ -30,7 +30,9 @@ namespace HexResourceTracker
             BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
             BindResource(config, "Pickable_Flax_Wild", "Flax");
             BindResource(config, "Pickable_Barley_Wild", "Barley");
+            BindResource(config, "CloudberryBush", "Cloudberries");
             BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
+            BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)

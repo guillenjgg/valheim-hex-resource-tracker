@@ -19,14 +19,14 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            ZNetView nview = __instance.GetComponent<ZNetView>();
+            var nview = __instance.GetComponent<ZNetView>();
 
             if (nview == null)
             {
                 return;
             }
 
-            ZDO zdo = nview.GetZDO();
+            var zdo = nview.GetZDO();
 
             if (zdo == null)
             {
@@ -43,12 +43,21 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            if (!picked || __state == ZDOID.None)
+            Plugin.Log.LogInfo($"SetPicked Postfix: {__instance.name}, picked={picked}");
+
+            if (picked)
             {
+                if (__state == ZDOID.None)
+                {
+                    return;
+                }
+
+                ResourcePinManager.RemoveResourcePin(__state);
                 return;
             }
 
-            ResourcePinManager.RemoveResourcePin(__state);
+            Plugin.Log.LogInfo($"Restoring pin for {__instance.name}");
+            ResourcePinManager.TryAddResourcePinFromPickable(__instance);
         }
     }
 }
