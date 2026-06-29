@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
+using HarmonyLib;
 using UnityEngine;
 using static Minimap;
 
@@ -129,6 +129,37 @@ namespace HexResourceTracker
                 return;
             }
 
+            if (pickablePrefabName == "rock4_copper" || pickablePrefabName == "silvervein")
+            {
+                Destructible[] destructibles = Object.FindObjectsByType<Destructible>(FindObjectsSortMode.None);
+
+                foreach (Destructible destructible in destructibles)
+                {
+                    if (destructible == null)
+                    {
+                        continue;
+                    }
+
+                    string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+                    if (prefabName != pickablePrefabName)
+                    {
+                        continue;
+                    }
+
+                    if (prefabName == "rock4_copper")
+                    {
+                        TryAddResourcePinFromDestructibleOre(destructible, "rock4_copper", "CopperOre");
+                    }
+                    else if (prefabName == "silvervein")
+                    {
+                        TryAddResourcePinFromDestructibleOre(destructible, "silvervein", "SilverOre");
+                    }
+                }
+
+                return;
+            }
+
             Pickable[] pickables = Object.FindObjectsByType<Pickable>(FindObjectsSortMode.None);
 
             foreach (Pickable pickable in pickables)
@@ -165,7 +196,7 @@ namespace HexResourceTracker
                     continue;
                 }
 
-                if (model.ItemPrefabName == "TurnipSeeds" || model.ItemPrefabName == "CarrotSeeds" || model.ItemPrefabName == "Dandelion")
+                if (model.ItemPrefabName == "TurnipSeeds" || model.ItemPrefabName == "CarrotSeeds" || model.ItemPrefabName == "Dandelion" || model.ItemPrefabName == "CopperOre" || model.ItemPrefabName == "SilverOre" || model.ItemPrefabName == "Softtissue")
                 {
                     pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 32);
                     pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 32);
@@ -241,6 +272,81 @@ namespace HexResourceTracker
             return RemoveResourcePin(closestModel.ZdoId);
         }
 
+        internal static bool TryAddResourcePinFromDestructibleOre(Destructible destructible, string orePrefabName, string itemPrefabName)
+        {
+            if (destructible == null || Minimap.instance == null || string.IsNullOrWhiteSpace(orePrefabName) || string.IsNullOrWhiteSpace(itemPrefabName))
+            {
+                return false;
+            }
+
+            if (!PluginConfig.IsResourceTrackingEnabled(orePrefabName))
+            {
+                return false;
+            }
+
+            ZNetView nview = destructible.GetComponent<ZNetView>();
+
+            if (nview == null || !nview.IsValid())
+            {
+                return false;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return false;
+            }
+
+            return TryAddResourcePin(new ResourcePinModel(
+                zdo.m_uid,
+                orePrefabName,
+                itemPrefabName,
+                destructible.transform.position,
+                ClusterRadius));
+        }
+
+        internal static bool TryAddOrRelinkResourcePinFromMineRock5Ore(MineRock5 mineRock, string orePrefabName, string itemPrefabName)
+        {
+            if (mineRock == null || Minimap.instance == null)
+            {
+                return false;
+            }
+
+            if (!PluginConfig.IsResourceTrackingEnabled(orePrefabName))
+            {
+                return false;
+            }
+
+            ZNetView nview = mineRock.GetComponent<ZNetView>();
+
+            if (nview == null || !nview.IsValid())
+            {
+                return false;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return false;
+            }
+
+            if (ResourcePinByZdoId.ContainsKey(zdo.m_uid))
+            {
+                return true;
+            }
+
+            RemoveClosestResourcePin(orePrefabName, mineRock.transform.position, 35f);
+
+            return TryAddResourcePin(new ResourcePinModel(
+                zdo.m_uid,
+                orePrefabName,
+                itemPrefabName,
+                mineRock.transform.position,
+                ClusterRadius));
+        }
+
         private static bool IsTrackedPickablePrefab(string pickablePrefabName)
         {
             return PluginConfig.IsResourceTrackingEnabled(pickablePrefabName);
@@ -311,6 +417,37 @@ namespace HexResourceTracker
             }
 
             MPinUpdateRequired.SetValue(Minimap.instance, true);
+        }
+
+        internal static bool RemoveClosestResourcePin(string prefabName, Vector3 position, float radius)
+        {
+            ResourcePinModel closestModel = null;
+            float closestDistanceSqr = radius * radius;
+
+            foreach (ResourcePinModel model in ResourcePinByZdoId.Values)
+            {
+                if (model.PickablePrefabName != prefabName)
+                {
+                    continue;
+                }
+
+                float deltaX = model.Position.x - position.x;
+                float deltaZ = model.Position.z - position.z;
+                float distanceSqr = (deltaX * deltaX) + (deltaZ * deltaZ);
+
+                if (distanceSqr <= closestDistanceSqr)
+                {
+                    closestDistanceSqr = distanceSqr;
+                    closestModel = model;
+                }
+            }
+
+            if (closestModel == null)
+            {
+                return false;
+            }
+
+            return RemoveResourcePin(closestModel.ZdoId);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿# HexResourceTracker
+# HexResourceTracker
 
 Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, and other gatherables. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.
 
@@ -33,9 +33,11 @@ Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds,
 ### Plains
 - Wild Flax
 - Wild Barley
+- Cloudberries
 
 ### Mistlands
 - Jotun Puffs
+- Magecaps
 
 ## Configuration
 

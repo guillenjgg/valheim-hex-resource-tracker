@@ -33,6 +33,9 @@ namespace HexResourceTracker
             BindResource(config, "CloudberryBush", "Cloudberries");
             BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
             BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
+            BindResource(config, "rock4_copper", "Copper");
+            BindResource(config, "silvervein", "Silver");
+            BindResource(config, "giant_skull", "GiantSkull");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)

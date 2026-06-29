@@ -43,8 +43,6 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            Plugin.Log.LogInfo($"SetPicked Postfix: {__instance.name}, picked={picked}");
-
             if (picked)
             {
                 if (__state == ZDOID.None)
