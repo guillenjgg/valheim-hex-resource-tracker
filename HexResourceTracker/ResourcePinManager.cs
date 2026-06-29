@@ -17,6 +17,16 @@ namespace HexResourceTracker
 
         private static readonly FieldInfo MPinUpdateRequired = AccessTools.Field(typeof(Minimap), "m_pinUpdateRequired");
 
+        private static readonly Dictionary<string, float> ResourceIconSizeOverrides = new Dictionary<string, float>
+        {
+            { "TurnipSeeds", 32f },
+            { "CarrotSeeds", 32f },
+            { "Dandelion", 32f },
+            { "CopperOre", 32f },
+            { "SilverOre", 32f },
+            { "Softtissue", 32f }
+        };
+
         internal static bool TryAddResourcePinFromPickable(Pickable pickable)
         {
             if (pickable == null || Minimap.instance == null || pickable.m_itemPrefab == null)
@@ -196,16 +206,15 @@ namespace HexResourceTracker
                     continue;
                 }
 
-                if (model.ItemPrefabName == "TurnipSeeds" || model.ItemPrefabName == "CarrotSeeds" || model.ItemPrefabName == "Dandelion" || model.ItemPrefabName == "CopperOre" || model.ItemPrefabName == "SilverOre" || model.ItemPrefabName == "Softtissue")
+                float size = ResourcePinSize;
+
+                if (ResourceIconSizeOverrides.TryGetValue(model.ItemPrefabName, out float overrideSize))
                 {
-                    pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 32);
-                    pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 32);
+                    size = overrideSize;
                 }
-                else
-                {
-                    pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, ResourcePinSize);
-                    pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ResourcePinSize);
-                }
+
+                pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
+                pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
             }
         }
 
@@ -230,20 +239,6 @@ namespace HexResourceTracker
             SetPinUpdateRequired();
 
             return true;
-        }
-
-        internal static void ClearResourcePins()
-        {
-            foreach (ResourcePinModel model in new List<ResourcePinModel>(ResourcePinByZdoId.Values))
-            {
-                if (model.Pin != null && Minimap.instance != null)
-                {
-                    Minimap.instance.RemovePin(model.Pin);
-                }
-            }
-
-            ResourcePinByZdoId.Clear();
-            SetPinUpdateRequired();
         }
 
         internal static bool RemoveClosestResourcePin(Vector3 position, float radius)

@@ -7,6 +7,7 @@ namespace HexResourceTracker.Patches
     {
         private const string CopperDepositName = "$piece_deposit_copper";
         private const string SilverDepositName = "$piece_deposit_silvervein";
+        private const string GiantSkullName = "$piece_giant_bone";
 
         private static void Postfix(MineRock5 __instance)
         {
@@ -31,6 +32,16 @@ namespace HexResourceTracker.Patches
                     __instance,
                     "silvervein",
                     "SilverOre");
+
+                return;
+            }
+
+            if (__instance.m_name == GiantSkullName)
+            {
+                ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
+                    __instance,
+                    "giant_skull",
+                    "Softtissue");
 
                 return;
             }
