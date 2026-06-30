@@ -17,6 +17,13 @@ namespace HexResourceTracker
 
         private static readonly FieldInfo MPinUpdateRequired = AccessTools.Field(typeof(Minimap), "m_pinUpdateRequired");
 
+        private static readonly Dictionary<string, string> DestructibleOreLookup = new Dictionary<string, string>
+        {
+            { "rock4_copper", "CopperOre" },
+            { "silvervein", "SilverOre" },
+            { "giant_skull", "Softtissue" }
+        };
+
         private static readonly Dictionary<string, float> ResourceIconSizeOverrides = new Dictionary<string, float>
         {
             { "TurnipSeeds", 32f },
@@ -139,37 +146,6 @@ namespace HexResourceTracker
                 return;
             }
 
-            if (pickablePrefabName == "rock4_copper" || pickablePrefabName == "silvervein")
-            {
-                Destructible[] destructibles = Object.FindObjectsByType<Destructible>(FindObjectsSortMode.None);
-
-                foreach (Destructible destructible in destructibles)
-                {
-                    if (destructible == null)
-                    {
-                        continue;
-                    }
-
-                    string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
-
-                    if (prefabName != pickablePrefabName)
-                    {
-                        continue;
-                    }
-
-                    if (prefabName == "rock4_copper")
-                    {
-                        TryAddResourcePinFromDestructibleOre(destructible, "rock4_copper", "CopperOre");
-                    }
-                    else if (prefabName == "silvervein")
-                    {
-                        TryAddResourcePinFromDestructibleOre(destructible, "silvervein", "SilverOre");
-                    }
-                }
-
-                return;
-            }
-
             Pickable[] pickables = Object.FindObjectsByType<Pickable>(FindObjectsSortMode.None);
 
             foreach (Pickable pickable in pickables)
@@ -272,14 +248,21 @@ namespace HexResourceTracker
             return RemoveResourcePin(closestModel.ZdoId);
         }
 
-        internal static bool TryAddResourcePinFromDestructibleOre(Destructible destructible, string orePrefabName, string itemPrefabName)
+        internal static bool TryAddResourcePinFromDestructibleOre(Destructible destructible)
         {
-            if (destructible == null || Minimap.instance == null || string.IsNullOrWhiteSpace(orePrefabName) || string.IsNullOrWhiteSpace(itemPrefabName))
+            if (destructible == null || Minimap.instance == null)
             {
                 return false;
             }
 
-            if (!PluginConfig.IsResourceTrackingEnabled(orePrefabName))
+            string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+            if (!DestructibleOreLookup.TryGetValue(prefabName, out string itemPrefabName))
+            {
+                return false;
+            }
+
+            if (!PluginConfig.IsResourceTrackingEnabled(prefabName))
             {
                 return false;
             }
@@ -300,7 +283,7 @@ namespace HexResourceTracker
 
             return TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
-                orePrefabName,
+                prefabName,
                 itemPrefabName,
                 destructible.transform.position,
                 ClusterRadius));
@@ -336,8 +319,6 @@ namespace HexResourceTracker
             {
                 return true;
             }
-
-            RemoveClosestResourcePin(orePrefabName, mineRock.transform.position, 35f);
 
             return TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
@@ -409,6 +390,17 @@ namespace HexResourceTracker
             return sprite;
         }
 
+        private static float GetResourcePinSize(string itemPrefabName)
+        {
+            if (!string.IsNullOrWhiteSpace(itemPrefabName) &&
+                ResourceIconSizeOverrides.TryGetValue(itemPrefabName, out float size))
+            {
+                return size;
+            }
+
+            return ResourcePinSize;
+        }
+
         private static void SetPinUpdateRequired()
         {
             if (Minimap.instance == null)
@@ -418,46 +410,6 @@ namespace HexResourceTracker
 
             MPinUpdateRequired.SetValue(Minimap.instance, true);
         }
-
-        private static float GetResourcePinSize(string itemPrefabName)
-        {
-            if (ResourceIconSizeOverrides.TryGetValue(itemPrefabName, out float overrideSize))
-            {
-                return overrideSize;
-            }
-
-            return ResourcePinSize;
-        }
-
-        internal static bool RemoveClosestResourcePin(string prefabName, Vector3 position, float radius)
-        {
-            ResourcePinModel closestModel = null;
-            float closestDistanceSqr = radius * radius;
-
-            foreach (ResourcePinModel model in ResourcePinByZdoId.Values)
-            {
-                if (model.PickablePrefabName != prefabName)
-                {
-                    continue;
-                }
-
-                float deltaX = model.Position.x - position.x;
-                float deltaZ = model.Position.z - position.z;
-                float distanceSqr = (deltaX * deltaX) + (deltaZ * deltaZ);
-
-                if (distanceSqr <= closestDistanceSqr)
-                {
-                    closestDistanceSqr = distanceSqr;
-                    closestModel = model;
-                }
-            }
-
-            if (closestModel == null)
-            {
-                return false;
-            }
-
-            return RemoveResourcePin(closestModel.ZdoId);
-        }
     }
 }
+
