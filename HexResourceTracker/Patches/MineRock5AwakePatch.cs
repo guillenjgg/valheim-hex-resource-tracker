@@ -1,13 +1,30 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
 
 namespace HexResourceTracker.Patches
 {
     [HarmonyPatch(typeof(MineRock5), nameof(MineRock5.Awake))]
     internal static class MineRock5AwakePatch
     {
-        private const string CopperDepositName = "$piece_deposit_copper";
-        private const string SilverDepositName = "$piece_deposit_silvervein";
-        private const string GiantSkullName = "$piece_giant_bone";
+        private sealed class MineRock5ResourceDefinition
+        {
+            internal readonly string ResourcePrefabName;
+            internal readonly string ItemPrefabName;
+
+            internal MineRock5ResourceDefinition(string resourcePrefabName, string itemPrefabName)
+            {
+                ResourcePrefabName = resourcePrefabName;
+                ItemPrefabName = itemPrefabName;
+            }
+        }
+
+        private static readonly Dictionary<string, MineRock5ResourceDefinition> ResourceDefinitionsByMineRockName =
+            new Dictionary<string, MineRock5ResourceDefinition>
+            {
+                { "$piece_deposit_copper", new MineRock5ResourceDefinition("rock4_copper", "CopperOre") },
+                { "$piece_deposit_silvervein", new MineRock5ResourceDefinition("silvervein", "SilverOre") },
+                { "$piece_giant_bone", new MineRock5ResourceDefinition("giant_skull", "Softtissue") }
+            };
 
         private static void Postfix(MineRock5 __instance)
         {
@@ -16,35 +33,15 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            if (__instance.m_name == CopperDepositName)
+            if (!ResourceDefinitionsByMineRockName.TryGetValue(__instance.m_name, out MineRock5ResourceDefinition definition))
             {
-                ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
-                    __instance,
-                    "rock4_copper",
-                    "CopperOre");
-
                 return;
             }
 
-            if (__instance.m_name == SilverDepositName)
-            {
-                ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
-                    __instance,
-                    "silvervein",
-                    "SilverOre");
-
-                return;
-            }
-
-            if (__instance.m_name == GiantSkullName)
-            {
-                ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
-                    __instance,
-                    "giant_skull",
-                    "Softtissue");
-
-                return;
-            }
+            ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
+                __instance,
+                definition.ResourcePrefabName,
+                definition.ItemPrefabName);
         }
     }
 }

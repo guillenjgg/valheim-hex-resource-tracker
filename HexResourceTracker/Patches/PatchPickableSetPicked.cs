@@ -54,7 +54,6 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            Plugin.Log.LogInfo($"Restoring pin for {__instance.name}");
             ResourcePinManager.TryAddResourcePinFromPickable(__instance);
         }
     }

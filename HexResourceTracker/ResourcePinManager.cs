@@ -8,7 +8,7 @@ namespace HexResourceTracker
 {
     internal static class ResourcePinManager
     {
-        internal static readonly float ResourcePinSize = 20f;
+        private const float ResourcePinSize = 20f;
         private const float ClusterRadius = 25f;
 
         private static readonly Dictionary<string, Sprite> ResourceSprites = new Dictionary<string, Sprite>();
@@ -203,18 +203,23 @@ namespace HexResourceTracker
 
                 if (pin == null || pin.m_uiElement == null)
                 {
+                    model.LastSizedUiElement = null;
                     continue;
                 }
 
-                float size = ResourcePinSize;
+                float size = GetResourcePinSize(model.ItemPrefabName);
 
-                if (ResourceIconSizeOverrides.TryGetValue(model.ItemPrefabName, out float overrideSize))
+                if (model.LastSizedUiElement == pin.m_uiElement &&
+                    model.LastAppliedSize == size)
                 {
-                    size = overrideSize;
+                    continue;
                 }
 
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
+
+                model.LastSizedUiElement = pin.m_uiElement;
+                model.LastAppliedSize = size;
             }
         }
 
@@ -412,6 +417,16 @@ namespace HexResourceTracker
             }
 
             MPinUpdateRequired.SetValue(Minimap.instance, true);
+        }
+
+        private static float GetResourcePinSize(string itemPrefabName)
+        {
+            if (ResourceIconSizeOverrides.TryGetValue(itemPrefabName, out float overrideSize))
+            {
+                return overrideSize;
+            }
+
+            return ResourcePinSize;
         }
 
         internal static bool RemoveClosestResourcePin(string prefabName, Vector3 position, float radius)
