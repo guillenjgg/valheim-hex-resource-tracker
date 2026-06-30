@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
+using HexResourceTracker.Core;
 using System.Collections.Generic;
-using HexResourceTracker.UI;
 
 namespace HexResourceTracker
 {

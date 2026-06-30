@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace HexResourceTracker.UI
+namespace HexResourceTracker.Core
 {
     internal static class ResourceTrackerMapOverlay
     {

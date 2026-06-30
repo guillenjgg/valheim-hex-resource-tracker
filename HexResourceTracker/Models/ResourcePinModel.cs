@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using static Minimap;
 
-namespace HexResourceTracker
+namespace HexResourceTracker.Models
 {
     internal class ResourcePinModel
     {

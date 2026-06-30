@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using HexResourceTracker.Models;
 using UnityEngine;
 using static Minimap;
 
-namespace HexResourceTracker
+namespace HexResourceTracker.Core
 {
     internal static class ResourcePinManager
     {
@@ -16,13 +17,6 @@ namespace HexResourceTracker
         private static readonly Dictionary<ZDOID, ResourcePinModel> ResourcePinByZdoId = new Dictionary<ZDOID, ResourcePinModel>();
 
         private static readonly FieldInfo MPinUpdateRequired = AccessTools.Field(typeof(Minimap), "m_pinUpdateRequired");
-
-        private static readonly Dictionary<string, string> DestructibleOreLookup = new Dictionary<string, string>
-        {
-            { "rock4_copper", "CopperOre" },
-            { "silvervein", "SilverOre" },
-            { "giant_skull", "Softtissue" }
-        };
 
         private static readonly Dictionary<string, float> ResourceIconSizeOverrides = new Dictionary<string, float>
         {
@@ -257,12 +251,12 @@ namespace HexResourceTracker
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!DestructibleOreLookup.TryGetValue(prefabName, out string itemPrefabName))
+            if (!TrackedResourceDefinitions.DestructibleResourcesByPrefabName.TryGetValue(prefabName, out ResourceDefinitionModel definition))
             {
                 return false;
             }
 
-            if (!PluginConfig.IsResourceTrackingEnabled(prefabName))
+            if (!PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
             {
                 return false;
             }
@@ -283,8 +277,8 @@ namespace HexResourceTracker
 
             return TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
-                prefabName,
-                itemPrefabName,
+                definition.ResourcePrefabName,
+                definition.ItemPrefabName,
                 destructible.transform.position,
                 ClusterRadius));
         }

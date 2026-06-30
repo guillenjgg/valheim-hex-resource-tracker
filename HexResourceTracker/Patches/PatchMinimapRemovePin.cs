@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core;
 using UnityEngine;
 
 namespace HexResourceTracker.Patches

@@ -77,9 +77,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Patches\DestructibleAwakePatch.cs" />
-    <Compile Include="Patches\MineRock5AwakePatch.cs" />
-    <Compile Include="ResourceTrackerDragHandler.cs" />
+    <Compile Include="Patches\PatchDestructibleAwake.cs" />
+    <Compile Include="Patches\PatchMineRock5Awake.cs" />
+    <Compile Include="Models\ResourceDefinitionModel.cs" />
+    <Compile Include="Core\ResourceTrackerDragHandler.cs" />
     <Compile Include="Patches\PatchMinimapRemovePin.cs" />
     <Compile Include="Patches\PatchMinimapStart.cs" />
     <Compile Include="Patches\PatchPickableSetPicked.cs" />
@@ -88,9 +89,10 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourcePinManager.cs" />
-    <Compile Include="ResourcePinModel.cs" />
-    <Compile Include="ResourceTrackerMapOverlay.cs" />
+    <Compile Include="Core\ResourcePinManager.cs" />
+    <Compile Include="Models\ResourcePinModel.cs" />
+    <Compile Include="Core\ResourceTrackerMapOverlay.cs" />
+    <Compile Include="TrackedResourceDefinitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CHANGELOG.md">
