@@ -1,7 +1,7 @@
-﻿using HexResourceTracker.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using HexResourceTracker.Models;
 
-namespace HexResourceTracker
+namespace HexResourceTracker.Core
 {
     internal static class TrackedResourceDefinitions
     {

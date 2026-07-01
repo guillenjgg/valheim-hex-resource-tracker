@@ -13,7 +13,7 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            ResourcePinManager.TryAddResourcePinFromDestructibleOre(__instance);
+            OreResourcePinService.TryAddResourcePinFromDestructibleOre(__instance);
         }
     }
 }

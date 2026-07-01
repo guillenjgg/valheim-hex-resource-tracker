@@ -55,7 +55,7 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            ResourcePinManager.TryAddResourcePinFromPickable(__instance);
+            PickableResourcePinService.TryAddResourcePinFromPickable(__instance);
         }
     }
 }

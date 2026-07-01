@@ -1,4 +1,4 @@
-﻿namespace HexResourceTracker.Models
+namespace HexResourceTracker.Models
 {
     internal class ResourceDefinitionModel
     {

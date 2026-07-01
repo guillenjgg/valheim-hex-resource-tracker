@@ -35,7 +35,7 @@ namespace HexResourceTracker
             BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
             BindResource(config, "rock4_copper", "Copper");
             BindResource(config, "silvervein", "Silver");
-            BindResource(config, "giant_skull", "GiantSkull");
+            BindResource(config, "giant_skull", "Giant Skull");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)
@@ -56,10 +56,8 @@ namespace HexResourceTracker
             entry.SettingChanged += delegate
             {
                 ResourceTrackerMapOverlay.HandleResourceTrackingChanged(prefabName, entry.Value);
-
-                ResourcePinManager.HandleResourceTrackingChanged(
-                    prefabName,
-                    entry.Value);
+                PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
+                OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
             };
 
             ResourceConfigs[prefabName] = entry;

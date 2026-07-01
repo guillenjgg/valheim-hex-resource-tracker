@@ -14,15 +14,7 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            if (!TrackedResourceDefinitions.MineRock5ResourcesByName.TryGetValue(__instance.m_name, out ResourceDefinitionModel definition))
-            {
-                return;
-            }
-
-            ResourcePinManager.TryAddOrRelinkResourcePinFromMineRock5Ore(
-                __instance,
-                definition.ResourcePrefabName,
-                definition.ItemPrefabName);
+            OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(__instance);
         }
     }
 }
