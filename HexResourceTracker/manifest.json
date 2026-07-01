@@ -2,7 +2,7 @@
   "name": "HexResourceTracker",
   "version_number": "1.0.0",
   "website_url": "https://discord.gg/wU2FXD94v4",
-  "description": "Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, and other gatherables. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.",
+  "description": "Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, ores, and other gatherables. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2333"
   ]

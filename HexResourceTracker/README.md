@@ -1,10 +1,10 @@
 # HexResourceTracker
 
-Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, and other gatherables. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.
+Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, ore deposits, and other gatherable resources. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.
 
 ## Features
 
-- Automatically adds minimap pins for tracked resources.
+- Automatically adds minimap pins for tracked resources, including pickables and ore deposits.
 - Pins are removed when resources are harvested.
 - Pins are automatically restored when resources respawn.
 - Configurable resource tracking.
@@ -14,6 +14,8 @@ Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds,
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_2.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_3.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_4.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_5.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_6.png)
 
 ## Tracked Resources
 
@@ -26,9 +28,13 @@ Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds,
 - Blueberries
 - Thistle
 - Carrot Seeds
+- Copper
 
 ### Swamp
 - Turnip Seeds
+
+### Mountains
+- Silver Veins
 
 ### Plains
 - Wild Flax
@@ -38,21 +44,15 @@ Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds,
 ### Mistlands
 - Jotun Puffs
 - Magecaps
+- Giant Skulls (Soft Tissue)
+
+### Ashlands
+- Vineberries
+- Fiddleheads
+- Smoke Puffs
+- Flametal Deposits
 
 ## Configuration
-
-The following resources can be individually enabled or disabled:
-
-- Mushrooms
-- Raspberries
-- Blueberries
-- Thistle
-- Carrot Seeds
-- Turnip Seeds
-- Wild Flax
-- Wild Barley
-- Jotun Puffs
-- Dandelions
 
 Settings can be configured through:
 
@@ -80,7 +80,7 @@ Settings can be configured through:
 ## Known Limitations
 
 - Only tracks currently supported gatherable resources.
-- Resources must be loaded by Valheim before pins can be displayed.
+- Resources appear on the map as their zones are loaded by the game.
 - Pins do not persist across game sessions.
 - Pins are clustered to reduce map clutter in dense resource areas.
 
