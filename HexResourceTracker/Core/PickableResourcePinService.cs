@@ -6,8 +6,6 @@ namespace HexResourceTracker.Core
 {
     internal static class PickableResourcePinService
     {
-        private const float ClusterRadius = 25f;
-
         internal static bool TryAddResourcePinFromPickable(Pickable pickable)
         {
             if (pickable == null || Minimap.instance == null || pickable.m_itemPrefab == null)
@@ -45,8 +43,7 @@ namespace HexResourceTracker.Core
                 zdo.m_uid,
                 pickablePrefabName,
                 pickable.m_itemPrefab.name,
-                pickable.transform.position,
-                ClusterRadius));
+                pickable.transform.position));
         }
 
         internal static void HandleResourceTrackingChanged(string pickablePrefabName, bool isEnabled)

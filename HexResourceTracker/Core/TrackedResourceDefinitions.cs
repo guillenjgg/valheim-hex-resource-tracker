@@ -20,5 +20,11 @@ namespace HexResourceTracker.Core
                 { "$piece_deposit_silvervein", new ResourceDefinitionModel("silvervein", "SilverOre") },
                 { "$piece_giant_bone", new ResourceDefinitionModel("giant_skull", "Softtissue") }
             };
+
+        internal static readonly Dictionary<string, ResourceDefinitionModel> MineRockResourcesByName =
+            new Dictionary<string, ResourceDefinitionModel>
+            {
+                { "$item_flametalore", new ResourceDefinitionModel("LeviathanLava", "FlametalOreNew") }
+            };
     }
 }

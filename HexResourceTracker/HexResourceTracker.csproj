@@ -81,8 +81,10 @@
     <Compile Include="Core\PickableResourcePinService.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
-    <Compile Include="Patches\PatchMineRock5Awake.cs" />
+    <Compile Include="Patches\PatchDestructibleDestroy.cs" />
     <Compile Include="Core\ResourceTrackerDragHandler.cs" />
+    <Compile Include="Patches\PatchMineRockAllDestroyed.cs" />
+    <Compile Include="Patches\PatchMineRockStart.cs" />
     <Compile Include="Patches\PatchMinimapRemovePin.cs" />
     <Compile Include="Patches\PatchMinimapStart.cs" />
     <Compile Include="Patches\PatchPickableSetPicked.cs" />

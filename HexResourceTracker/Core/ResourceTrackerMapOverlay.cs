@@ -30,7 +30,7 @@ namespace HexResourceTracker.Core
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 410f);
+            panelRect.sizeDelta = new Vector2(180f, 510f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -52,6 +52,10 @@ namespace HexResourceTracker.Core
             AddResourceToggle("rock4_copper", "Copper", -335f);
             AddResourceToggle("silvervein", "Silver", -360f);
             AddResourceToggle("giant_skull", "Giant Skull", -385f);
+            AddResourceToggle("LeviathanLava", "Flametal", -410f);
+            AddResourceToggle("VineAsh", "Vineberries", -435f);
+            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -460f);
+            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -485f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)

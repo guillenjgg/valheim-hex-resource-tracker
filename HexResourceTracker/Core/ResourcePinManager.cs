@@ -206,7 +206,7 @@ namespace HexResourceTracker.Core
 
         private static bool HasNearbyResourcePin(ResourcePinModel model)
         {
-            float radiusSqr = model.ClusterRadius * model.ClusterRadius;
+            float radiusSqr = ClusterRadius * ClusterRadius;
 
             foreach (ResourcePinModel existingModel in ResourcePinByZdoId.Values)
             {
