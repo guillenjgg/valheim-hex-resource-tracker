@@ -8,10 +8,12 @@ namespace HexResourceTracker
     {
         private const string GeneralSection = "General";
         private const string ResourcesSection = "Resources To Track";
+        private const string DungeonsSection = "Dungeons To Track";
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
 
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
+        internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
 
         internal static void Initialize(ConfigFile config)
         {
@@ -40,12 +42,24 @@ namespace HexResourceTracker
             BindResource(config, "VineAsh", "Vineberries");
             BindResource(config, "Pickable_SmokePuff", "Smoke Puffs");
             BindResource(config, "Pickable_Fiddlehead", "Fiddleheads");
+
+            BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
+            BindDungeon(config, Room.Theme.SunkenCrypt, "Sunken Crypts");
+            BindDungeon(config, Room.Theme.Cave, "Frost Caves");
+            BindDungeon(config, Room.Theme.DvergerTown, "Infested Mines");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)
         {
             return IsModEnabled.Value &&
                    ResourceConfigs.TryGetValue(prefabName, out ConfigEntry<bool> config) &&
+                   config.Value;
+        }
+
+        internal static bool IsDungeonTrackingEnabled(Room.Theme theme)
+        {
+            return IsModEnabled.Value &&
+                   DungeonConfigs.TryGetValue(theme, out ConfigEntry<bool> config) &&
                    config.Value;
         }
 
@@ -65,6 +79,22 @@ namespace HexResourceTracker
             };
 
             ResourceConfigs[prefabName] = entry;
+        }
+
+        private static void BindDungeon(ConfigFile config, Room.Theme theme, string displayName)
+        {
+            ConfigEntry<bool> entry = config.Bind(
+                DungeonsSection,
+                $"Track {displayName}",
+                true,
+                $"Enable or disable tracking for {displayName}.");
+
+            entry.SettingChanged += delegate
+            {
+                DungeonPinManager.HandleDungeonTrackingChanged(theme, entry.Value);
+            };
+
+            DungeonConfigs[theme] = entry;
         }
     }
 }
