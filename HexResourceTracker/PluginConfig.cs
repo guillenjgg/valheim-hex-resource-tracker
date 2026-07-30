@@ -91,6 +91,7 @@ namespace HexResourceTracker
 
             entry.SettingChanged += delegate
             {
+                ResourceTrackerMapOverlay.HandleDungeonTrackingChanged(theme, entry.Value);
                 DungeonPinManager.HandleDungeonTrackingChanged(theme, entry.Value);
             };
 

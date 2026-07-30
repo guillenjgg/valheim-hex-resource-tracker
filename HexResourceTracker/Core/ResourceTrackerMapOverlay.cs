@@ -8,7 +8,9 @@ namespace HexResourceTracker.Core
     internal static class ResourceTrackerMapOverlay
     {
         private static GameObject _panel;
+
         private static readonly Dictionary<string, Toggle> ResourceToggles = new Dictionary<string, Toggle>();
+        private static readonly Dictionary<Room.Theme, Toggle> DungeonToggles = new Dictionary<Room.Theme, Toggle>();
 
         internal static void Create()
         {
@@ -30,32 +32,40 @@ namespace HexResourceTracker.Core
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 510f);
+            panelRect.sizeDelta = new Vector2(180f, 680f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
             AddTitle();
+            AddSectionHeader("Resources", -32f);
 
-            AddResourceToggle("Pickable_Mushroom", "Mushrooms", -35f);
-            AddResourceToggle("Pickable_Dandelion", "Dandelions", -60f);
-            AddResourceToggle("RaspberryBush", "Raspberries", -85f);
-            AddResourceToggle("BlueberryBush", "Blueberries", -110f);
-            AddResourceToggle("Pickable_Thistle", "Thistle", -135f);
-            AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -160f);
-            AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -185f);
-            AddResourceToggle("Pickable_Flax_Wild", "Flax", -210f);
-            AddResourceToggle("Pickable_Barley_Wild", "Barley", -235f);
-            AddResourceToggle("CloudberryBush", "Cloudberries", -260f);
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -285f);
-            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -310f);
-            AddResourceToggle("rock4_copper", "Copper", -335f);
-            AddResourceToggle("silvervein", "Silver", -360f);
-            AddResourceToggle("giant_skull", "Giant Skull", -385f);
-            AddResourceToggle("LeviathanLava", "Flametal", -410f);
-            AddResourceToggle("VineAsh", "Vineberries", -435f);
-            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -460f);
-            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -485f);
+            AddResourceToggle("Pickable_Mushroom", "Mushrooms", -60f);
+            AddResourceToggle("Pickable_Dandelion", "Dandelions", -85f);
+            AddResourceToggle("RaspberryBush", "Raspberries", -110f);
+            AddResourceToggle("BlueberryBush", "Blueberries", -135f);
+            AddResourceToggle("Pickable_Thistle", "Thistle", -160f);
+            AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -185f);
+            AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -210f);
+            AddResourceToggle("Pickable_Flax_Wild", "Flax", -235f);
+            AddResourceToggle("Pickable_Barley_Wild", "Barley", -260f);
+            AddResourceToggle("CloudberryBush", "Cloudberries", -285f);
+            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -310f);
+            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -335f);
+            AddResourceToggle("rock4_copper", "Copper", -360f);
+            AddResourceToggle("silvervein", "Silver", -385f);
+            AddResourceToggle("giant_skull", "Giant Skull", -410f);
+            AddResourceToggle("LeviathanLava", "Flametal", -435f);
+            AddResourceToggle("VineAsh", "Vineberries", -460f);
+            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -485f);
+            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -510f);
+
+            AddSectionHeader("Dungeons", -540f);
+
+            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -568f);
+            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -593f);
+            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -618f);
+            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -643f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
@@ -66,6 +76,14 @@ namespace HexResourceTracker.Core
             }
 
             if (ResourceToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
+            {
+                toggle.SetIsOnWithoutNotify(isEnabled);
+            }
+        }
+
+        internal static void HandleDungeonTrackingChanged(Room.Theme theme, bool isEnabled)
+        {
+            if (DungeonToggles.TryGetValue(theme, out Toggle toggle) && toggle != null)
             {
                 toggle.SetIsOnWithoutNotify(isEnabled);
             }
@@ -100,13 +118,53 @@ namespace HexResourceTracker.Core
 
             TextMeshProUGUI title = titleTextObject.AddComponent<TextMeshProUGUI>();
             title.font = Minimap.instance.m_biomeNameLarge.font;
-            title.text = "Track Resources";
+            title.text = "Map Tracking";
             title.fontSize = 12f;
             title.alignment = TextAlignmentOptions.Center;
             title.color = Color.white;
 
+            AddSeparator(titleObject);
+        }
+
+        private static void AddSectionHeader(string text, float yPosition)
+        {
+            GameObject headerObject = new GameObject($"{text}Header");
+            headerObject.transform.SetParent(_panel.transform, false);
+
+            RectTransform headerRect = headerObject.AddComponent<RectTransform>();
+            headerRect.anchorMin = new Vector2(0f, 1f);
+            headerRect.anchorMax = new Vector2(1f, 1f);
+            headerRect.pivot = new Vector2(0.5f, 1f);
+            headerRect.anchoredPosition = new Vector2(0f, yPosition);
+            headerRect.sizeDelta = new Vector2(0f, 24f);
+
+            Image headerBackground = headerObject.AddComponent<Image>();
+            headerBackground.color = new Color(0.14f, 0.10f, 0.06f, 0.90f);
+            headerBackground.raycastTarget = false;
+
+            GameObject textObject = new GameObject("Text");
+            textObject.transform.SetParent(headerObject.transform, false);
+
+            RectTransform textRect = textObject.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            TextMeshProUGUI headerText = textObject.AddComponent<TextMeshProUGUI>();
+            headerText.font = Minimap.instance.m_biomeNameLarge.font;
+            headerText.text = text;
+            headerText.fontSize = 12f;
+            headerText.alignment = TextAlignmentOptions.Center;
+            headerText.color = Color.white;
+
+            AddSeparator(headerObject);
+        }
+
+        private static void AddSeparator(GameObject parent)
+        {
             GameObject separator = new GameObject("Separator");
-            separator.transform.SetParent(titleObject.transform, false);
+            separator.transform.SetParent(parent.transform, false);
 
             RectTransform separatorRect = separator.AddComponent<RectTransform>();
             separatorRect.anchorMin = new Vector2(0f, 0f);
@@ -116,11 +174,40 @@ namespace HexResourceTracker.Core
 
             Image separatorImage = separator.AddComponent<Image>();
             separatorImage.color = new Color(0.6f, 0.5f, 0.3f, 0.8f);
+            separatorImage.raycastTarget = false;
         }
 
         private static void AddResourceToggle(string prefabName, string displayName, float yPosition)
         {
-            GameObject toggleObject = new GameObject($"{prefabName}_Toggle");
+            Toggle toggle = CreateToggle($"{prefabName}_Toggle", displayName, yPosition);
+            bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
+
+            toggle.SetIsOnWithoutNotify(isEnabled);
+            ResourceToggles[prefabName] = toggle;
+
+            toggle.onValueChanged.AddListener(delegate (bool value)
+            {
+                PluginConfig.ResourceConfigs[prefabName].Value = value;
+            });
+        }
+
+        private static void AddDungeonToggle(Room.Theme theme, string displayName, float yPosition)
+        {
+            Toggle toggle = CreateToggle($"{theme}_Toggle", displayName, yPosition);
+            bool isEnabled = PluginConfig.DungeonConfigs[theme].Value;
+
+            toggle.SetIsOnWithoutNotify(isEnabled);
+            DungeonToggles[theme] = toggle;
+
+            toggle.onValueChanged.AddListener(delegate (bool value)
+            {
+                PluginConfig.DungeonConfigs[theme].Value = value;
+            });
+        }
+
+        private static Toggle CreateToggle(string objectName, string displayName, float yPosition)
+        {
+            GameObject toggleObject = new GameObject(objectName);
             toggleObject.transform.SetParent(_panel.transform, false);
 
             RectTransform toggleRect = toggleObject.AddComponent<RectTransform>();
@@ -164,8 +251,8 @@ namespace HexResourceTracker.Core
             labelObject.transform.SetParent(toggleObject.transform, false);
 
             RectTransform labelRect = labelObject.AddComponent<RectTransform>();
-            labelRect.anchorMin = new Vector2(0f, 0f);
-            labelRect.anchorMax = new Vector2(1f, 1f);
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
             labelRect.offsetMin = new Vector2(34f, 0f);
             labelRect.offsetMax = new Vector2(-10f, 0f);
 
@@ -176,14 +263,7 @@ namespace HexResourceTracker.Core
             label.alignment = TextAlignmentOptions.Left;
             label.color = Color.white;
 
-            bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
-            toggle.SetIsOnWithoutNotify(isEnabled);
-            ResourceToggles[prefabName] = toggle;
-
-            toggle.onValueChanged.AddListener(delegate (bool value)
-            {
-                PluginConfig.ResourceConfigs[prefabName].Value = value;
-            });
+            return toggle;
         }
     }
 }
