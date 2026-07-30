@@ -8,6 +8,7 @@ namespace HexResourceTracker
         internal Room.Theme Theme { get; }
         internal string LocationPrefabName { get; }
         internal Vector3 Position { get; }
+        internal bool IsChecked { get; set; }
         internal PinData Pin { get; set; }
 
         internal DungeonPinModel(Room.Theme theme, string locationPrefabName, Vector3 position)

@@ -13,7 +13,6 @@ namespace HexResourceTracker
         private static readonly AccessTools.FieldRef<Minimap, List<PinData>> MinimapPins = AccessTools.FieldRefAccess<Minimap, List<PinData>>("m_pins");
         private static Minimap _trackedMinimap;
 
-
         internal static bool TryAddDungeonPin(Location location)
         {
             if (location == null)
@@ -23,7 +22,10 @@ namespace HexResourceTracker
 
             EnsureMinimapState();
 
-            string locationName = Utils.GetPrefabName(location.gameObject);
+            if (Minimap.instance == null)
+            {
+                return false;
+            }
 
             if (!TryGetSupportedDungeonTheme(location, out Room.Theme theme))
             {
@@ -35,11 +37,7 @@ namespace HexResourceTracker
                 return false;
             }
 
-            if (Minimap.instance == null)
-            {
-                return false;
-            }
-
+            string locationName = Utils.GetPrefabName(location.gameObject);
             Vector3 position = location.transform.position;
 
             if (HasDungeonPin(theme, position))
@@ -47,36 +45,38 @@ namespace HexResourceTracker
                 return false;
             }
 
-            string dungeonName = GetDungeonName(theme);
+            DungeonPinModel model = new DungeonPinModel(theme, locationName, position);
+            PinData existingPin = FindExistingDungeonPin(theme, position);
 
-            PinData pin = Minimap.instance.AddPin(
-                position,
-                PinType.Icon2,// hammer icon
-                dungeonName,
-                false,
-                false);
-
-            if (pin == null)
+            if (existingPin != null)
             {
-                #if DEBUG
+                model.Pin = existingPin;
+                model.IsChecked = existingPin.m_checked;
+
+#if DEBUG
+                Plugin.Log.LogInfo(
+                    $"[DungeonPins] Reconnected existing {GetDungeonName(theme)} pin at " +
+                    $"X={position.x}, Y={position.y}, Z={position.z}. " +
+                    $"Checked={model.IsChecked}.");
+#endif
+            }
+            else if (!CreatePin(model))
+            {
+#if DEBUG
                 Plugin.Log.LogWarning($"[DungeonPins] Failed to create pin for {locationName}.");
-                #endif
+#endif
                 return false;
             }
-
-            DungeonPinModel model = new DungeonPinModel(theme, locationName, position)
+            else
             {
-                Pin = pin
-            };
+#if DEBUG
+                Plugin.Log.LogInfo(
+                    $"[DungeonPins] Added {GetDungeonName(theme)} pin at " +
+                    $"X={position.x}, Y={position.y}, Z={position.z}.");
+#endif
+            }
 
             DungeonPins.Add(model);
-
-            #if DEBUG
-            Plugin.Log.LogInfo(
-                $"[DungeonPins] Added {dungeonName} pin at " +
-                $"X={position.x}, Y={position.y}, Z={position.z}.");
-            #endif
-
             return true;
         }
 
@@ -88,16 +88,87 @@ namespace HexResourceTracker
 
             if (!isEnabled)
             {
-                #if DEBUG
+#if DEBUG
                 Plugin.Log.LogInfo(
                     $"[DungeonPins] Disabled {GetDungeonName(theme)} tracking. " +
                     $"Removed {removedCount} dungeon pin(s).");
-                #endif
-
+#endif
                 return;
             }
 
             AddLoadedDungeonPins(theme);
+        }
+
+        internal static void UpdateCheckedStates()
+        {
+            EnsureMinimapState();
+
+            foreach (DungeonPinModel model in DungeonPins)
+            {
+                if (model.Pin == null || model.IsChecked == model.Pin.m_checked)
+                {
+                    continue;
+                }
+
+                model.IsChecked = model.Pin.m_checked;
+
+#if DEBUG
+                Plugin.Log.LogInfo(
+                    $"[DungeonPins] Updated {GetDungeonName(model.Theme)} checked state: " +
+                    $"{model.IsChecked}.");
+#endif
+            }
+        }
+
+        internal static void RedrawDungeonPins()
+        {
+            EnsureMinimapState();
+
+            if (Minimap.instance == null)
+            {
+                return;
+            }
+
+            foreach (DungeonPinModel model in DungeonPins)
+            {
+                if (model.Pin != null)
+                {
+                    Minimap.instance.RemovePin(model.Pin);
+                    model.Pin = null;
+                }
+
+                if (!CreatePin(model))
+                {
+#if DEBUG
+                    Plugin.Log.LogWarning(
+                        $"[DungeonPins] Failed to redraw {GetDungeonName(model.Theme)} pin at " +
+                        $"X={model.Position.x}, Y={model.Position.y}, Z={model.Position.z}.");
+#endif
+                }
+            }
+        }
+
+        private static bool CreatePin(DungeonPinModel model)
+        {
+            if (model == null || Minimap.instance == null)
+            {
+                return false;
+            }
+
+            PinData pin = Minimap.instance.AddPin(
+                model.Position,
+                PinType.Icon2,
+                GetDungeonName(model.Theme),
+                true,
+                model.IsChecked);
+
+            if (pin == null)
+            {
+                return false;
+            }
+
+            model.Pin = pin;
+            return true;
         }
 
         private static void AddLoadedDungeonPins(Room.Theme theme)
@@ -131,11 +202,11 @@ namespace HexResourceTracker
                 }
             }
 
-            #if DEBUG
+#if DEBUG
             Plugin.Log.LogInfo(
                 $"[DungeonPins] Enabled {GetDungeonName(theme)} tracking. " +
                 $"Added {addedCount} loaded dungeon pin(s).");
-            #endif
+#endif
         }
 
         private static bool TryGetSupportedDungeonTheme(Location location, out Room.Theme theme)
@@ -149,18 +220,12 @@ namespace HexResourceTracker
 
             DungeonGenerator generator = location.GetComponentInChildren<DungeonGenerator>(true);
 
-            if (generator == null)
-            {
-                return false;
-            }
-
-            if (generator.m_algorithm != DungeonGenerator.Algorithm.Dungeon)
+            if (generator == null || generator.m_algorithm != DungeonGenerator.Algorithm.Dungeon)
             {
                 return false;
             }
 
             theme = generator.m_themes;
-
             return IsSupportedDungeon(theme);
         }
 
@@ -189,17 +254,55 @@ namespace HexResourceTracker
                     continue;
                 }
 
-                float deltaX = model.Position.x - position.x;
-                float deltaZ = model.Position.z - position.z;
-                float distanceSqr = (deltaX * deltaX) + (deltaZ * deltaZ);
-
-                if (distanceSqr <= radiusSqr)
+                if (IsWithinRadius(model.Position, position, radiusSqr))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private static PinData FindExistingDungeonPin(Room.Theme theme, Vector3 position)
+        {
+            if (Minimap.instance == null)
+            {
+                return null;
+            }
+
+            List<PinData> minimapPins = MinimapPins(Minimap.instance);
+
+            if (minimapPins == null)
+            {
+                return null;
+            }
+
+            string dungeonName = GetDungeonName(theme);
+            float radiusSqr = DuplicateRadius * DuplicateRadius;
+
+            foreach (PinData pin in minimapPins)
+            {
+                if (!IsMatchingDungeonPin(pin, dungeonName))
+                {
+                    continue;
+                }
+
+                if (IsWithinRadius(pin.m_pos, position, radiusSqr))
+                {
+                    return pin;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsWithinRadius(Vector3 firstPosition, Vector3 secondPosition, float radiusSqr)
+        {
+            float deltaX = firstPosition.x - secondPosition.x;
+            float deltaZ = firstPosition.z - secondPosition.z;
+            float distanceSqr = (deltaX * deltaX) + (deltaZ * deltaZ);
+
+            return distanceSqr <= radiusSqr;
         }
 
         private static int RemoveExistingDungeonPins(Room.Theme theme)
@@ -232,7 +335,7 @@ namespace HexResourceTracker
 
             List<PinData> minimapPins = MinimapPins(Minimap.instance);
 
-            if(minimapPins == null)
+            if (minimapPins == null)
             {
                 return removedCount;
             }
