@@ -77,14 +77,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
+    <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
     <Compile Include="Patches\PatchDestructibleDestroy.cs" />
     <Compile Include="Core\ResourceTrackerDragHandler.cs" />
+    <Compile Include="Patches\PatchLocationAwake.cs" />
     <Compile Include="Patches\PatchMineRockAllDestroyed.cs" />
     <Compile Include="Patches\PatchMineRockStart.cs" />
+    <Compile Include="Patches\PatchMinimapOnMapLeftClick.cs" />
     <Compile Include="Patches\PatchMinimapRemovePin.cs" />
     <Compile Include="Patches\PatchMinimapStart.cs" />
     <Compile Include="Patches\PatchPickableSetPicked.cs" />

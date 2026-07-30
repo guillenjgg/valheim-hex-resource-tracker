@@ -1,21 +1,25 @@
 # HexResourceTracker
 
-Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds, ore deposits, and other gatherable resources. Includes a custom draggable map overlay that lets players toggle resource tracking on and off without leaving the game.
+Automatically adds minimap pins for gatherable resources such as berries, mushrooms, thistle, seeds, ore deposits, and other harvestable materials.
+
+Automatically adds minimap pins for supported dungeon entrances.
+
+Includes a custom draggable **Map Tracking** overlay that lets players enable or disable resource and dungeon tracking without leaving the game.
 
 ## Features
 
-- Automatically adds minimap pins for tracked resources, including pickables and ore deposits.
-- Pins are removed when resources are harvested.
-- Pins are automatically restored when resources respawn.
-- Configurable resource tracking.
-- Draggable map overlay for managing tracked resources in-game. Click and drag the overlay title bar to move it around.
+- Automatically adds minimap pins for supported gatherable resources and dungeon entrances.
+- Resource pins are removed when resources are harvested.
+- Resource pins are automatically restored when resources respawn.
+- Independently configure which resources and dungeons are tracked.
+- Draggable in-game **Map Tracking** overlay for enabling or disabling resource and dungeon tracking without opening the configuration file.
 
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_1.png)
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_2.png)
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_3.png)
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_4.png)
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_5.png)
-![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcetracker_6.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_1.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_2.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_3.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_4.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_5.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_6.png)
 
 ## Tracked Resources
 
@@ -52,12 +56,19 @@ Automatically adds minimap resource pins for berries, mushrooms, thistle, seeds,
 - Smoke Puffs
 - Flametal Deposits
 
+## Tracked Dungeons
+
+- Burial Chambers
+- Sunken Crypts
+- Frost Caves
+- Infested Mines
+
 ## Configuration
 
-Settings can be configured through:
+Tracking can be configured through either:
 
 - BepInEx configuration file
-- In-game draggable map overlay
+- In-game **Map Tracking** overlay
 
 ## Installation
 
@@ -75,14 +86,14 @@ Settings can be configured through:
 ## Compatibility
 
 - Client-side only.
-- Has not been tested in multiplayer, or on a dedicated server.
+- Has not been tested in multiplayer or on dedicated servers.
 
 ## Known Limitations
 
-- Only tracks currently supported gatherable resources.
-- Resources appear on the map as their zones are loaded by the game.
+- Only currently supported resources and dungeon entrances are tracked.
+- Pins appear as the surrounding world is loaded by the game.
 - Pins do not persist across game sessions.
-- Pins are clustered to reduce map clutter in dense resource areas.
+- Resource pins are clustered to reduce map clutter in dense areas.
 
 ## Feedback & Support
 
