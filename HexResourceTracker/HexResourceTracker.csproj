@@ -36,19 +36,19 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_utils_publicized">
-      <HintPath>..\..\..\publicized_assemblies\assembly_utils_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\1.0-release\assembly_utils_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_valheim_publicized">
-      <HintPath>..\..\..\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\1.0-release\assembly_valheim_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\bepinex_mod_libs\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Splatform">
-      <HintPath>..\..\..\valheim_mod_libraries\Splatform.dll</HintPath>
+    <Reference Include="Splatform_publicized">
+      <HintPath>..\..\..\publicized_assemblies\1.0-release\Splatform_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
