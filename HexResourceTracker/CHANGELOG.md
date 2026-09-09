@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.1
+
+### Added
+- Update for 1.0 release
+
 ## v1.2.0
 
 ### Added
