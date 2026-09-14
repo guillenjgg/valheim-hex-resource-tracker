@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.0
+
+### Added
+- Added support for Valheim's Deep North content.
+- Added tracking for new Deep North resources:
+  - Lingonberries
+  - Kale Seeds
+- Added automatic tracking for new Deep North dungeon entrances:
+  - Morkhalla
+  - Winding Tunnels
+
 ## v1.2.1
 
 ### Added

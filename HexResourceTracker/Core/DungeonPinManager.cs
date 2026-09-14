@@ -13,6 +13,16 @@ namespace HexResourceTracker
         private static readonly AccessTools.FieldRef<Minimap, List<PinData>> MinimapPins = AccessTools.FieldRefAccess<Minimap, List<PinData>>("m_pins");
         private static Minimap _trackedMinimap;
 
+        private static readonly Dictionary<Room.Theme, string> SupportedDungeons = new Dictionary<Room.Theme, string>
+        {
+            { Room.Theme.ForestCrypt, "Burial Chamber" },
+            { Room.Theme.SunkenCrypt, "Sunken Crypt" },
+            { Room.Theme.Cave, "Frost Cave" },
+            { Room.Theme.DvergerTown, "Infested Mine" },
+            { Room.Theme.MorkHalla, "Morkhalla" },
+            { Room.Theme.Hole, "Winding Tunnels" }
+        };
+
         internal static bool TryAddDungeonPin(Location location)
         {
             if (location == null)
@@ -226,21 +236,8 @@ namespace HexResourceTracker
             }
 
             theme = generator.m_themes;
-            return IsSupportedDungeon(theme);
-        }
 
-        private static bool IsSupportedDungeon(Room.Theme theme)
-        {
-            switch (theme)
-            {
-                case Room.Theme.ForestCrypt:
-                case Room.Theme.SunkenCrypt:
-                case Room.Theme.Cave:
-                case Room.Theme.DvergerTown:
-                    return true;
-                default:
-                    return false;
-            }
+            return SupportedDungeons.ContainsKey(theme);
         }
 
         private static bool HasDungeonPin(Room.Theme theme, Vector3 position)
@@ -380,19 +377,12 @@ namespace HexResourceTracker
 
         private static string GetDungeonName(Room.Theme theme)
         {
-            switch (theme)
+            if (SupportedDungeons.TryGetValue(theme, out string dungeonName))
             {
-                case Room.Theme.ForestCrypt:
-                    return "Burial Chamber";
-                case Room.Theme.SunkenCrypt:
-                    return "Sunken Crypt";
-                case Room.Theme.Cave:
-                    return "Frost Cave";
-                case Room.Theme.DvergerTown:
-                    return "Infested Mine";
-                default:
-                    return "Dungeon";
+                return dungeonName;
             }
+
+            return "Dungeon";
         }
     }
 }

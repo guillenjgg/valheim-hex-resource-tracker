@@ -1,6 +1,6 @@
 # HexResourceTracker
 
-Automatically adds minimap pins for gatherable resources such as berries, mushrooms, thistle, seeds, ore deposits, and other harvestable materials.
+Automatically adds minimap pins for supported gatherable resources such as berries, mushrooms, thistle, seeds, ore deposits, and other harvestable materials.
 
 Automatically adds minimap pins for supported dungeon entrances.
 
@@ -13,6 +13,7 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 - Resource pins are automatically restored when resources respawn.
 - Independently configure which resources and dungeons are tracked.
 - Draggable in-game **Map Tracking** overlay for enabling or disabling resource and dungeon tracking without opening the configuration file.
+- Includes support for Deep North resources and dungeons.
 
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_1.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_2.png)
@@ -20,6 +21,7 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_4.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_5.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_6.png)
+![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_7.png)
 
 ## Tracked Resources
 
@@ -56,12 +58,18 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 - Smoke Puffs
 - Flametal Deposits
 
+### Deep North
+- Lingonberries
+- Kale Seeds
+
 ## Tracked Dungeons
 
 - Burial Chambers
 - Sunken Crypts
 - Frost Caves
 - Infested Mines
+- Morkhalla
+- Winding Tunnels
 
 ## Configuration
 
@@ -69,6 +77,8 @@ Tracking can be configured through either:
 
 - BepInEx configuration file
 - In-game **Map Tracking** overlay
+
+Each supported resource and dungeon can be enabled or disabled independently.
 
 ## Installation
 
