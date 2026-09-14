@@ -237,6 +237,8 @@ namespace HexResourceTracker
                 case Room.Theme.SunkenCrypt:
                 case Room.Theme.Cave:
                 case Room.Theme.DvergerTown:
+                case Room.Theme.MorkHalla:
+                case Room.Theme.Hole:
                     return true;
                 default:
                     return false;
@@ -390,6 +392,10 @@ namespace HexResourceTracker
                     return "Frost Cave";
                 case Room.Theme.DvergerTown:
                     return "Infested Mine";
+                case Room.Theme.MorkHalla:
+                    return "Morkhalla";
+                case Room.Theme.Hole:
+                    return "Winding Tunnels";
                 default:
                     return "Dungeon";
             }

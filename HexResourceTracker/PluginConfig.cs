@@ -42,11 +42,15 @@ namespace HexResourceTracker
             BindResource(config, "VineAsh", "Vineberries");
             BindResource(config, "Pickable_SmokePuff", "Smoke Puffs");
             BindResource(config, "Pickable_Fiddlehead", "Fiddleheads");
+            BindResource(config, "LingonberryBush", "Lingonberries");
+            BindResource(config, "Pickable_SeedKale", "Kale Seeds");
 
             BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
             BindDungeon(config, Room.Theme.SunkenCrypt, "Sunken Crypts");
             BindDungeon(config, Room.Theme.Cave, "Frost Caves");
             BindDungeon(config, Room.Theme.DvergerTown, "Infested Mines");
+            BindDungeon(config, Room.Theme.MorkHalla, "Morkhalla");
+            BindDungeon(config, Room.Theme.Hole, "Winding Tunnel");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)

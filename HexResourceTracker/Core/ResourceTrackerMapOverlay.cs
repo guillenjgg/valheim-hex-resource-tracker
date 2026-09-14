@@ -32,7 +32,7 @@ namespace HexResourceTracker.Core
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 680f);
+            panelRect.sizeDelta = new Vector2(180f, 780f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -59,13 +59,17 @@ namespace HexResourceTracker.Core
             AddResourceToggle("VineAsh", "Vineberries", -460f);
             AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -485f);
             AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -510f);
+            AddResourceToggle("LingonberryBush", "Lingonberries", -535f);
+            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -560f);
 
-            AddSectionHeader("Dungeons", -540f);
+            AddSectionHeader("Dungeons", -590f);
 
-            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -568f);
-            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -593f);
-            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -618f);
-            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -643f);
+            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -618f);
+            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -643f);
+            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -668f);
+            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -693f);
+            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -718f);
+            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -743f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
