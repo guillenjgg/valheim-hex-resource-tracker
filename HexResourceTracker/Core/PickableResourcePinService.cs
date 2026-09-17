@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
+using UnityEngine;
 
 namespace HexResourceTracker.Core
 {
@@ -81,6 +82,43 @@ namespace HexResourceTracker.Core
 
                 TryAddResourcePinFromPickable(pickable);
             }
+        }
+
+        internal static void ReconcileTrackedPickable(TrackedMapObject trackedObject)
+        {
+            if (trackedObject == null)
+            {
+                return;
+            }
+
+            Pickable pickable = trackedObject.GetComponent<Pickable>();
+
+            if (pickable == null)
+            {
+                return;
+            }
+
+            ZNetView nview = pickable.GetComponent<ZNetView>();
+
+            if (nview == null || !nview.IsValid())
+            {
+                return;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return;
+            }
+
+            if (!trackedObject.IsInTrackingRange)
+            {
+                ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                return;
+            }
+
+            TryAddResourcePinFromPickable(pickable);
         }
 
         private static bool IsTrackedPickablePrefab(string pickablePrefabName)

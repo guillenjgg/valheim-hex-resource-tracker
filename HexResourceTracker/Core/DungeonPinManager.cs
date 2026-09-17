@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core;
 using System.Collections.Generic;
 using UnityEngine;
 using static Minimap;
@@ -49,6 +50,17 @@ namespace HexResourceTracker
 
             string locationName = Utils.GetPrefabName(location.gameObject);
             Vector3 position = location.transform.position;
+
+            if (!TrackingRangeService.IsWithinTrackingRange(position))
+            {
+#if DEBUG
+                Plugin.Log.LogInfo(
+                    $"[DungeonPins] Skipped out-of-range {GetDungeonName(theme)} at " +
+                    $"X={position.x}, Y={position.y}, Z={position.z}. " +
+                    $"Range={PluginConfig.TrackingRange.Value:F1}m.");
+#endif
+                return false;
+            }
 
             if (HasDungeonPin(theme, position))
             {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HexResourceTracker.Core.Tracking;
+using UnityEngine;
 
 namespace HexResourceTracker.Core
 {
@@ -6,6 +7,11 @@ namespace HexResourceTracker.Core
     {
         internal static bool IsWithinTrackingRange(Vector3 position)
         {
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.ZoneBased)
+            {
+                return true;
+            }
+
             if (Player.m_localPlayer == null)
             {
                 return false;

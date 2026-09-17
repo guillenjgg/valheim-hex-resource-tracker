@@ -80,8 +80,10 @@
     <Compile Include="Core\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
-    <Compile Include="Core\TrackedMapObject.cs" />
+    <Compile Include="Core\Tracking\MapTrackingScanner.cs" />
+    <Compile Include="Core\Tracking\TrackedMapObject.cs" />
     <Compile Include="Core\TrackingRangeService.cs" />
+    <Compile Include="Core\Tracking\TrackingModeEnum.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Patches\PatchMinimapStart.cs" />
     <Compile Include="Patches\PatchPickableSetPicked.cs" />
     <Compile Include="Patches\PatchPickableAwake.cs" />
+    <Compile Include="Patches\PatchPlayerSetLocalPlayer.cs" />
     <Compile Include="Patches\PathMinimapUpdatePins.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginConfig.cs" />

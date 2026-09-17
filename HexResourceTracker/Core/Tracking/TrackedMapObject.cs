@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace HexResourceTracker
+namespace HexResourceTracker.Core.Tracking
 {
     internal sealed class TrackedMapObject : MonoBehaviour
     {
         private static readonly HashSet<TrackedMapObject> TrackedObjects = new HashSet<TrackedMapObject>();
 
         internal string PrefabName { get; private set; }
+        internal bool IsInTrackingRange { get; set; }
 
         internal static IReadOnlyCollection<TrackedMapObject> GetTrackedObjects()
         {
