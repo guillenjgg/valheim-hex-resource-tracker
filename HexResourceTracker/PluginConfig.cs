@@ -11,6 +11,7 @@ namespace HexResourceTracker
         private const string DungeonsSection = "Dungeons To Track";
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
+        internal static ConfigEntry<float> TrackingRange { get; private set; }
 
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
@@ -22,6 +23,14 @@ namespace HexResourceTracker
                 "Enable",
                 true,
                 "Enable or disable the HexResourceTracker mod.");
+
+            TrackingRange = config.Bind(
+                GeneralSection,
+                "Tracking Range",
+                500f,
+                new ConfigDescription(
+                    "Maximum distance in meters from the player to track resources and dungeons.",
+                    new AcceptableValueRange<float>(50f, 2000f)));
 
             BindResource(config, "Pickable_Mushroom", "Mushrooms");
             BindResource(config, "Pickable_Dandelion", "Dandelions");

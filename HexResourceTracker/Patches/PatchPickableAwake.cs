@@ -13,6 +13,13 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
+            string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+            if (PluginConfig.ResourceConfigs.ContainsKey(prefabName))
+            {
+                TrackedMapObject.TryAdd(__instance.gameObject, prefabName);
+            }
+
             PickableResourcePinService.TryAddResourcePinFromPickable(__instance);
         }
     }

@@ -32,6 +32,11 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
+            if (!TrackingRangeService.IsWithinTrackingRange(model.Position))
+            {
+                return false;
+            }
+
             if (ResourcePinByZdoId.ContainsKey(model.ZdoId))
             {
                 return false;

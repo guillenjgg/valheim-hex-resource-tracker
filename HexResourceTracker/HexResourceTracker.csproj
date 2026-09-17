@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Valheim1.0Release\BepInEx\plugins\Hex_Viking-HexResourceTracker\</OutputPath>
+    <OutputPath>..\..\..\debug_builds\HexResourceTracker\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -36,11 +36,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_utils_publicized">
-      <HintPath>..\..\..\publicized_assemblies\1.0-release\assembly_utils_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.14\assembly_utils_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_valheim_publicized">
-      <HintPath>..\..\..\publicized_assemblies\1.0-release\assembly_valheim_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.14\assembly_valheim_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
@@ -48,7 +48,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Splatform_publicized">
-      <HintPath>..\..\..\publicized_assemblies\1.0-release\Splatform_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0\Splatform_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -80,6 +80,8 @@
     <Compile Include="Core\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
+    <Compile Include="Core\TrackedMapObject.cs" />
+    <Compile Include="Core\TrackingRangeService.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />

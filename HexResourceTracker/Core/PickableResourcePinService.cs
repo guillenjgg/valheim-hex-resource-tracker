@@ -26,7 +26,7 @@ namespace HexResourceTracker.Core
 
             string pickablePrefabName = pickable.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!IsTrackedPickablePrefab(pickablePrefabName))
+            if (!PluginConfig.IsResourceTrackingEnabled(pickablePrefabName))
             {
                 return false;
             }
