@@ -1,19 +1,22 @@
 # HexResourceTracker
 
-Automatically adds minimap pins for supported gatherable resources such as berries, mushrooms, thistle, seeds, ore deposits, and other harvestable materials.
+Automatically adds minimap pins for supported gatherable resources and dungeon entrances.
 
-Automatically adds minimap pins for supported dungeon entrances.
-
-Includes a custom draggable **Map Tracking** overlay that lets players enable or disable resource and dungeon tracking without leaving the game.
+Includes a draggable **Map Tracking** overlay for enabling or disabling individual resources and dungeons in-game.
 
 ## Features
 
-- Automatically adds minimap pins for supported gatherable resources and dungeon entrances.
-- Resource pins are removed when resources are harvested.
-- Resource pins are automatically restored when resources respawn.
-- Independently configure which resources and dungeons are tracked.
-- Draggable in-game **Map Tracking** overlay for enabling or disabling resource and dungeon tracking without opening the configuration file.
+- Tracks supported gatherable resources and dungeon entrances.
+- Removes resource pins when resources are harvested.
+- Restores resource pins when resources respawn.
+- Supports two tracking modes:
+  - **Zone Based** - Tracks supported objects as Valheim loads the surrounding world.
+  - **Range Scanner** - Only displays supported resources and dungeons within a configurable distance of the player.
+- Configurable **Range Scanner** distance from 50 to 2000 meters.
+- Independently enable or disable each supported resource and dungeon.
+- Draggable in-game **Map Tracking** overlay.
 - Includes support for Deep North resources and dungeons.
+- Resource pins are clustered to reduce map clutter in dense areas.
 
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_1.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_2.png)
@@ -22,6 +25,20 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_5.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_6.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_7.png)
+
+## Tracking Modes
+
+### Zone Based
+
+Tracks supported resources and dungeons as their surrounding zones are loaded by Valheim.
+
+There is no configured distance limit in this mode.
+
+### Range Scanner
+
+Only displays supported resources and dungeons within the configured **Tracking Range** of the player.
+
+Pins are automatically added and removed as the player moves through the world.
 
 ## Tracked Resources
 
@@ -41,6 +58,7 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 
 ### Mountains
 - Silver Veins
+- Dragon Eggs
 
 ### Plains
 - Wild Flax
@@ -73,12 +91,14 @@ Includes a custom draggable **Map Tracking** overlay that lets players enable or
 
 ## Configuration
 
-Tracking can be configured through either:
+Tracking can be configured through the BepInEx configuration file or the in-game **Map Tracking** overlay.
 
-- BepInEx configuration file
-- In-game **Map Tracking** overlay
+Configuration options include:
 
-Each supported resource and dungeon can be enabled or disabled independently.
+- Tracking mode
+- Range Scanner distance
+- Individual resource tracking
+- Individual dungeon tracking
 
 ## Installation
 
@@ -100,10 +120,9 @@ Each supported resource and dungeon can be enabled or disabled independently.
 
 ## Known Limitations
 
-- Only currently supported resources and dungeon entrances are tracked.
-- Pins appear as the surrounding world is loaded by the game.
+- Only supported resources and dungeon entrances are tracked.
+- Valheim must load an object before the mod can discover and track it.
 - Pins do not persist across game sessions.
-- Resource pins are clustered to reduce map clutter in dense areas.
 
 ## Feedback & Support
 

@@ -53,12 +53,6 @@ namespace HexResourceTracker
 
             if (!TrackingRangeService.IsWithinTrackingRange(position))
             {
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] Skipped out-of-range {GetDungeonName(theme)} at " +
-                    $"X={position.x}, Y={position.y}, Z={position.z}. " +
-                    $"Range={PluginConfig.TrackingRange.Value:F1}m.");
-#endif
                 return false;
             }
 
@@ -74,28 +68,10 @@ namespace HexResourceTracker
             {
                 model.Pin = existingPin;
                 model.IsChecked = existingPin.m_checked;
-
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] Reconnected existing {GetDungeonName(theme)} pin at " +
-                    $"X={position.x}, Y={position.y}, Z={position.z}. " +
-                    $"Checked={model.IsChecked}.");
-#endif
             }
             else if (!CreatePin(model))
             {
-#if DEBUG
-                Plugin.Log.LogWarning($"[DungeonPins] Failed to create pin for {locationName}.");
-#endif
                 return false;
-            }
-            else
-            {
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] Added {GetDungeonName(theme)} pin at " +
-                    $"X={position.x}, Y={position.y}, Z={position.z}.");
-#endif
             }
 
             DungeonPins.Add(model);
@@ -106,15 +82,10 @@ namespace HexResourceTracker
         {
             EnsureMinimapState();
 
-            int removedCount = RemoveExistingDungeonPins(theme);
+            RemoveExistingDungeonPins(theme);
 
             if (!isEnabled)
             {
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] Disabled {GetDungeonName(theme)} tracking. " +
-                    $"Removed {removedCount} dungeon pin(s).");
-#endif
                 return;
             }
 
@@ -133,12 +104,6 @@ namespace HexResourceTracker
                 }
 
                 model.IsChecked = model.Pin.m_checked;
-
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] Updated {GetDungeonName(model.Theme)} checked state: " +
-                    $"{model.IsChecked}.");
-#endif
             }
         }
 
@@ -159,14 +124,7 @@ namespace HexResourceTracker
                     model.Pin = null;
                 }
 
-                if (!CreatePin(model))
-                {
-#if DEBUG
-                    Plugin.Log.LogWarning(
-                        $"[DungeonPins] Failed to redraw {GetDungeonName(model.Theme)} pin at " +
-                        $"X={model.Position.x}, Y={model.Position.y}, Z={model.Position.z}.");
-#endif
-                }
+                CreatePin(model);
             }
         }
 
@@ -176,21 +134,8 @@ namespace HexResourceTracker
 
             if (Minimap.instance == null || Player.m_localPlayer == null)
             {
-#if DEBUG
-                Plugin.Log.LogInfo("[DungeonPins] Range reconciliation skipped because Minimap or local player is null.");
-#endif
                 return;
             }
-
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[DungeonPins] Starting range reconciliation. " +
-                $"TrackedPins={DungeonPins.Count} | " +
-                $"Player={Player.m_localPlayer.transform.position} | " +
-                $"Range={PluginConfig.TrackingRange.Value:F1}m.");
-#endif
-
-            int removedCount = 0;
 
             List<PinData> minimapPins = MinimapPins(Minimap.instance);
 
@@ -205,7 +150,7 @@ namespace HexResourceTracker
                         continue;
                     }
 
-                    string dungeonName = null;
+                    bool isDungeonPin = false;
 
                     foreach (KeyValuePair<Room.Theme, string> supportedDungeon in SupportedDungeons)
                     {
@@ -214,65 +159,29 @@ namespace HexResourceTracker
                             continue;
                         }
 
-                        dungeonName = supportedDungeon.Value;
+                        isDungeonPin = true;
                         break;
                     }
 
-                    if (dungeonName == null)
+                    if (!isDungeonPin)
                     {
                         continue;
                     }
 
-                    bool isInRange = TrackingRangeService.IsWithinTrackingRange(pin.m_pos);
-
-#if DEBUG
-                    Plugin.Log.LogInfo(
-                        $"[DungeonPins] RANGE CHECK EXISTING PIN | " +
-                        $"Dungeon={dungeonName} | " +
-                        $"Position={pin.m_pos} | " +
-                        $"Checked={pin.m_checked} | " +
-                        $"InRange={isInRange}");
-#endif
-
-                    if (isInRange)
+                    if (TrackingRangeService.IsWithinTrackingRange(pin.m_pos))
                     {
                         continue;
                     }
-
-#if DEBUG
-                    Plugin.Log.LogInfo(
-                        $"[DungeonPins] REMOVING EXISTING OUT-OF-RANGE PIN | " +
-                        $"Dungeon={dungeonName} | " +
-                        $"Position={pin.m_pos}");
-#endif
 
                     Minimap.instance.RemovePin(pin);
-                    removedCount++;
-
-#if DEBUG
-                    Plugin.Log.LogInfo(
-                        $"[DungeonPins] REMOVED EXISTING OUT-OF-RANGE PIN | " +
-                        $"Dungeon={dungeonName} | " +
-                        $"Position={pin.m_pos}");
-#endif
                 }
             }
 
             for (int i = DungeonPins.Count - 1; i >= 0; i--)
             {
                 DungeonPinModel model = DungeonPins[i];
-                bool isInRange = TrackingRangeService.IsWithinTrackingRange(model.Position);
 
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] RANGE CHECK MODEL | Dungeon={GetDungeonName(model.Theme)} | " +
-                    $"Position={model.Position} | " +
-                    $"Player={Player.m_localPlayer.transform.position} | " +
-                    $"InRange={isInRange} | " +
-                    $"Pin={(model.Pin != null ? "EXISTS" : "NULL")}");
-#endif
-
-                if (isInRange)
+                if (TrackingRangeService.IsWithinTrackingRange(model.Position))
                 {
                     continue;
                 }
@@ -284,34 +193,16 @@ namespace HexResourceTracker
                 }
 
                 DungeonPins.RemoveAt(i);
-
-#if DEBUG
-                Plugin.Log.LogInfo(
-                    $"[DungeonPins] REMOVED OUT-OF-RANGE MODEL | " +
-                    $"Dungeon={GetDungeonName(model.Theme)} | " +
-                    $"Position={model.Position}");
-#endif
             }
 
             Location[] locations = Object.FindObjectsByType<Location>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
 
-            int addedCount = 0;
-
             foreach (Location location in locations)
             {
-                if (TryAddDungeonPin(location))
-                {
-                    addedCount++;
-                }
+                TryAddDungeonPin(location);
             }
-
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[DungeonPins] Range reconciliation complete. " +
-                $"Removed={removedCount} | Added={addedCount} | TrackedPins={DungeonPins.Count}");
-#endif
         }
 
         internal static void AddLoadedDungeonPins()
@@ -327,45 +218,10 @@ namespace HexResourceTracker
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
 
-#if DEBUG
-            Plugin.Log.LogInfo($"[DungeonPins] ZoneBased rescan found {locations.Length} loaded Location objects.");
-#endif
-
-            int addedCount = 0;
-            int supportedCount = 0;
-
             foreach (Location location in locations)
             {
-#if DEBUG
-                string locationName = location != null ? location.gameObject.name : "NULL";
-                Plugin.Log.LogInfo($"[DungeonPins] ZoneBased rescan inspecting Location={locationName}");
-#endif
-
-                if (!TryGetSupportedDungeonTheme(location, out Room.Theme theme))
-                {
-#if DEBUG
-                    Plugin.Log.LogInfo($"[DungeonPins] ZoneBased rescan rejected Location={locationName} as unsupported.");
-#endif
-                    continue;
-                }
-
-#if DEBUG
-                Plugin.Log.LogInfo($"[DungeonPins] ZoneBased rescan found supported Location={locationName} | Theme={theme}");
-#endif
-
-                supportedCount++;
-
-                if (TryAddDungeonPin(location))
-                {
-                    addedCount++;
-                }
+                TryAddDungeonPin(location);
             }
-
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[DungeonPins] ZoneBased loaded dungeon rescan complete. " +
-                $"Locations={locations.Length} | Supported={supportedCount} | Added={addedCount} | TrackedPins={DungeonPins.Count}");
-#endif
         }
 
         private static bool CreatePin(DungeonPinModel model)
@@ -402,8 +258,6 @@ namespace HexResourceTracker
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
 
-            int addedCount = 0;
-
             foreach (Location location in locations)
             {
                 if (!TryGetSupportedDungeonTheme(location, out Room.Theme locationTheme))
@@ -416,17 +270,8 @@ namespace HexResourceTracker
                     continue;
                 }
 
-                if (TryAddDungeonPin(location))
-                {
-                    addedCount++;
-                }
+                TryAddDungeonPin(location);
             }
-
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[DungeonPins] Enabled {GetDungeonName(theme)} tracking. " +
-                $"Added {addedCount} loaded dungeon pin(s).");
-#endif
         }
 
         private static bool TryGetSupportedDungeonTheme(Location location, out Room.Theme theme)
