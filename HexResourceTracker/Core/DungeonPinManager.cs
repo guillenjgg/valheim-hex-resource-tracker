@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.Tracking;
 using System.Collections.Generic;
 using UnityEngine;
 using static Minimap;
@@ -21,7 +22,7 @@ namespace HexResourceTracker
             { Room.Theme.Cave, "Frost Cave" },
             { Room.Theme.DvergerTown, "Infested Mine" },
             { Room.Theme.MorkHalla, "Morkhalla" },
-            { Room.Theme.Hole, "Winding Tunnels" }
+            { Room.Theme.Hole, "Winding Tunnel" }
         };
 
         internal static bool TryAddDungeonPin(Location location)
@@ -43,13 +44,13 @@ namespace HexResourceTracker
                 return false;
             }
 
+            string locationName = Utils.GetPrefabName(location.gameObject);
+            Vector3 position = location.transform.position;
+
             if (!PluginConfig.IsDungeonTrackingEnabled(theme))
             {
                 return false;
             }
-
-            string locationName = Utils.GetPrefabName(location.gameObject);
-            Vector3 position = location.transform.position;
 
             if (!TrackingRangeService.IsWithinTrackingRange(position))
             {
@@ -195,13 +196,14 @@ namespace HexResourceTracker
                 DungeonPins.RemoveAt(i);
             }
 
-            Location[] locations = Object.FindObjectsByType<Location>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
-
-            foreach (Location location in locations)
+            foreach (TrackedDungeonLocation trackedLocation in TrackedDungeonLocation.GetTrackedLocations())
             {
-                TryAddDungeonPin(location);
+                if (trackedLocation == null || trackedLocation.Location == null)
+                {
+                    continue;
+                }
+
+                TryAddDungeonPin(trackedLocation.Location);
             }
         }
 
@@ -214,13 +216,14 @@ namespace HexResourceTracker
                 return;
             }
 
-            Location[] locations = Object.FindObjectsByType<Location>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
-
-            foreach (Location location in locations)
+            foreach (TrackedDungeonLocation trackedLocation in TrackedDungeonLocation.GetTrackedLocations())
             {
-                TryAddDungeonPin(location);
+                if (trackedLocation == null || trackedLocation.Location == null)
+                {
+                    continue;
+                }
+
+                TryAddDungeonPin(trackedLocation.Location);
             }
         }
 
@@ -254,12 +257,15 @@ namespace HexResourceTracker
                 return;
             }
 
-            Location[] locations = Object.FindObjectsByType<Location>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
-
-            foreach (Location location in locations)
+            foreach (TrackedDungeonLocation trackedLocation in TrackedDungeonLocation.GetTrackedLocations())
             {
+                if (trackedLocation == null || trackedLocation.Location == null)
+                {
+                    continue;
+                }
+
+                Location location = trackedLocation.Location;
+
                 if (!TryGetSupportedDungeonTheme(location, out Room.Theme locationTheme))
                 {
                     continue;
@@ -274,7 +280,7 @@ namespace HexResourceTracker
             }
         }
 
-        private static bool TryGetSupportedDungeonTheme(Location location, out Room.Theme theme)
+        internal static bool TryGetSupportedDungeonTheme(Location location, out Room.Theme theme)
         {
             theme = Room.Theme.None;
 

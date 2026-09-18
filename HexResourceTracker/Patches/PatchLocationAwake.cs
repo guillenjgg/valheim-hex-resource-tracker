@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
 {
@@ -17,6 +18,7 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
+            TrackedDungeonLocation.TryAdd(__instance);
             DungeonPinManager.TryAddDungeonPin(__instance);
         }
     }
