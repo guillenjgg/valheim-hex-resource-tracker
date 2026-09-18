@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 using System.Linq;
 using System.Reflection;
@@ -235,6 +236,98 @@ namespace HexResourceTracker.Core
             RescanLoadedDestructibles(prefabName);
             RescanLoadedMineRock5(prefabName);
             RescanLoadedMineRock(prefabName);
+        }
+
+        internal static void ReconcileTrackedOre(TrackedMapObject trackedObject)
+        {
+            if (trackedObject == null)
+            {
+                return;
+            }
+
+            ZNetView nview = trackedObject.GetComponent<ZNetView>();
+
+            if (nview == null || !nview.IsValid())
+            {
+                return;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return;
+            }
+
+            Destructible destructible = trackedObject.GetComponent<Destructible>();
+
+            if (destructible != null)
+            {
+                string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+                if (TrackedResourceDefinitions.DestructibleResourcesByPrefabName.ContainsKey(prefabName))
+                {
+                    if (!trackedObject.IsInTrackingRange)
+                    {
+#if DEBUG
+                        Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range Destructible | Prefab={prefabName} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                        ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                        return;
+                    }
+
+#if DEBUG
+                    Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range Destructible | Prefab={prefabName} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                    TryAddResourcePinFromDestructibleOre(destructible);
+                    return;
+                }
+            }
+
+            MineRock5 mineRock5 = trackedObject.GetComponent<MineRock5>();
+
+            if (mineRock5 != null && TrackedResourceDefinitions.MineRock5ResourcesByName.ContainsKey(mineRock5.m_name))
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+#if DEBUG
+                    Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range MineRock5 | Name={mineRock5.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+#if DEBUG
+                Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range MineRock5 | Name={mineRock5.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5);
+                return;
+            }
+
+            MineRock mineRock = trackedObject.GetComponent<MineRock>();
+
+            if (mineRock != null && TrackedResourceDefinitions.MineRockResourcesByName.ContainsKey(mineRock.m_name))
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+#if DEBUG
+                    Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range MineRock | Name={mineRock.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+#if DEBUG
+                Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range MineRock | Name={mineRock.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
+#endif
+
+                TryAddResourcePinFromMineRock(mineRock);
+            }
         }
 
         private static void RescanLoadedDestructibles(string prefabName)

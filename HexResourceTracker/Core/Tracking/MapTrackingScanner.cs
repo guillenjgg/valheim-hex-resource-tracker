@@ -64,7 +64,14 @@ namespace HexResourceTracker.Core
                 }
 
                 PickableResourcePinService.ReconcileTrackedPickable(trackedObject);
+                OreResourcePinService.ReconcileTrackedOre(trackedObject);
             }
+
+#if DEBUG
+            Plugin.Log.LogInfo("[DungeonPins] Running dungeon range reconciliation from RangeScanner.");
+#endif
+
+            DungeonPinManager.ReconcileTrackingRange();
 
 #if DEBUG
             Plugin.Log.LogInfo($"Map tracking scan at {currentPosition}. Range: {trackingRange:F1}m. Registered objects: {TrackedMapObject.GetTrackedObjects().Count}. In range: {objectsInRange}");
@@ -143,7 +150,8 @@ namespace HexResourceTracker.Core
 
         private static void RescanZoneBasedObjects()
         {
-            int reconciledObjects = 0;
+            int reconciledPickables = 0;
+            int reconciledOres = 0;
 
             foreach (TrackedMapObject trackedObject in TrackedMapObject.GetTrackedObjects())
             {
@@ -154,18 +162,80 @@ namespace HexResourceTracker.Core
 
                 Pickable pickable = trackedObject.GetComponent<Pickable>();
 
-                if (pickable == null)
+                if (pickable != null)
                 {
+                    if (PickableResourcePinService.TryAddResourcePinFromPickable(pickable))
+                    {
+                        reconciledPickables++;
+                    }
+
                     continue;
                 }
 
-                PickableResourcePinService.TryAddResourcePinFromPickable(pickable);
-                reconciledObjects++;
+                Destructible destructible = trackedObject.GetComponent<Destructible>();
+
+                if (destructible != null)
+                {
+                    if (OreResourcePinService.TryAddResourcePinFromDestructibleOre(destructible))
+                    {
+#if DEBUG
+                        Plugin.Log.LogInfo(
+                            $"[ZoneBased] Reconciled Destructible ore | " +
+                            $"Prefab={trackedObject.PrefabName} | " +
+                            $"Position={trackedObject.transform.position}");
+#endif
+
+                        reconciledOres++;
+                    }
+
+                    continue;
+                }
+
+                MineRock5 mineRock5 = trackedObject.GetComponent<MineRock5>();
+
+                if (mineRock5 != null)
+                {
+                    if (OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5))
+                    {
+#if DEBUG
+                        Plugin.Log.LogInfo(
+                            $"[ZoneBased] Reconciled MineRock5 ore | " +
+                            $"Prefab={trackedObject.PrefabName} | " +
+                            $"Position={trackedObject.transform.position}");
+#endif
+
+                        reconciledOres++;
+                    }
+
+                    continue;
+                }
+
+                MineRock mineRock = trackedObject.GetComponent<MineRock>();
+
+                if (mineRock != null)
+                {
+                    if (OreResourcePinService.TryAddResourcePinFromMineRock(mineRock))
+                    {
+#if DEBUG
+                        Plugin.Log.LogInfo(
+                            $"[ZoneBased] Reconciled MineRock ore | " +
+                            $"Prefab={trackedObject.PrefabName} | " +
+                            $"Position={trackedObject.transform.position}");
+#endif
+
+                        reconciledOres++;
+                    }
+                }
             }
 
 #if DEBUG
-            Plugin.Log.LogInfo($"ZoneBased rescan complete. Reconciled {reconciledObjects} currently loaded tracked objects.");
+            Plugin.Log.LogInfo(
+                $"ZoneBased resource rescan complete. " +
+                $"Pickables={reconciledPickables} | " +
+                $"Ores={reconciledOres}");
 #endif
+
+            DungeonPinManager.AddLoadedDungeonPins();
         }
     }
 }

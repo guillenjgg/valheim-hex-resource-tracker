@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
 {
@@ -9,6 +10,28 @@ namespace HexResourceTracker.Patches
         private static void Postfix(Destructible __instance)
         {
             if (!PluginConfig.IsModEnabled.Value || __instance == null)
+            {
+                return;
+            }
+
+            string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+            if (!TrackedResourceDefinitions.DestructibleResourcesByPrefabName.ContainsKey(prefabName))
+            {
+                return;
+            }
+
+            TrackedMapObject.TryAdd(__instance.gameObject, prefabName);
+
+#if DEBUG
+            Plugin.Log.LogInfo(
+                $"[OreTracking] Registered tracked Destructible | " +
+                $"Prefab={prefabName} | " +
+                $"Mode={PluginConfig.TrackingMode.Value} | " +
+                $"Position={__instance.transform.position}");
+#endif
+
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
             {
                 return;
             }
