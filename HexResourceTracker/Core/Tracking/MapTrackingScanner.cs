@@ -38,7 +38,6 @@ namespace HexResourceTracker.Core
 
         private void Scan(Vector3 currentPosition)
         {
-            int objectsInRange = 0;
             float trackingRange = PluginConfig.TrackingRange.Value;
             float trackingRangeSquared = trackingRange * trackingRange;
 
@@ -58,24 +57,11 @@ namespace HexResourceTracker.Core
 
                 trackedObject.IsInTrackingRange = isInRange;
 
-                if (isInRange)
-                {
-                    objectsInRange++;
-                }
-
                 PickableResourcePinService.ReconcileTrackedPickable(trackedObject);
                 OreResourcePinService.ReconcileTrackedOre(trackedObject);
             }
 
-#if DEBUG
-            Plugin.Log.LogInfo("[DungeonPins] Running dungeon range reconciliation from RangeScanner.");
-#endif
-
             DungeonPinManager.ReconcileTrackingRange();
-
-#if DEBUG
-            Plugin.Log.LogInfo($"Map tracking scan at {currentPosition}. Range: {trackingRange:F1}m. Registered objects: {TrackedMapObject.GetTrackedObjects().Count}. In range: {objectsInRange}");
-#endif
 
             _lastScanPosition = currentPosition;
             _hasScanned = true;
@@ -95,10 +81,6 @@ namespace HexResourceTracker.Core
                 if (!player.TryGetComponent(out MapTrackingScanner scanner))
                 {
                     scanner = player.gameObject.AddComponent<MapTrackingScanner>();
-
-#if DEBUG
-                    Plugin.Log.LogInfo("Added MapTrackingScanner to local player.");
-#endif
                 }
 
                 scanner.ForceScan();
@@ -107,10 +89,6 @@ namespace HexResourceTracker.Core
 
             if (player.TryGetComponent(out MapTrackingScanner existingScanner))
             {
-#if DEBUG
-                Plugin.Log.LogInfo("Removing MapTrackingScanner because tracking mode changed to ZoneBased.");
-#endif
-
                 Destroy(existingScanner);
             }
 
@@ -131,28 +109,17 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-#if DEBUG
-            Plugin.Log.LogInfo($"Tracking range changed. Forcing RangeScanner rescan. Range: {PluginConfig.TrackingRange.Value:F1}m.");
-#endif
-
             scanner.ForceScan();
         }
 
         private void ForceScan()
         {
-#if DEBUG
-            Plugin.Log.LogInfo($"Forcing RangeScanner reconciliation. Range: {PluginConfig.TrackingRange.Value:F1}m.");
-#endif
-
             _hasScanned = false;
             Scan(transform.position);
         }
 
         private static void RescanZoneBasedObjects()
         {
-            int reconciledPickables = 0;
-            int reconciledOres = 0;
-
             foreach (TrackedMapObject trackedObject in TrackedMapObject.GetTrackedObjects())
             {
                 if (trackedObject == null)
@@ -164,11 +131,7 @@ namespace HexResourceTracker.Core
 
                 if (pickable != null)
                 {
-                    if (PickableResourcePinService.TryAddResourcePinFromPickable(pickable))
-                    {
-                        reconciledPickables++;
-                    }
-
+                    PickableResourcePinService.TryAddResourcePinFromPickable(pickable);
                     continue;
                 }
 
@@ -176,18 +139,7 @@ namespace HexResourceTracker.Core
 
                 if (destructible != null)
                 {
-                    if (OreResourcePinService.TryAddResourcePinFromDestructibleOre(destructible))
-                    {
-#if DEBUG
-                        Plugin.Log.LogInfo(
-                            $"[ZoneBased] Reconciled Destructible ore | " +
-                            $"Prefab={trackedObject.PrefabName} | " +
-                            $"Position={trackedObject.transform.position}");
-#endif
-
-                        reconciledOres++;
-                    }
-
+                    OreResourcePinService.TryAddResourcePinFromDestructibleOre(destructible);
                     continue;
                 }
 
@@ -195,18 +147,7 @@ namespace HexResourceTracker.Core
 
                 if (mineRock5 != null)
                 {
-                    if (OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5))
-                    {
-#if DEBUG
-                        Plugin.Log.LogInfo(
-                            $"[ZoneBased] Reconciled MineRock5 ore | " +
-                            $"Prefab={trackedObject.PrefabName} | " +
-                            $"Position={trackedObject.transform.position}");
-#endif
-
-                        reconciledOres++;
-                    }
-
+                    OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5);
                     continue;
                 }
 
@@ -214,26 +155,9 @@ namespace HexResourceTracker.Core
 
                 if (mineRock != null)
                 {
-                    if (OreResourcePinService.TryAddResourcePinFromMineRock(mineRock))
-                    {
-#if DEBUG
-                        Plugin.Log.LogInfo(
-                            $"[ZoneBased] Reconciled MineRock ore | " +
-                            $"Prefab={trackedObject.PrefabName} | " +
-                            $"Position={trackedObject.transform.position}");
-#endif
-
-                        reconciledOres++;
-                    }
+                    OreResourcePinService.TryAddResourcePinFromMineRock(mineRock);
                 }
             }
-
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"ZoneBased resource rescan complete. " +
-                $"Pickables={reconciledPickables} | " +
-                $"Ores={reconciledOres}");
-#endif
 
             DungeonPinManager.AddLoadedDungeonPins();
         }

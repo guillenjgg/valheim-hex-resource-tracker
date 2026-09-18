@@ -269,17 +269,9 @@ namespace HexResourceTracker.Core
                 {
                     if (!trackedObject.IsInTrackingRange)
                     {
-#if DEBUG
-                        Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range Destructible | Prefab={prefabName} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
-
                         ResourcePinManager.RemoveResourcePin(zdo.m_uid);
                         return;
                     }
-
-#if DEBUG
-                    Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range Destructible | Prefab={prefabName} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
 
                     TryAddResourcePinFromDestructibleOre(destructible);
                     return;
@@ -292,17 +284,9 @@ namespace HexResourceTracker.Core
             {
                 if (!trackedObject.IsInTrackingRange)
                 {
-#if DEBUG
-                    Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range MineRock5 | Name={mineRock5.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
-
                     ResourcePinManager.RemoveResourcePin(zdo.m_uid);
                     return;
                 }
-
-#if DEBUG
-                Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range MineRock5 | Name={mineRock5.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
 
                 TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5);
                 return;
@@ -314,17 +298,9 @@ namespace HexResourceTracker.Core
             {
                 if (!trackedObject.IsInTrackingRange)
                 {
-#if DEBUG
-                    Plugin.Log.LogInfo($"[OreRangeScanner] Removing out-of-range MineRock | Name={mineRock.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
-
                     ResourcePinManager.RemoveResourcePin(zdo.m_uid);
                     return;
                 }
-
-#if DEBUG
-                Plugin.Log.LogInfo($"[OreRangeScanner] Reconciling in-range MineRock | Name={mineRock.m_name} | ZDO={zdo.m_uid} | Position={trackedObject.transform.position}");
-#endif
 
                 TryAddResourcePinFromMineRock(mineRock);
             }

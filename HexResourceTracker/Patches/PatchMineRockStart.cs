@@ -22,14 +22,6 @@ namespace HexResourceTracker.Patches
 
             TrackedMapObject.TryAdd(__instance.gameObject, definition.ResourcePrefabName);
 
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[OreTracking] Registered tracked MineRock | " +
-                $"Name={__instance.m_name} | " +
-                $"Prefab={definition.ResourcePrefabName} | " +
-                $"Position={__instance.transform.position}");
-#endif
-
             if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
             {
                 return;

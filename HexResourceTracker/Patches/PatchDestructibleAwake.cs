@@ -23,14 +23,6 @@ namespace HexResourceTracker.Patches
 
             TrackedMapObject.TryAdd(__instance.gameObject, prefabName);
 
-#if DEBUG
-            Plugin.Log.LogInfo(
-                $"[OreTracking] Registered tracked Destructible | " +
-                $"Prefab={prefabName} | " +
-                $"Mode={PluginConfig.TrackingMode.Value} | " +
-                $"Position={__instance.transform.position}");
-#endif
-
             if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
             {
                 return;
