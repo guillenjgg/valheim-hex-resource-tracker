@@ -363,10 +363,9 @@ namespace HexResourceTracker
             return distanceSqr <= radiusSqr;
         }
 
-        private static int RemoveExistingDungeonPins(Room.Theme theme)
+        private static void RemoveExistingDungeonPins(Room.Theme theme)
         {
             string dungeonName = GetDungeonName(theme);
-            int removedCount = 0;
 
             for (int i = DungeonPins.Count - 1; i >= 0; i--)
             {
@@ -383,35 +382,29 @@ namespace HexResourceTracker
                 }
 
                 DungeonPins.RemoveAt(i);
-                removedCount++;
             }
 
             if (Minimap.instance == null)
             {
-                return removedCount;
+                return;
             }
 
             List<PinData> minimapPins = MinimapPins(Minimap.instance);
 
             if (minimapPins == null)
             {
-                return removedCount;
+                return;
             }
 
             for (int i = minimapPins.Count - 1; i >= 0; i--)
             {
                 PinData pin = minimapPins[i];
 
-                if (!IsMatchingDungeonPin(pin, dungeonName))
+                if (IsMatchingDungeonPin(pin, dungeonName))
                 {
-                    continue;
+                    Minimap.instance.RemovePin(pin);
                 }
-
-                Minimap.instance.RemovePin(pin);
-                removedCount++;
             }
-
-            return removedCount;
         }
 
         private static bool IsMatchingDungeonPin(PinData pin, string dungeonName)

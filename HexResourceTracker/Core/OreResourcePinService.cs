@@ -245,7 +245,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            ZNetView nview = trackedObject.GetComponent<ZNetView>();
+            ZNetView nview = trackedObject.ZNetView;
 
             if (nview == null || !nview.IsValid())
             {
@@ -259,28 +259,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            Destructible destructible = trackedObject.GetComponent<Destructible>();
-
-            if (destructible != null)
-            {
-                string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
-
-                if (TrackedResourceDefinitions.DestructibleResourcesByPrefabName.ContainsKey(prefabName))
-                {
-                    if (!trackedObject.IsInTrackingRange)
-                    {
-                        ResourcePinManager.RemoveResourcePin(zdo.m_uid);
-                        return;
-                    }
-
-                    TryAddResourcePinFromDestructibleOre(destructible);
-                    return;
-                }
-            }
-
-            MineRock5 mineRock5 = trackedObject.GetComponent<MineRock5>();
-
-            if (mineRock5 != null && TrackedResourceDefinitions.MineRock5ResourcesByName.ContainsKey(mineRock5.m_name))
+            if (trackedObject.Destructible != null)
             {
                 if (!trackedObject.IsInTrackingRange)
                 {
@@ -288,13 +267,11 @@ namespace HexResourceTracker.Core
                     return;
                 }
 
-                TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5);
+                TryAddResourcePinFromDestructibleOre(trackedObject.Destructible);
                 return;
             }
 
-            MineRock mineRock = trackedObject.GetComponent<MineRock>();
-
-            if (mineRock != null && TrackedResourceDefinitions.MineRockResourcesByName.ContainsKey(mineRock.m_name))
+            if (trackedObject.MineRock5 != null)
             {
                 if (!trackedObject.IsInTrackingRange)
                 {
@@ -302,7 +279,19 @@ namespace HexResourceTracker.Core
                     return;
                 }
 
-                TryAddResourcePinFromMineRock(mineRock);
+                TryAddOrRelinkResourcePinFromMineRock5Ore(trackedObject.MineRock5);
+                return;
+            }
+
+            if (trackedObject.MineRock != null)
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddResourcePinFromMineRock(trackedObject.MineRock);
             }
         }
 

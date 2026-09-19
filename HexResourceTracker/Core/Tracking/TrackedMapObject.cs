@@ -10,6 +10,12 @@ namespace HexResourceTracker.Core.Tracking
         internal string PrefabName { get; private set; }
         internal bool IsInTrackingRange { get; set; }
 
+        internal Pickable Pickable { get; private set; }
+        internal Destructible Destructible { get; private set; }
+        internal MineRock5 MineRock5 { get; private set; }
+        internal MineRock MineRock { get; private set; }
+        internal ZNetView ZNetView { get; private set; }
+
         internal static IReadOnlyCollection<TrackedMapObject> GetTrackedObjects()
         {
             return TrackedObjects;
@@ -18,6 +24,19 @@ namespace HexResourceTracker.Core.Tracking
         internal void Initialize(string prefabName)
         {
             PrefabName = prefabName;
+
+            TryGetComponent(out Pickable pickable);
+            TryGetComponent(out Destructible destructible);
+            TryGetComponent(out MineRock5 mineRock5);
+            TryGetComponent(out MineRock mineRock);
+            TryGetComponent(out ZNetView zNetView);
+
+            Pickable = pickable;
+            Destructible = destructible;
+            MineRock5 = mineRock5;
+            MineRock = mineRock;
+            ZNetView = zNetView;
+
             TrackedObjects.Add(this);
         }
 

@@ -21,6 +21,11 @@ namespace HexResourceTracker.Patches
                 TrackedMapObject.TryAdd(__instance.gameObject, prefabName);
             }
 
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
+            {
+                return;
+            }
+
             PickableResourcePinService.TryAddResourcePinFromPickable(__instance);
         }
     }

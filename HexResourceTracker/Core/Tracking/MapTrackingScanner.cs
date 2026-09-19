@@ -57,8 +57,14 @@ namespace HexResourceTracker.Core
 
                 trackedObject.IsInTrackingRange = isInRange;
 
-                PickableResourcePinService.ReconcileTrackedPickable(trackedObject);
-                OreResourcePinService.ReconcileTrackedOre(trackedObject);
+                if (trackedObject.Pickable != null)
+                {
+                    PickableResourcePinService.ReconcileTrackedPickable(trackedObject);
+                }
+                else
+                {
+                    OreResourcePinService.ReconcileTrackedOre(trackedObject);
+                }
             }
 
             DungeonPinManager.ReconcileTrackingRange();
@@ -127,35 +133,27 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                Pickable pickable = trackedObject.GetComponent<Pickable>();
-
-                if (pickable != null)
+                if (trackedObject.Pickable != null)
                 {
-                    PickableResourcePinService.TryAddResourcePinFromPickable(pickable);
+                    PickableResourcePinService.TryAddResourcePinFromPickable(trackedObject.Pickable);
                     continue;
                 }
 
-                Destructible destructible = trackedObject.GetComponent<Destructible>();
-
-                if (destructible != null)
+                if (trackedObject.Destructible != null)
                 {
-                    OreResourcePinService.TryAddResourcePinFromDestructibleOre(destructible);
+                    OreResourcePinService.TryAddResourcePinFromDestructibleOre(trackedObject.Destructible);
                     continue;
                 }
 
-                MineRock5 mineRock5 = trackedObject.GetComponent<MineRock5>();
-
-                if (mineRock5 != null)
+                if (trackedObject.MineRock5 != null)
                 {
-                    OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(mineRock5);
+                    OreResourcePinService.TryAddOrRelinkResourcePinFromMineRock5Ore(trackedObject.MineRock5);
                     continue;
                 }
 
-                MineRock mineRock = trackedObject.GetComponent<MineRock>();
-
-                if (mineRock != null)
+                if (trackedObject.MineRock != null)
                 {
-                    OreResourcePinService.TryAddResourcePinFromMineRock(mineRock);
+                    OreResourcePinService.TryAddResourcePinFromMineRock(trackedObject.MineRock);
                 }
             }
 

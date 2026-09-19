@@ -86,19 +86,12 @@ namespace HexResourceTracker.Core
 
         internal static void ReconcileTrackedPickable(TrackedMapObject trackedObject)
         {
-            if (trackedObject == null)
+            if (trackedObject == null || trackedObject.Pickable == null)
             {
                 return;
             }
 
-            Pickable pickable = trackedObject.GetComponent<Pickable>();
-
-            if (pickable == null)
-            {
-                return;
-            }
-
-            ZNetView nview = pickable.GetComponent<ZNetView>();
+            ZNetView nview = trackedObject.ZNetView;
 
             if (nview == null || !nview.IsValid())
             {
@@ -118,7 +111,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            TryAddResourcePinFromPickable(pickable);
+            TryAddResourcePinFromPickable(trackedObject.Pickable);
         }
 
         private static bool IsTrackedPickablePrefab(string pickablePrefabName)
