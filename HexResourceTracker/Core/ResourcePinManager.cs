@@ -3,6 +3,7 @@ using System.Reflection;
 using HarmonyLib;
 using HexResourceTracker.Models;
 using UnityEngine;
+using UnityEngine.UI;
 using static Minimap;
 
 namespace HexResourceTracker.Core
@@ -11,6 +12,11 @@ namespace HexResourceTracker.Core
     {
         private const float ResourcePinSize = 20f;
         private const float ClusterRadius = 25f;
+        private const float OnionSeedsBorderPadding = -16f;
+        private const string OnionSeedsPrefabName = "OnionSeeds";
+        private const string OnionSeedsBorderName = "OnionSeedsBorder";
+
+        private static readonly Color OnionSeedsBorderColor = new Color(1f, 0.75f, 0.15f, 1f);
 
         private static readonly Dictionary<string, Sprite> ResourceSprites = new Dictionary<string, Sprite>();
         private static readonly Dictionary<ZDOID, ResourcePinModel> ResourcePinByZdoId = new Dictionary<ZDOID, ResourcePinModel>();
@@ -22,7 +28,8 @@ namespace HexResourceTracker.Core
             { "Dandelion", 32f },
             { "CopperOre", 32f },
             { "SilverOre", 32f },
-            { "Softtissue", 32f }
+            { "Softtissue", 32f },
+            { OnionSeedsPrefabName, 32f }
         };
 
         internal static bool TryAddResourcePin(ResourcePinModel model)
@@ -95,6 +102,11 @@ namespace HexResourceTracker.Core
 
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
+
+                if (model.ItemPrefabName == OnionSeedsPrefabName)
+                {
+                    AddOnionSeedsBorder(pin.m_uiElement, size);
+                }
 
                 model.LastSizedUiElement = pin.m_uiElement;
                 model.LastAppliedSize = size;
@@ -277,6 +289,51 @@ namespace HexResourceTracker.Core
             return ResourcePinSize;
         }
 
+        private static void AddOnionSeedsBorder(RectTransform pinUiElement, float iconSize)
+        {
+            Transform existingBorder = pinUiElement.Find(OnionSeedsBorderName);
+
+            if (existingBorder != null)
+            {
+                return;
+            }
+
+            GameObject borderObject = new GameObject(OnionSeedsBorderName);
+            borderObject.transform.SetParent(pinUiElement, false);
+            borderObject.transform.SetAsFirstSibling();
+
+            RectTransform borderRect = borderObject.AddComponent<RectTransform>();
+            borderRect.anchorMin = new Vector2(0.5f, 0.5f);
+            borderRect.anchorMax = new Vector2(0.5f, 0.5f);
+            borderRect.pivot = new Vector2(0.5f, 0.5f);
+            borderRect.anchoredPosition = Vector2.zero;
+
+            float borderSize = iconSize + OnionSeedsBorderPadding;
+            borderRect.sizeDelta = new Vector2(borderSize, borderSize);
+
+            AddBorderEdge(borderRect, "Top", new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -2f), new Vector2(0f, 2f));
+            AddBorderEdge(borderRect, "Bottom", new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(0f, 2f));
+            AddBorderEdge(borderRect, "Left", new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(2f, 0f));
+            AddBorderEdge(borderRect, "Right", new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(-2f, 0f), new Vector2(2f, 0f));
+        }
+
+        private static void AddBorderEdge(RectTransform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 sizeDelta)
+        {
+            GameObject edgeObject = new GameObject(name);
+            edgeObject.transform.SetParent(parent, false);
+
+            RectTransform edgeRect = edgeObject.AddComponent<RectTransform>();
+            edgeRect.anchorMin = anchorMin;
+            edgeRect.anchorMax = anchorMax;
+            edgeRect.pivot = new Vector2(0.5f, 0.5f);
+            edgeRect.anchoredPosition = anchoredPosition;
+            edgeRect.sizeDelta = sizeDelta;
+
+            Image edgeImage = edgeObject.AddComponent<Image>();
+            edgeImage.color = OnionSeedsBorderColor;
+            edgeImage.raycastTarget = false;
+        }
+
         private static void SetPinUpdateRequired()
         {
             if (Minimap.instance == null)
@@ -288,4 +345,3 @@ namespace HexResourceTracker.Core
         }
     }
 }
-

@@ -77,6 +77,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ContainerResourcePinService.cs" />
     <Compile Include="Core\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
@@ -87,6 +88,8 @@
     <Compile Include="Core\Tracking\TrackingModeEnum.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
+    <Compile Include="Patches\PatchContainerAwake.cs" />
+    <Compile Include="Patches\PatchContainerOnContainerChanged.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
     <Compile Include="Patches\PatchDestructibleDestroy.cs" />
     <Compile Include="Core\ResourceTrackerDragHandler.cs" />

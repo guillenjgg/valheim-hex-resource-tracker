@@ -15,6 +15,7 @@ namespace HexResourceTracker.Core.Tracking
         internal MineRock5 MineRock5 { get; private set; }
         internal MineRock MineRock { get; private set; }
         internal ZNetView ZNetView { get; private set; }
+        internal Container Container { get; private set; }
 
         internal static IReadOnlyCollection<TrackedMapObject> GetTrackedObjects()
         {
@@ -30,12 +31,14 @@ namespace HexResourceTracker.Core.Tracking
             TryGetComponent(out MineRock5 mineRock5);
             TryGetComponent(out MineRock mineRock);
             TryGetComponent(out ZNetView zNetView);
+            TryGetComponent(out Container container);
 
             Pickable = pickable;
             Destructible = destructible;
             MineRock5 = mineRock5;
             MineRock = mineRock;
             ZNetView = zNetView;
+            Container = container;
 
             TrackedObjects.Add(this);
         }

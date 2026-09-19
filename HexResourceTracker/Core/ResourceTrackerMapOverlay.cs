@@ -32,7 +32,7 @@ namespace HexResourceTracker.Core
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 860f);
+            panelRect.sizeDelta = new Vector2(180f, 885f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -57,49 +57,50 @@ namespace HexResourceTracker.Core
 
             // Mountains
             AddResourceToggle("Pickable_DragonEgg", "Dragon Eggs", -235f);
+            AddResourceToggle("OnionSeeds", "Onion Seeds", -260f);
 
             // Plains
-            AddResourceToggle("Pickable_Flax_Wild", "Flax", -260f);
-            AddResourceToggle("Pickable_Barley_Wild", "Barley", -285f);
-            AddResourceToggle("CloudberryBush", "Cloudberries", -310f);
+            AddResourceToggle("Pickable_Flax_Wild", "Flax", -285f);
+            AddResourceToggle("Pickable_Barley_Wild", "Barley", -310f);
+            AddResourceToggle("CloudberryBush", "Cloudberries", -335f);
 
             // Mistlands
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -335f);
-            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -360f);
+            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -360f);
+            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -385f);
 
             // Ashlands
-            AddResourceToggle("VineAsh", "Vineberries", -385f);
-            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -410f);
-            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -435f);
+            AddResourceToggle("VineAsh", "Vineberries", -410f);
+            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -435f);
+            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -460f);
 
             // Deep North
-            AddResourceToggle("LingonberryBush", "Lingonberries", -460f);
-            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -485f);
+            AddResourceToggle("LingonberryBush", "Lingonberries", -485f);
+            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -510f);
 
             // Deposits
-            AddSectionHeader("Deposits", -515f);
+            AddSectionHeader("Deposits", -540f);
 
             // Black Forest
-            AddResourceToggle("rock4_copper", "Copper", -543f);
+            AddResourceToggle("rock4_copper", "Copper", -568f);
 
             // Mountains
-            AddResourceToggle("silvervein", "Silver", -568f);
+            AddResourceToggle("silvervein", "Silver", -593f);
 
             // Mistlands
-            AddResourceToggle("giant_skull", "Giant Skull", -593f);
+            AddResourceToggle("giant_skull", "Giant Skull", -618f);
 
             // Ashlands
-            AddResourceToggle("LeviathanLava", "Flametal", -618f);
+            AddResourceToggle("LeviathanLava", "Flametal", -643f);
 
             // Dungeons
-            AddSectionHeader("Dungeons", -648f);
+            AddSectionHeader("Dungeons", -673f);
 
-            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -676f);
-            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -701f);
-            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -726f);
-            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -751f);
-            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -776f);
-            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -801f);
+            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -701f);
+            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -726f);
+            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -751f);
+            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -776f);
+            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -801f);
+            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -826f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)

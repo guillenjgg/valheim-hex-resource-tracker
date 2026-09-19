@@ -20,5 +20,10 @@ namespace HexResourceTracker.Models
             ItemPrefabName = itemPrefabName;
             Position = position;
         }
+
+        public ResourcePinModel(ZDOID zdoid, string itemPrefabName, Vector3 position)
+            : this(zdoid, itemPrefabName, itemPrefabName, position)
+        {
+        }
     }
 }

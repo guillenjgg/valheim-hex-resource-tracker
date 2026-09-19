@@ -57,7 +57,11 @@ namespace HexResourceTracker.Core
 
                 trackedObject.IsInTrackingRange = isInRange;
 
-                if (trackedObject.Pickable != null)
+                if (trackedObject.Container != null)
+                {
+                    ContainerResourcePinService.ReconcileTrackedContainer(trackedObject);
+                }
+                else if (trackedObject.Pickable != null)
                 {
                     PickableResourcePinService.ReconcileTrackedPickable(trackedObject);
                 }
@@ -130,6 +134,12 @@ namespace HexResourceTracker.Core
             {
                 if (trackedObject == null)
                 {
+                    continue;
+                }
+
+                if (trackedObject.Container != null)
+                {
+                    ContainerResourcePinService.ReconcileTrackedContainer(trackedObject);
                     continue;
                 }
 

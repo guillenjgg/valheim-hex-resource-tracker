@@ -60,6 +60,7 @@ namespace HexResourceTracker
             BindResource(config, "Pickable_SeedCarrot", "Carrot Seeds");
             BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
             BindResource(config, "silvervein", "Silver");
+            BindResource(config, "OnionSeeds", "Onion Seeds");
             BindResource(config, "Pickable_DragonEgg", "Dragon Eggs");
             BindResource(config, "Pickable_Flax_Wild", "Flax");
             BindResource(config, "Pickable_Barley_Wild", "Barley");
@@ -109,6 +110,7 @@ namespace HexResourceTracker
                 ResourceTrackerMapOverlay.HandleResourceTrackingChanged(prefabName, entry.Value);
                 PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
+                ContainerResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
             };
 
             ResourceConfigs[prefabName] = entry;
