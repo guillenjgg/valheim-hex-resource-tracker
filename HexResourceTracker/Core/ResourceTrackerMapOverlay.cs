@@ -32,44 +32,75 @@ namespace HexResourceTracker.Core
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 780f);
+            panelRect.sizeDelta = new Vector2(180f, 885f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
             AddTitle();
+
+            // Resources
             AddSectionHeader("Resources", -32f);
 
+            // Meadows
             AddResourceToggle("Pickable_Mushroom", "Mushrooms", -60f);
             AddResourceToggle("Pickable_Dandelion", "Dandelions", -85f);
             AddResourceToggle("RaspberryBush", "Raspberries", -110f);
+
+            // Black Forest
             AddResourceToggle("BlueberryBush", "Blueberries", -135f);
             AddResourceToggle("Pickable_Thistle", "Thistle", -160f);
             AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -185f);
+
+            // Swamp
             AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -210f);
-            AddResourceToggle("Pickable_Flax_Wild", "Flax", -235f);
-            AddResourceToggle("Pickable_Barley_Wild", "Barley", -260f);
-            AddResourceToggle("CloudberryBush", "Cloudberries", -285f);
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -310f);
-            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -335f);
-            AddResourceToggle("rock4_copper", "Copper", -360f);
-            AddResourceToggle("silvervein", "Silver", -385f);
-            AddResourceToggle("giant_skull", "Giant Skull", -410f);
-            AddResourceToggle("LeviathanLava", "Flametal", -435f);
-            AddResourceToggle("VineAsh", "Vineberries", -460f);
-            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -485f);
-            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -510f);
-            AddResourceToggle("LingonberryBush", "Lingonberries", -535f);
-            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -560f);
 
-            AddSectionHeader("Dungeons", -590f);
+            // Mountains
+            AddResourceToggle("Pickable_DragonEgg", "Dragon Eggs", -235f);
+            AddResourceToggle("OnionSeeds", "Onion Seeds", -260f);
 
-            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -618f);
-            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -643f);
-            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -668f);
-            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -693f);
-            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -718f);
-            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -743f);
+            // Plains
+            AddResourceToggle("Pickable_Flax_Wild", "Flax", -285f);
+            AddResourceToggle("Pickable_Barley_Wild", "Barley", -310f);
+            AddResourceToggle("CloudberryBush", "Cloudberries", -335f);
+
+            // Mistlands
+            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -360f);
+            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -385f);
+
+            // Ashlands
+            AddResourceToggle("VineAsh", "Vineberries", -410f);
+            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -435f);
+            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -460f);
+
+            // Deep North
+            AddResourceToggle("LingonberryBush", "Lingonberries", -485f);
+            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -510f);
+
+            // Deposits
+            AddSectionHeader("Deposits", -540f);
+
+            // Black Forest
+            AddResourceToggle("rock4_copper", "Copper", -568f);
+
+            // Mountains
+            AddResourceToggle("silvervein", "Silver", -593f);
+
+            // Mistlands
+            AddResourceToggle("giant_skull", "Giant Skull", -618f);
+
+            // Ashlands
+            AddResourceToggle("LeviathanLava", "Flametal", -643f);
+
+            // Dungeons
+            AddSectionHeader("Dungeons", -673f);
+
+            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -701f);
+            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -726f);
+            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -751f);
+            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -776f);
+            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -801f);
+            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -826f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)

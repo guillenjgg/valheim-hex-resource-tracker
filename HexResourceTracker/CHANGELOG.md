@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.4.0
+
+### Added
+- Added a new **Range Scanner** tracking mode.
+- Added the ability to switch between **Zone Based** and **Range Scanner** tracking modes.
+- Added a configurable tracking range from **50 to 2000 meters**.
+- Resource and dungeon pins are automatically added or removed as they enter or leave the configured tracking range.
+- Added tracking for **Dragon Eggs**.
+- Added tracking for **Onion Seeds** found in Mountain chests.
+- Added Onion Seeds to the in-game **Map Tracking** overlay.
+
+### Improved
+- Resource and dungeon tracking now immediately updates when changing tracking modes or tracking range.
+- Improved handling of existing resource and dungeon pins when switching tracking modes.
+- Improved resource tracking for Copper, Silver, Giant Skulls, and Flametal.
+- Improved map visibility for Onion Seed pins with a larger icon and gold border.
+
 ## v1.3.0
 
 ### Added

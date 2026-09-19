@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.Tracking;
 using System.Collections.Generic;
 
 namespace HexResourceTracker
@@ -9,8 +10,11 @@ namespace HexResourceTracker
         private const string GeneralSection = "General";
         private const string ResourcesSection = "Resources To Track";
         private const string DungeonsSection = "Dungeons To Track";
+        private const string TrackingModeSection = "Tracking Mode";
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
+        internal static ConfigEntry<float> TrackingRange { get; private set; }
+        internal static ConfigEntry<TrackingModeEnum> TrackingMode { get; private set; }
 
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
@@ -23,20 +27,46 @@ namespace HexResourceTracker
                 true,
                 "Enable or disable the HexResourceTracker mod.");
 
+            TrackingMode = config.Bind(
+                TrackingModeSection,
+                "Tracking Mode",
+                TrackingModeEnum.ZoneBased,
+                "Controls how tracked map objects are discovered. ZoneBased adds pins as Valheim loads zones. RangeScanner only displays tracked objects within the configured range of the player.");
+
+            TrackingMode.SettingChanged += delegate
+            {
+                MapTrackingScanner.HandleTrackingModeChanged();
+            };
+
+            TrackingRange = config.Bind(
+                TrackingModeSection,
+                "Tracking Range",
+                50f,
+                new ConfigDescription(
+                    "Maximum distance in meters from the player to track resources and dungeons when using RangeScanner mode.",
+                    new AcceptableValueRange<float>(50f, 2000f)));
+
+            TrackingRange.SettingChanged += delegate
+            {
+                MapTrackingScanner.ForceRescan();
+            };
+
             BindResource(config, "Pickable_Mushroom", "Mushrooms");
             BindResource(config, "Pickable_Dandelion", "Dandelions");
             BindResource(config, "RaspberryBush", "Raspberries");
+            BindResource(config, "rock4_copper", "Copper");
             BindResource(config, "BlueberryBush", "Blueberries");
             BindResource(config, "Pickable_Thistle", "Thistle");
             BindResource(config, "Pickable_SeedCarrot", "Carrot Seeds");
             BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
+            BindResource(config, "silvervein", "Silver");
+            BindResource(config, "OnionSeeds", "Onion Seeds");
+            BindResource(config, "Pickable_DragonEgg", "Dragon Eggs");
             BindResource(config, "Pickable_Flax_Wild", "Flax");
             BindResource(config, "Pickable_Barley_Wild", "Barley");
             BindResource(config, "CloudberryBush", "Cloudberries");
             BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
             BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
-            BindResource(config, "rock4_copper", "Copper");
-            BindResource(config, "silvervein", "Silver");
             BindResource(config, "giant_skull", "Giant Skull");
             BindResource(config, "LeviathanLava", "Flametal");
             BindResource(config, "VineAsh", "Vineberries");
@@ -80,6 +110,7 @@ namespace HexResourceTracker
                 ResourceTrackerMapOverlay.HandleResourceTrackingChanged(prefabName, entry.Value);
                 PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
+                ContainerResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
             };
 
             ResourceConfigs[prefabName] = entry;

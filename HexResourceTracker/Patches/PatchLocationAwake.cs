@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
 {
@@ -7,12 +8,14 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix(Location __instance)
         {
-            if (!PluginConfig.IsModEnabled.Value)
+            if (!PluginConfig.IsModEnabled.Value || __instance == null)
             {
                 return;
             }
 
-            if (__instance == null)
+            TrackedDungeonLocation.TryAdd(__instance);
+
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
             {
                 return;
             }

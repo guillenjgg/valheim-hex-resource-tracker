@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
+using UnityEngine;
 
 namespace HexResourceTracker.Core
 {
@@ -26,7 +27,7 @@ namespace HexResourceTracker.Core
 
             string pickablePrefabName = pickable.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!IsTrackedPickablePrefab(pickablePrefabName))
+            if (!PluginConfig.IsResourceTrackingEnabled(pickablePrefabName))
             {
                 return false;
             }
@@ -81,6 +82,36 @@ namespace HexResourceTracker.Core
 
                 TryAddResourcePinFromPickable(pickable);
             }
+        }
+
+        internal static void ReconcileTrackedPickable(TrackedMapObject trackedObject)
+        {
+            if (trackedObject == null || trackedObject.Pickable == null)
+            {
+                return;
+            }
+
+            ZNetView nview = trackedObject.ZNetView;
+
+            if (nview == null || !nview.IsValid())
+            {
+                return;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return;
+            }
+
+            if (!trackedObject.IsInTrackingRange)
+            {
+                ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                return;
+            }
+
+            TryAddResourcePinFromPickable(trackedObject.Pickable);
         }
 
         private static bool IsTrackedPickablePrefab(string pickablePrefabName)

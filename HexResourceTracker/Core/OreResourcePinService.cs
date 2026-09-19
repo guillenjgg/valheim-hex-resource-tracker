@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 using System.Linq;
 using System.Reflection;
@@ -235,6 +236,63 @@ namespace HexResourceTracker.Core
             RescanLoadedDestructibles(prefabName);
             RescanLoadedMineRock5(prefabName);
             RescanLoadedMineRock(prefabName);
+        }
+
+        internal static void ReconcileTrackedOre(TrackedMapObject trackedObject)
+        {
+            if (trackedObject == null)
+            {
+                return;
+            }
+
+            ZNetView nview = trackedObject.ZNetView;
+
+            if (nview == null || !nview.IsValid())
+            {
+                return;
+            }
+
+            ZDO zdo = nview.GetZDO();
+
+            if (zdo == null)
+            {
+                return;
+            }
+
+            if (trackedObject.Destructible != null)
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddResourcePinFromDestructibleOre(trackedObject.Destructible);
+                return;
+            }
+
+            if (trackedObject.MineRock5 != null)
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddOrRelinkResourcePinFromMineRock5Ore(trackedObject.MineRock5);
+                return;
+            }
+
+            if (trackedObject.MineRock != null)
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddResourcePinFromMineRock(trackedObject.MineRock);
+            }
         }
 
         private static void RescanLoadedDestructibles(string prefabName)
