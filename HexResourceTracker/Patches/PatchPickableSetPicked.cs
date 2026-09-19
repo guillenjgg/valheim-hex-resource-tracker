@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
 {
@@ -20,14 +21,14 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            var nview = __instance.GetComponent<ZNetView>();
+            ZNetView nview = __instance.GetComponent<ZNetView>();
 
             if (nview == null)
             {
                 return;
             }
 
-            var zdo = nview.GetZDO();
+            ZDO zdo = nview.GetZDO();
 
             if (zdo == null)
             {
@@ -52,6 +53,11 @@ namespace HexResourceTracker.Patches
                 }
 
                 ResourcePinManager.RemoveResourcePin(__state);
+                return;
+            }
+
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
+            {
                 return;
             }
 

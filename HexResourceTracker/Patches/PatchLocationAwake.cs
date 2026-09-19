@@ -8,17 +8,18 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix(Location __instance)
         {
-            if (!PluginConfig.IsModEnabled.Value)
-            {
-                return;
-            }
-
-            if (__instance == null)
+            if (!PluginConfig.IsModEnabled.Value || __instance == null)
             {
                 return;
             }
 
             TrackedDungeonLocation.TryAdd(__instance);
+
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
+            {
+                return;
+            }
+
             DungeonPinManager.TryAddDungeonPin(__instance);
         }
     }
