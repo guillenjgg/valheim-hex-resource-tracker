@@ -7,8 +7,9 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 ## Features
 
 - Tracks supported gatherable resources and dungeon entrances.
-- Removes resource pins when resources are harvested.
+- Removes resource pins when resources are harvested or otherwise depleted.
 - Restores resource pins when resources respawn.
+- Tracks **Onion Seeds found inside Mountain chests** and removes the pin when the seeds are taken.
 - Supports two tracking modes:
   - **Zone Based** - Tracks supported objects as Valheim loads the surrounding world.
   - **Range Scanner** - Only displays supported resources and dungeons within a configurable distance of the player.
@@ -17,6 +18,8 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 - Draggable in-game **Map Tracking** overlay.
 - Includes support for Deep North resources and dungeons.
 - Resource pins are clustered to reduce map clutter in dense areas.
+- Selected resource icons use larger map pins for improved visibility.
+- Onion Seed pins use a gold border to make them easier to spot on the map.
 
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_1.png)
 ![Tracking Overlay](https://raw.githubusercontent.com/guillenjgg/valheim-hex-mod-images/main/hexresourcetracker/hexresourcedgtracker_2.png)
@@ -59,6 +62,7 @@ Pins are automatically added and removed as the player moves through the world.
 ### Mountains
 - Silver Veins
 - Dragon Eggs
+- Onion Seeds found in Mountain chests
 
 ### Plains
 - Wild Flax
@@ -122,6 +126,7 @@ Configuration options include:
 
 - Only supported resources and dungeon entrances are tracked.
 - Valheim must load an object before the mod can discover and track it.
+- Onion Seeds are tracked through naturally generated Mountain chests, not dropped or player-planted Onion Seed items.
 - Pins do not persist across game sessions.
 
 ## Feedback & Support
