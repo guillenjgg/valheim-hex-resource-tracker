@@ -78,14 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ContainerResourcePinService.cs" />
-    <Compile Include="Core\DungeonPinManager.cs" />
+    <Compile Include="Core\PinManagers\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
     <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\Tracking\MapTrackingScanner.cs" />
     <Compile Include="Core\Tracking\TrackedDungeonLocation.cs" />
     <Compile Include="Core\Tracking\TrackedMapObject.cs" />
-    <Compile Include="Core\TrackingRangeService.cs" />
+    <Compile Include="Core\Tracking\TrackingRangeService.cs" />
     <Compile Include="Core\Tracking\TrackingModeEnum.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
@@ -95,7 +95,7 @@
     <Compile Include="Patches\PatchContainerOnContainerChanged.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
     <Compile Include="Patches\PatchDestructibleDestroy.cs" />
-    <Compile Include="Core\ResourceTrackerDragHandler.cs" />
+    <Compile Include="UI\ResourceTrackerDragHandler.cs" />
     <Compile Include="Patches\PatchLocationAwake.cs" />
     <Compile Include="Patches\PatchMineRockAllDestroyed.cs" />
     <Compile Include="Patches\PatchMineRockStart.cs" />
@@ -109,9 +109,9 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\ResourcePinManager.cs" />
+    <Compile Include="Core\PinManagers\ResourcePinManager.cs" />
     <Compile Include="Models\ResourcePinModel.cs" />
-    <Compile Include="Core\ResourceTrackerMapOverlay.cs" />
+    <Compile Include="UI\ResourceTrackerMapOverlay.cs" />
     <Compile Include="Core\TrackedResourceDefinitions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,10 @@
 ﻿using HarmonyLib;
-using HexResourceTracker.Core;
 using HexResourceTracker.Core.Tracking;
 using System.Collections.Generic;
 using UnityEngine;
 using static Minimap;
 
-namespace HexResourceTracker
+namespace HexResourceTracker.Core.PinManagers
 {
     internal static class DungeonPinManager
     {

@@ -1,4 +1,5 @@
-﻿using HexResourceTracker.Core.Tracking;
+﻿using HexResourceTracker.Core.PinManagers;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Core

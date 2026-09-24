@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HexResourceTracker.Core
+namespace HexResourceTracker.UI
 {
     internal class ResourceTrackerDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler
     {

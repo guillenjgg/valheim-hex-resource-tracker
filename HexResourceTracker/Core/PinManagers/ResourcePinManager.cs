@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 using UnityEngine;
 using UnityEngine.UI;
 using static Minimap;
 
-namespace HexResourceTracker.Core
+namespace HexResourceTracker.Core.PinManagers
 {
     internal static class ResourcePinManager
     {

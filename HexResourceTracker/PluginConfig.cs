@@ -1,7 +1,9 @@
 ﻿using BepInEx.Configuration;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
+using HexResourceTracker.UI;
 using System.Collections.Generic;
 using System.Linq;
 

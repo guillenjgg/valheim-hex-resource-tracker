@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Core
 {
+    [Obsolete("Delete this class after refactor")]
     internal static class TrackedResourceDefinitions
     {
         internal static readonly Dictionary<string, ResourceDefinitionModel> DestructibleResourcesByPrefabName =

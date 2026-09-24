@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 using System.Linq;
