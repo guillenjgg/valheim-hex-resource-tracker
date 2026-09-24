@@ -31,13 +31,10 @@ namespace HexResourceTracker
         internal static ConfigEntry<string> WindingTunnelLabel { get; private set; }
 
         internal static ConfigEntry<bool> HideDepositLabels { get; private set; }
-        internal static ConfigEntry<string> CopperLabel { get; private set; }
-        internal static ConfigEntry<string> SilverLabel { get; private set; }
-        internal static ConfigEntry<string> GiantSkullLabel { get; private set; }
-        internal static ConfigEntry<string> FlametalLabel { get; private set; }
 
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
+        internal static readonly Dictionary<string, ConfigEntry<string>> DepositLabelConfigs = new Dictionary<string, ConfigEntry<string>>();
 
         internal static void Initialize(ConfigFile config)
         {
@@ -119,33 +116,14 @@ namespace HexResourceTracker
                 false,
                 "Hide labels on tracked deposit pins.");
 
-            CopperLabel = config.Bind(
-                DepositLabelsSection,
-                "Copper Label",
-                "Copper",
-                "Label displayed for Copper deposits.");
-
-            SilverLabel = config.Bind(
-                DepositLabelsSection,
-                "Silver Label",
-                "Silver",
-                "Label displayed for Silver deposits.");
-
-            GiantSkullLabel = config.Bind(
-                DepositLabelsSection,
-                "Giant Skull Label",
-                "Giant Skull",
-                "Label displayed for Giant Skulls.");
-
-            FlametalLabel = config.Bind(
-                DepositLabelsSection,
-                "Flametal Label",
-                "Flametal",
-                "Label displayed for Flametal deposits.");
-
             foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
                 BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
+
+                if (resource.ResourceType == TrackedResourceTypeEnum.Deposit)
+                {
+                    BindDepositLabel(config, resource);
+                }
             }
 
             BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
@@ -170,6 +148,21 @@ namespace HexResourceTracker
                    config.Value;
         }
 
+        internal static string GetDepositLabel(string prefabName)
+        {
+            if (HideDepositLabels.Value)
+            {
+                return string.Empty;
+            }
+
+            if (!DepositLabelConfigs.TryGetValue(prefabName, out ConfigEntry<string> labelConfig))
+            {
+                return string.Empty;
+            }
+
+            return labelConfig.Value;
+        }
+
         private static void BindResource(ConfigFile config, string prefabName, string displayName)
         {
             ConfigEntry<bool> entry = config.Bind(
@@ -187,6 +180,17 @@ namespace HexResourceTracker
             };
 
             ResourceConfigs[prefabName] = entry;
+        }
+
+        private static void BindDepositLabel(ConfigFile config, TrackedResourceDefinition resource)
+        {
+            ConfigEntry<string> entry = config.Bind(
+                DepositLabelsSection,
+                $"{resource.DisplayName} Label",
+                resource.DisplayName,
+                $"Label displayed for {resource.DisplayName} deposits.");
+
+            DepositLabelConfigs[resource.ResourcePrefabName] = entry;
         }
 
         private static void BindDungeon(ConfigFile config, Room.Theme theme, string displayName)
