@@ -2,7 +2,6 @@
 using System.Reflection;
 using HarmonyLib;
 using HexResourceTracker.Core.Tracking;
-using HexResourceTracker.Models;
 using UnityEngine;
 using UnityEngine.UI;
 using static Minimap;
@@ -65,7 +64,7 @@ namespace HexResourceTracker.Core.PinManagers
                 false,
                 false);
 
-            Sprite sprite = GetSprite(model.ResourceDefinition.IconItemPrefabName);
+            Sprite sprite = GetSprite(model.IconItemPrefabName);
 
             if (sprite != null)
             {
@@ -97,7 +96,7 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                string iconItemPrefabName = model.ResourceDefinition.IconItemPrefabName;
+                string iconItemPrefabName = model.IconItemPrefabName;
                 float size = GetResourcePinSize(iconItemPrefabName);
 
                 if (model.LastSizedUiElement == pin.m_uiElement && model.LastAppliedSize == size)

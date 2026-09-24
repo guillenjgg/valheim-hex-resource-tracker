@@ -22,7 +22,7 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResources.TryGetPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -50,6 +50,7 @@ namespace HexResourceTracker.Core
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
                 definition,
+                definition.IconItemPrefabName,
                 destructible.transform.position));
         }
 
@@ -60,7 +61,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetMineRock5(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -98,6 +99,7 @@ namespace HexResourceTracker.Core
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
                 definition,
+                definition.IconItemPrefabName,
                 mineRock.transform.position));
         }
 
@@ -108,7 +110,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -142,6 +144,7 @@ namespace HexResourceTracker.Core
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
                 definition,
+                definition.IconItemPrefabName,
                 mineRock.transform.position));
         }
 
@@ -154,7 +157,7 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResources.TryGetPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -184,7 +187,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -214,7 +217,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TrackedResources.TryGetPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return;
@@ -326,7 +329,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResources.TryGetMineRock5(mineRock.m_name, out TrackedResourceDefinition definition))
+                if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition))
                 {
                     continue;
                 }
@@ -351,7 +354,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResources.TryGetMineRock(mineRock.m_name, out TrackedResourceDefinition definition))
+                if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition))
                 {
                     continue;
                 }

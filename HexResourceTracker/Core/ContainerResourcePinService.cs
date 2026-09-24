@@ -20,7 +20,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinition definition) ||
+            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinition definition, out string iconItemPrefabName) ||
                 !PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
             {
                 ResourcePinManager.RemoveResourcePin(zdo.m_uid);
@@ -30,6 +30,7 @@ namespace HexResourceTracker.Core
             var model = new ResourcePinModel(
                 zdo.m_uid,
                 definition,
+                iconItemPrefabName,
                 trackedObject.transform.position);
 
             ResourcePinManager.TryAddResourcePin(model);
@@ -37,7 +38,7 @@ namespace HexResourceTracker.Core
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
         {
-            if (!TrackedResources.TryGetPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Container)
             {
                 return;
@@ -60,13 +61,14 @@ namespace HexResourceTracker.Core
             }
         }
 
-        private static bool TryGetTrackedContainerResource(Container container, out TrackedResourceDefinition definition)
+        private static bool TryGetTrackedContainerResource(Container container, out TrackedResourceDefinition definition, out string iconItemPrefabName)
         {
             var inventory = container.GetInventory();
 
             if (inventory == null)
             {
                 definition = null;
+                iconItemPrefabName = null;
                 return false;
             }
 
@@ -77,18 +79,20 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResources.TryGetPrefabName(item.m_dropPrefab.name, out definition))
+                string itemPrefabName = item.m_dropPrefab.name;
+
+                if (!TrackedResources.TryGetByPrefabName(itemPrefabName, out definition) ||
+                    definition.ResourceType != TrackedResourceTypeEnum.Container)
                 {
                     continue;
                 }
 
-                if (definition.ResourceType == TrackedResourceTypeEnum.Container)
-                {
-                    return true;
-                }
+                iconItemPrefabName = itemPrefabName;
+                return true;
             }
 
             definition = null;
+            iconItemPrefabName = null;
             return false;
         }
     }

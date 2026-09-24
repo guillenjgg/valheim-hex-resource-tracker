@@ -85,17 +85,17 @@ namespace HexResourceTracker.Core
             BuildResourceLookups();
         }
 
-        internal static bool TryGetPrefabName(string prefabName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByPrefabName(string prefabName, out TrackedResourceDefinition definition)
         {
             return ByPrefabName.TryGetValue(prefabName, out definition);
         }
 
-        internal static bool TryGetMineRock5(string mineRockName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByMineRock5(string mineRockName, out TrackedResourceDefinition definition)
         {
             return ByMineRock5Name.TryGetValue(mineRockName, out definition);
         }
 
-        internal static bool TryGetMineRock(string mineRockName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByMineRock(string mineRockName, out TrackedResourceDefinition definition)
         {
             return ByMineRockName.TryGetValue(mineRockName, out definition);
         }
