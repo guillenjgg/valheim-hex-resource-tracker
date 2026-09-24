@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using HarmonyLib;
+﻿using HarmonyLib;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Models;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using static Minimap;
@@ -57,10 +58,12 @@ namespace HexResourceTracker.Core.PinManagers
                 return false;
             }
 
+            string label = GetResourcePinLabel(model.ResourceDefinition);
+
             PinData pin = Minimap.instance.AddPin(
                 model.Position,
                 PinType.None,
-                string.Empty,
+                label,
                 false,
                 false);
 
@@ -225,6 +228,21 @@ namespace HexResourceTracker.Core.PinManagers
             return zdoId != ZDOID.None && ResourcePinByZdoId.ContainsKey(zdoId);
         }
 
+        internal static void UpdateDepositLabels()
+        {
+            foreach (ResourcePinModel model in ResourcePinByZdoId.Values)
+            {
+                if (model.ResourceDefinition.ResourceType != TrackedResourceTypeEnum.Deposit || model.Pin == null)
+                {
+                    continue;
+                }
+
+                model.Pin.m_name = PluginConfig.GetDepositLabel(model.ResourceDefinition.ResourcePrefabName);
+            }
+
+            SetPinUpdateRequired();
+        }
+
         private static bool HasNearbyResourcePin(ResourcePinModel model)
         {
             float radiusSqr = ClusterRadius * ClusterRadius;
@@ -346,6 +364,16 @@ namespace HexResourceTracker.Core.PinManagers
             }
 
             MPinUpdateRequired.SetValue(Minimap.instance, true);
+        }
+
+        private static string GetResourcePinLabel(TrackedResourceDefinition definition)
+        {
+            if (definition.ResourceType != TrackedResourceTypeEnum.Deposit)
+            {
+                return string.Empty;
+            }
+
+            return PluginConfig.GetDepositLabel(definition.ResourcePrefabName);
         }
     }
 }

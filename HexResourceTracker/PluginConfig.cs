@@ -167,6 +167,11 @@ namespace HexResourceTracker
                         Order = HideLabelOrder
                     }));
 
+            HideDepositLabels.SettingChanged += delegate
+            {
+                ResourcePinManager.UpdateDepositLabels();
+            };
+
             foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
                 BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
@@ -246,6 +251,11 @@ namespace HexResourceTracker
                     {
                         Order = LabelOrder
                     }));
+
+            entry.SettingChanged += delegate
+            {
+                ResourcePinManager.UpdateDepositLabels();
+            };
 
             DepositLabelConfigs[resource.ResourcePrefabName] = entry;
         }
