@@ -1,7 +1,9 @@
 ﻿using BepInEx.Configuration;
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HexResourceTracker
 {
@@ -139,29 +141,10 @@ namespace HexResourceTracker
                 "Flametal",
                 "Label displayed for Flametal deposits.");
 
-            BindResource(config, "Pickable_Mushroom", "Mushrooms");
-            BindResource(config, "Pickable_Dandelion", "Dandelions");
-            BindResource(config, "RaspberryBush", "Raspberries");
-            BindResource(config, "rock4_copper", "Copper");
-            BindResource(config, "BlueberryBush", "Blueberries");
-            BindResource(config, "Pickable_Thistle", "Thistle");
-            BindResource(config, "Pickable_SeedCarrot", "Carrot Seeds");
-            BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
-            BindResource(config, "silvervein", "Silver");
-            BindResource(config, "OnionSeeds", "Onion Seeds");
-            BindResource(config, "Pickable_DragonEgg", "Dragon Eggs");
-            BindResource(config, "Pickable_Flax_Wild", "Flax");
-            BindResource(config, "Pickable_Barley_Wild", "Barley");
-            BindResource(config, "CloudberryBush", "Cloudberries");
-            BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
-            BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
-            BindResource(config, "giant_skull", "Giant Skull");
-            BindResource(config, "LeviathanLava", "Flametal");
-            BindResource(config, "VineAsh", "Vineberries");
-            BindResource(config, "Pickable_SmokePuff", "Smoke Puffs");
-            BindResource(config, "Pickable_Fiddlehead", "Fiddleheads");
-            BindResource(config, "LingonberryBush", "Lingonberries");
-            BindResource(config, "Pickable_SeedKale", "Kale Seeds");
+            foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
+            {
+                BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
+            }
 
             BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
             BindDungeon(config, Room.Theme.SunkenCrypt, "Sunken Crypts");
