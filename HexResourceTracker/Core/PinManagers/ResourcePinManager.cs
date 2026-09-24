@@ -35,7 +35,10 @@ namespace HexResourceTracker.Core.PinManagers
 
         internal static bool TryAddResourcePin(ResourcePinModel model)
         {
-            if (model == null || Minimap.instance == null || model.ZdoId == ZDOID.None)
+            if (model == null ||
+                model.ResourceDefinition == null ||
+                Minimap.instance == null ||
+                model.ZdoId == ZDOID.None)
             {
                 return false;
             }
@@ -62,7 +65,7 @@ namespace HexResourceTracker.Core.PinManagers
                 false,
                 false);
 
-            Sprite sprite = GetSprite(model.ItemPrefabName);
+            Sprite sprite = GetSprite(model.ResourceDefinition.IconItemPrefabName);
 
             if (sprite != null)
             {
@@ -94,7 +97,8 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                float size = GetResourcePinSize(model.ItemPrefabName);
+                string iconItemPrefabName = model.ResourceDefinition.IconItemPrefabName;
+                float size = GetResourcePinSize(iconItemPrefabName);
 
                 if (model.LastSizedUiElement == pin.m_uiElement && model.LastAppliedSize == size)
                 {
@@ -104,7 +108,7 @@ namespace HexResourceTracker.Core.PinManagers
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
 
-                if (model.ItemPrefabName == OnionSeedsPrefabName)
+                if (model.ResourceDefinition.ResourcePrefabName == OnionSeedsPrefabName)
                 {
                     AddOnionSeedsBorder(pin.m_uiElement, size);
                 }
@@ -144,11 +148,11 @@ namespace HexResourceTracker.Core.PinManagers
                 return;
             }
 
-            List<ZDOID> zdoIdsToRemove = new List<ZDOID>();
+            var zdoIdsToRemove = new List<ZDOID>();
 
             foreach (KeyValuePair<ZDOID, ResourcePinModel> entry in ResourcePinByZdoId)
             {
-                if (entry.Value.PickablePrefabName == prefabName)
+                if (entry.Value.ResourceDefinition.ResourcePrefabName == prefabName)
                 {
                     zdoIdsToRemove.Add(entry.Key);
                 }
@@ -193,7 +197,7 @@ namespace HexResourceTracker.Core.PinManagers
 
             foreach (ResourcePinModel model in ResourcePinByZdoId.Values)
             {
-                if (model.PickablePrefabName != prefabName)
+                if (model.ResourceDefinition.ResourcePrefabName != prefabName)
                 {
                     continue;
                 }
@@ -228,7 +232,7 @@ namespace HexResourceTracker.Core.PinManagers
 
             foreach (ResourcePinModel existingModel in ResourcePinByZdoId.Values)
             {
-                if (existingModel.PickablePrefabName != model.PickablePrefabName)
+                if (existingModel.ResourceDefinition.ResourcePrefabName != model.ResourceDefinition.ResourcePrefabName)
                 {
                     continue;
                 }
@@ -258,14 +262,14 @@ namespace HexResourceTracker.Core.PinManagers
                 return cachedSprite;
             }
 
-            GameObject prefab = ObjectDB.instance.GetItemPrefab(prefabName);
+            var prefab = ObjectDB.instance.GetItemPrefab(prefabName);
 
             if (prefab == null)
             {
                 return null;
             }
 
-            ItemDrop itemDrop = prefab.GetComponent<ItemDrop>();
+            var itemDrop = prefab.GetComponent<ItemDrop>();
 
             if (itemDrop == null)
             {
@@ -279,10 +283,10 @@ namespace HexResourceTracker.Core.PinManagers
             return sprite;
         }
 
-        private static float GetResourcePinSize(string itemPrefabName)
+        private static float GetResourcePinSize(string iconItemPrefabName)
         {
-            if (!string.IsNullOrWhiteSpace(itemPrefabName) &&
-                ResourceIconSizeOverrides.TryGetValue(itemPrefabName, out float size))
+            if (!string.IsNullOrWhiteSpace(iconItemPrefabName) &&
+                ResourceIconSizeOverrides.TryGetValue(iconItemPrefabName, out float size))
             {
                 return size;
             }
@@ -299,11 +303,11 @@ namespace HexResourceTracker.Core.PinManagers
                 return;
             }
 
-            GameObject borderObject = new GameObject(OnionSeedsBorderName);
+            var borderObject = new GameObject(OnionSeedsBorderName);
             borderObject.transform.SetParent(pinUiElement, false);
             borderObject.transform.SetAsFirstSibling();
 
-            RectTransform borderRect = borderObject.AddComponent<RectTransform>();
+            var borderRect = borderObject.AddComponent<RectTransform>();
             borderRect.anchorMin = new Vector2(0.5f, 0.5f);
             borderRect.anchorMax = new Vector2(0.5f, 0.5f);
             borderRect.pivot = new Vector2(0.5f, 0.5f);
@@ -320,17 +324,17 @@ namespace HexResourceTracker.Core.PinManagers
 
         private static void AddBorderEdge(RectTransform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Vector2 anchoredPosition, Vector2 sizeDelta)
         {
-            GameObject edgeObject = new GameObject(name);
+            var edgeObject = new GameObject(name);
             edgeObject.transform.SetParent(parent, false);
 
-            RectTransform edgeRect = edgeObject.AddComponent<RectTransform>();
+            var edgeRect = edgeObject.AddComponent<RectTransform>();
             edgeRect.anchorMin = anchorMin;
             edgeRect.anchorMax = anchorMax;
             edgeRect.pivot = new Vector2(0.5f, 0.5f);
             edgeRect.anchoredPosition = anchoredPosition;
             edgeRect.sizeDelta = sizeDelta;
 
-            Image edgeImage = edgeObject.AddComponent<Image>();
+            var edgeImage = edgeObject.AddComponent<Image>();
             edgeImage.color = OnionSeedsBorderColor;
             edgeImage.raycastTarget = false;
         }
