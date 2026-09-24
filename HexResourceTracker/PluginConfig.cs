@@ -18,6 +18,9 @@ namespace HexResourceTracker
         private const string DungeonLabelsSection = "Dungeon Labels";
         private const string DepositLabelsSection = "Deposit Labels";
 
+        private const int HideLabelOrder = 1000;
+        private const int LabelOrder = 900;
+
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
         internal static ConfigEntry<float> TrackingRange { get; private set; }
         internal static ConfigEntry<TrackingModeEnum> TrackingMode { get; private set; }
@@ -72,49 +75,97 @@ namespace HexResourceTracker
                 DungeonLabelsSection,
                 "Hide Dungeon Labels",
                 false,
-                "Hide labels on tracked dungeon pins.");
+                new ConfigDescription(
+                    "Hide labels on tracked dungeon pins.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = HideLabelOrder
+                    }));
 
             BurialChamberLabel = config.Bind(
                 DungeonLabelsSection,
                 "Burial Chamber Label",
                 "Burial Chamber",
-                "Label displayed for Burial Chambers.");
+                new ConfigDescription(
+                    "Label displayed for Burial Chambers.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             SunkenCryptLabel = config.Bind(
                 DungeonLabelsSection,
                 "Sunken Crypt Label",
                 "Sunken Crypt",
-                "Label displayed for Sunken Crypts.");
+                new ConfigDescription(
+                    "Label displayed for Sunken Crypts.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             FrostCaveLabel = config.Bind(
                 DungeonLabelsSection,
                 "Frost Cave Label",
                 "Frost Cave",
-                "Label displayed for Frost Caves.");
+                new ConfigDescription(
+                    "Label displayed for Frost Caves.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             InfestedMineLabel = config.Bind(
                 DungeonLabelsSection,
                 "Infested Mine Label",
                 "Infested Mine",
-                "Label displayed for Infested Mines.");
+                new ConfigDescription(
+                    "Label displayed for Infested Mines.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             MorkhallaLabel = config.Bind(
                 DungeonLabelsSection,
                 "Morkhalla Label",
                 "Morkhalla",
-                "Label displayed for Morkhalla.");
+                new ConfigDescription(
+                    "Label displayed for Morkhalla.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             WindingTunnelLabel = config.Bind(
                 DungeonLabelsSection,
                 "Winding Tunnel Label",
                 "Winding Tunnel",
-                "Label displayed for Winding Tunnels.");
+                new ConfigDescription(
+                    "Label displayed for Winding Tunnels.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             HideDepositLabels = config.Bind(
                 DepositLabelsSection,
                 "Hide Deposit Labels",
                 false,
-                "Hide labels on tracked deposit pins.");
+                new ConfigDescription(
+                    "Hide labels on tracked deposit pins.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = HideLabelOrder
+                    }));
 
             foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
@@ -188,7 +239,13 @@ namespace HexResourceTracker
                 DepositLabelsSection,
                 $"{resource.DisplayName} Label",
                 resource.DisplayName,
-                $"Label displayed for {resource.DisplayName} deposits.");
+                new ConfigDescription(
+                    $"Label displayed for {resource.DisplayName} deposits.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
 
             DepositLabelConfigs[resource.ResourcePrefabName] = entry;
         }
@@ -208,6 +265,11 @@ namespace HexResourceTracker
             };
 
             DungeonConfigs[theme] = entry;
+        }
+
+        private sealed class ConfigurationManagerAttributes
+        {
+            public int? Order;
         }
     }
 }
