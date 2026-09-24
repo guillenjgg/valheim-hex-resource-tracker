@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.5.0
+
+### Added
+
 ## v1.4.0
 
 ### Added

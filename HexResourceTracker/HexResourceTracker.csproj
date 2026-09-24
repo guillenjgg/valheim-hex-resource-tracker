@@ -81,6 +81,7 @@
     <Compile Include="Core\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
+    <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\Tracking\MapTrackingScanner.cs" />
     <Compile Include="Core\Tracking\TrackedDungeonLocation.cs" />
     <Compile Include="Core\Tracking\TrackedMapObject.cs" />
@@ -88,6 +89,8 @@
     <Compile Include="Core\Tracking\TrackingModeEnum.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
+    <Compile Include="Models\TrackedResourceDefinition.cs" />
+    <Compile Include="Models\TrackedResourceTypeEnum.cs" />
     <Compile Include="Patches\PatchContainerAwake.cs" />
     <Compile Include="Patches\PatchContainerOnContainerChanged.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
