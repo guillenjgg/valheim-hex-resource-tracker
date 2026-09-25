@@ -3,6 +3,14 @@
 ## v1.5.0
 
 ### Added
+- Added customizable labels for tracked dungeon pins.
+- Added customizable labels for Copper, Silver, Giant Skull, and Flametal deposit pins.
+- Added configuration options to hide all dungeon labels or all deposit labels.
+- Dungeon and deposit labels update immediately when changed in the configuration.
+
+### Improved
+- Improved dungeon pin tracking by reducing unnecessary scans of all minimap pins.
+- Improved internal tracking of existing dungeon pins.
 
 ## v1.4.0
 
