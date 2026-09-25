@@ -26,18 +26,12 @@ namespace HexResourceTracker
         internal static ConfigEntry<TrackingModeEnum> TrackingMode { get; private set; }
 
         internal static ConfigEntry<bool> HideDungeonLabels { get; private set; }
-        internal static ConfigEntry<string> BurialChamberLabel { get; private set; }
-        internal static ConfigEntry<string> SunkenCryptLabel { get; private set; }
-        internal static ConfigEntry<string> FrostCaveLabel { get; private set; }
-        internal static ConfigEntry<string> InfestedMineLabel { get; private set; }
-        internal static ConfigEntry<string> MorkhallaLabel { get; private set; }
-        internal static ConfigEntry<string> WindingTunnelLabel { get; private set; }
-
         internal static ConfigEntry<bool> HideDepositLabels { get; private set; }
 
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
         internal static readonly Dictionary<string, ConfigEntry<string>> DepositLabelConfigs = new Dictionary<string, ConfigEntry<string>>();
+        internal static readonly Dictionary<Room.Theme, ConfigEntry<string>> DungeonLabelConfigs = new Dictionary<Room.Theme, ConfigEntry<string>>();
 
         internal static void Initialize(ConfigFile config)
         {
@@ -83,77 +77,17 @@ namespace HexResourceTracker
                         Order = HideLabelOrder
                     }));
 
-            BurialChamberLabel = config.Bind(
-                DungeonLabelsSection,
-                "Burial Chamber Label",
-                "Burial Chamber",
-                new ConfigDescription(
-                    "Label displayed for Burial Chambers.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
+            HideDungeonLabels.SettingChanged += delegate
+            {
+                DungeonPinManager.UpdateDungeonLabels();
+            };
 
-            SunkenCryptLabel = config.Bind(
-                DungeonLabelsSection,
-                "Sunken Crypt Label",
-                "Sunken Crypt",
-                new ConfigDescription(
-                    "Label displayed for Sunken Crypts.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
-
-            FrostCaveLabel = config.Bind(
-                DungeonLabelsSection,
-                "Frost Cave Label",
-                "Frost Cave",
-                new ConfigDescription(
-                    "Label displayed for Frost Caves.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
-
-            InfestedMineLabel = config.Bind(
-                DungeonLabelsSection,
-                "Infested Mine Label",
-                "Infested Mine",
-                new ConfigDescription(
-                    "Label displayed for Infested Mines.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
-
-            MorkhallaLabel = config.Bind(
-                DungeonLabelsSection,
-                "Morkhalla Label",
-                "Morkhalla",
-                new ConfigDescription(
-                    "Label displayed for Morkhalla.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
-
-            WindingTunnelLabel = config.Bind(
-                DungeonLabelsSection,
-                "Winding Tunnel Label",
-                "Winding Tunnel",
-                new ConfigDescription(
-                    "Label displayed for Winding Tunnels.",
-                    null,
-                    new ConfigurationManagerAttributes
-                    {
-                        Order = LabelOrder
-                    }));
+            BindDungeonLabel(config, Room.Theme.ForestCrypt, "Burial Chamber");
+            BindDungeonLabel(config, Room.Theme.SunkenCrypt, "Sunken Crypt");
+            BindDungeonLabel(config, Room.Theme.Cave, "Frost Cave");
+            BindDungeonLabel(config, Room.Theme.DvergerTown, "Infested Mine");
+            BindDungeonLabel(config, Room.Theme.MorkHalla, "Morkhalla");
+            BindDungeonLabel(config, Room.Theme.Hole, "Winding Tunnel");
 
             HideDepositLabels = config.Bind(
                 DepositLabelsSection,
@@ -219,6 +153,21 @@ namespace HexResourceTracker
             return labelConfig.Value;
         }
 
+        internal static string GetDungeonLabel(Room.Theme theme)
+        {
+            if (HideDungeonLabels.Value)
+            {
+                return string.Empty;
+            }
+
+            if (!DungeonLabelConfigs.TryGetValue(theme, out ConfigEntry<string> labelConfig))
+            {
+                return string.Empty;
+            }
+
+            return labelConfig.Value;
+        }
+
         private static void BindResource(ConfigFile config, string prefabName, string displayName)
         {
             ConfigEntry<bool> entry = config.Bind(
@@ -258,6 +207,28 @@ namespace HexResourceTracker
             };
 
             DepositLabelConfigs[resource.ResourcePrefabName] = entry;
+        }
+
+        private static void BindDungeonLabel(ConfigFile config, Room.Theme theme, string displayName)
+        {
+            ConfigEntry<string> entry = config.Bind(
+                DungeonLabelsSection,
+                $"{displayName} Label",
+                displayName,
+                new ConfigDescription(
+                    $"Label displayed for {displayName}.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
+
+            entry.SettingChanged += delegate
+            {
+                DungeonPinManager.UpdateDungeonLabels();
+            };
+
+            DungeonLabelConfigs[theme] = entry;
         }
 
         private static void BindDungeon(ConfigFile config, Room.Theme theme, string displayName)
