@@ -1,7 +1,11 @@
 ﻿using BepInEx.Configuration;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Models;
+using HexResourceTracker.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HexResourceTracker
 {
@@ -11,13 +15,23 @@ namespace HexResourceTracker
         private const string ResourcesSection = "Resources To Track";
         private const string DungeonsSection = "Dungeons To Track";
         private const string TrackingModeSection = "Tracking Mode";
+        private const string DungeonLabelsSection = "Dungeon Labels";
+        private const string DepositLabelsSection = "Deposit Labels";
+
+        private const int HideLabelOrder = 1000;
+        private const int LabelOrder = 900;
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
         internal static ConfigEntry<float> TrackingRange { get; private set; }
         internal static ConfigEntry<TrackingModeEnum> TrackingMode { get; private set; }
 
+        internal static ConfigEntry<bool> HideDungeonLabels { get; private set; }
+        internal static ConfigEntry<bool> HideDepositLabels { get; private set; }
+
         internal static readonly Dictionary<string, ConfigEntry<bool>> ResourceConfigs = new Dictionary<string, ConfigEntry<bool>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
+        internal static readonly Dictionary<string, ConfigEntry<string>> DepositLabelConfigs = new Dictionary<string, ConfigEntry<string>>();
+        internal static readonly Dictionary<Room.Theme, ConfigEntry<string>> DungeonLabelConfigs = new Dictionary<Room.Theme, ConfigEntry<string>>();
 
         internal static void Initialize(ConfigFile config)
         {
@@ -51,29 +65,56 @@ namespace HexResourceTracker
                 MapTrackingScanner.ForceRescan();
             };
 
-            BindResource(config, "Pickable_Mushroom", "Mushrooms");
-            BindResource(config, "Pickable_Dandelion", "Dandelions");
-            BindResource(config, "RaspberryBush", "Raspberries");
-            BindResource(config, "rock4_copper", "Copper");
-            BindResource(config, "BlueberryBush", "Blueberries");
-            BindResource(config, "Pickable_Thistle", "Thistle");
-            BindResource(config, "Pickable_SeedCarrot", "Carrot Seeds");
-            BindResource(config, "Pickable_SeedTurnip", "Turnip Seeds");
-            BindResource(config, "silvervein", "Silver");
-            BindResource(config, "OnionSeeds", "Onion Seeds");
-            BindResource(config, "Pickable_DragonEgg", "Dragon Eggs");
-            BindResource(config, "Pickable_Flax_Wild", "Flax");
-            BindResource(config, "Pickable_Barley_Wild", "Barley");
-            BindResource(config, "CloudberryBush", "Cloudberries");
-            BindResource(config, "Pickable_Mushroom_JotunPuffs", "Jotun Puffs");
-            BindResource(config, "Pickable_Mushroom_Magecap", "Magecap");
-            BindResource(config, "giant_skull", "Giant Skull");
-            BindResource(config, "LeviathanLava", "Flametal");
-            BindResource(config, "VineAsh", "Vineberries");
-            BindResource(config, "Pickable_SmokePuff", "Smoke Puffs");
-            BindResource(config, "Pickable_Fiddlehead", "Fiddleheads");
-            BindResource(config, "LingonberryBush", "Lingonberries");
-            BindResource(config, "Pickable_SeedKale", "Kale Seeds");
+            HideDungeonLabels = config.Bind(
+                DungeonLabelsSection,
+                "Hide Dungeon Labels",
+                false,
+                new ConfigDescription(
+                    "Hide labels on tracked dungeon pins.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = HideLabelOrder
+                    }));
+
+            HideDungeonLabels.SettingChanged += delegate
+            {
+                DungeonPinManager.UpdateDungeonLabels();
+            };
+
+            BindDungeonLabel(config, Room.Theme.ForestCrypt, "Burial Chamber");
+            BindDungeonLabel(config, Room.Theme.SunkenCrypt, "Sunken Crypt");
+            BindDungeonLabel(config, Room.Theme.Cave, "Frost Cave");
+            BindDungeonLabel(config, Room.Theme.DvergerTown, "Infested Mine");
+            BindDungeonLabel(config, Room.Theme.MorkHalla, "Morkhalla");
+            BindDungeonLabel(config, Room.Theme.Hole, "Winding Tunnel");
+
+            HideDepositLabels = config.Bind(
+                DepositLabelsSection,
+                "Hide Deposit Labels",
+                false,
+                new ConfigDescription(
+                    "Hide labels on tracked deposit pins.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = HideLabelOrder
+                    }));
+
+            HideDepositLabels.SettingChanged += delegate
+            {
+                ResourcePinManager.UpdateDepositLabels();
+            };
+
+            foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
+            {
+                BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
+
+                if (resource.ResourceType == TrackedResourceTypeEnum.Deposit)
+                {
+                    BindDepositLabel(config, resource);
+                }
+            }
 
             BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
             BindDungeon(config, Room.Theme.SunkenCrypt, "Sunken Crypts");
@@ -97,6 +138,36 @@ namespace HexResourceTracker
                    config.Value;
         }
 
+        internal static string GetDepositLabel(string prefabName)
+        {
+            if (HideDepositLabels.Value)
+            {
+                return string.Empty;
+            }
+
+            if (!DepositLabelConfigs.TryGetValue(prefabName, out ConfigEntry<string> labelConfig))
+            {
+                return string.Empty;
+            }
+
+            return labelConfig.Value;
+        }
+
+        internal static string GetDungeonLabel(Room.Theme theme)
+        {
+            if (HideDungeonLabels.Value)
+            {
+                return string.Empty;
+            }
+
+            if (!DungeonLabelConfigs.TryGetValue(theme, out ConfigEntry<string> labelConfig))
+            {
+                return string.Empty;
+            }
+
+            return labelConfig.Value;
+        }
+
         private static void BindResource(ConfigFile config, string prefabName, string displayName)
         {
             ConfigEntry<bool> entry = config.Bind(
@@ -116,6 +187,50 @@ namespace HexResourceTracker
             ResourceConfigs[prefabName] = entry;
         }
 
+        private static void BindDepositLabel(ConfigFile config, TrackedResourceDefinition resource)
+        {
+            ConfigEntry<string> entry = config.Bind(
+                DepositLabelsSection,
+                $"{resource.DisplayName} Label",
+                resource.DisplayName,
+                new ConfigDescription(
+                    $"Label displayed for {resource.DisplayName} deposits.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
+
+            entry.SettingChanged += delegate
+            {
+                ResourcePinManager.UpdateDepositLabels();
+            };
+
+            DepositLabelConfigs[resource.ResourcePrefabName] = entry;
+        }
+
+        private static void BindDungeonLabel(ConfigFile config, Room.Theme theme, string displayName)
+        {
+            ConfigEntry<string> entry = config.Bind(
+                DungeonLabelsSection,
+                $"{displayName} Label",
+                displayName,
+                new ConfigDescription(
+                    $"Label displayed for {displayName}.",
+                    null,
+                    new ConfigurationManagerAttributes
+                    {
+                        Order = LabelOrder
+                    }));
+
+            entry.SettingChanged += delegate
+            {
+                DungeonPinManager.UpdateDungeonLabels();
+            };
+
+            DungeonLabelConfigs[theme] = entry;
+        }
+
         private static void BindDungeon(ConfigFile config, Room.Theme theme, string displayName)
         {
             ConfigEntry<bool> entry = config.Bind(
@@ -131,6 +246,11 @@ namespace HexResourceTracker
             };
 
             DungeonConfigs[theme] = entry;
+        }
+
+        private sealed class ConfigurationManagerAttributes
+        {
+            public int? Order;
         }
     }
 }

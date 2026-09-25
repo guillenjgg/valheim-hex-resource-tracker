@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace HexResourceTracker.Core
 {
     internal static class OreResourcePinService
     {
-        private const float MineRockRelinkRadius = 35f;
+        private const float ResourcePinRadius = 35f;
 
         private static readonly MethodInfo MineRockAllDestroyedMethod = AccessTools.Method(typeof(MineRock), "AllDestroyed");
 
@@ -22,7 +22,8 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResourceDefinitions.DestructibleResourcesByPrefabName.TryGetValue(prefabName, out ResourceDefinitionModel definition))
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
             }
@@ -48,8 +49,8 @@ namespace HexResourceTracker.Core
 
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
-                definition.ResourcePrefabName,
-                definition.ItemPrefabName,
+                definition,
+                definition.IconItemPrefabName,
                 destructible.transform.position));
         }
 
@@ -60,7 +61,8 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResourceDefinitions.MineRock5ResourcesByName.TryGetValue(mineRock.m_name, out ResourceDefinitionModel definition))
+            if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
             }
@@ -92,12 +94,12 @@ namespace HexResourceTracker.Core
             ResourcePinManager.RemoveClosestResourcePin(
                 definition.ResourcePrefabName,
                 mineRock.transform.position,
-                MineRockRelinkRadius);
+                ResourcePinRadius);
 
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
-                definition.ResourcePrefabName,
-                definition.ItemPrefabName,
+                definition,
+                definition.IconItemPrefabName,
                 mineRock.transform.position));
         }
 
@@ -108,7 +110,8 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResourceDefinitions.MineRockResourcesByName.TryGetValue(mineRock.m_name, out ResourceDefinitionModel definition))
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
             }
@@ -140,8 +143,8 @@ namespace HexResourceTracker.Core
 
             return ResourcePinManager.TryAddResourcePin(new ResourcePinModel(
                 zdo.m_uid,
-                definition.ResourcePrefabName,
-                definition.ItemPrefabName,
+                definition,
+                definition.IconItemPrefabName,
                 mineRock.transform.position));
         }
 
@@ -154,7 +157,8 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResourceDefinitions.DestructibleResourcesByPrefabName.ContainsKey(prefabName))
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
             }
@@ -183,7 +187,8 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResourceDefinitions.MineRockResourcesByName.ContainsKey(mineRock.m_name))
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
             }
@@ -212,12 +217,8 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            bool isTrackedOre =
-                TrackedResourceDefinitions.DestructibleResourcesByPrefabName.ContainsKey(prefabName) ||
-                TrackedResourceDefinitions.MineRockResourcesByName.Values.Any(definition => definition.ResourcePrefabName == prefabName) ||
-                TrackedResourceDefinitions.MineRock5ResourcesByName.Values.Any(definition => definition.ResourcePrefabName == prefabName);
-
-            if (!isTrackedOre)
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return;
             }
@@ -328,7 +329,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResourceDefinitions.MineRock5ResourcesByName.TryGetValue(mineRock.m_name, out ResourceDefinitionModel definition))
+                if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition))
                 {
                     continue;
                 }
@@ -353,7 +354,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResourceDefinitions.MineRockResourcesByName.TryGetValue(mineRock.m_name, out ResourceDefinitionModel definition))
+                if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition))
                 {
                     continue;
                 }

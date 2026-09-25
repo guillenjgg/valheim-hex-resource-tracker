@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using HexResourceTracker.Core.PinManagers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HexResourceTracker.Core.Tracking

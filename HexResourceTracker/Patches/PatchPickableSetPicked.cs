@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches

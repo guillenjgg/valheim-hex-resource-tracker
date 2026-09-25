@@ -1,12 +1,11 @@
-﻿using HexResourceTracker.Core.Tracking;
+﻿using HexResourceTracker.Core.PinManagers;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Core
 {
     internal static class ContainerResourcePinService
     {
-        private const string OnionSeedsPrefabName = "OnionSeeds";
-
         internal static void ReconcileTrackedContainer(TrackedMapObject trackedObject)
         {
             if (trackedObject == null || trackedObject.Container == null || trackedObject.ZNetView == null)
@@ -14,15 +13,15 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            ZDO zdo = trackedObject.ZNetView.GetZDO();
+            var zdo = trackedObject.ZNetView.GetZDO();
 
             if (zdo == null)
             {
                 return;
             }
 
-            if (!PluginConfig.IsResourceTrackingEnabled(OnionSeedsPrefabName) ||
-                !ContainsOnionSeeds(trackedObject.Container))
+            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinition definition, out string iconItemPrefabName) ||
+                !PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
             {
                 ResourcePinManager.RemoveResourcePin(zdo.m_uid);
                 return;
@@ -30,22 +29,24 @@ namespace HexResourceTracker.Core
 
             var model = new ResourcePinModel(
                 zdo.m_uid,
-                OnionSeedsPrefabName,
+                definition,
+                iconItemPrefabName,
                 trackedObject.transform.position);
 
             ResourcePinManager.TryAddResourcePin(model);
         }
 
-        internal static void HandleResourceTrackingChanged(string prefabName, bool enabled)
+        internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
         {
-            if (prefabName != OnionSeedsPrefabName)
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+                definition.ResourceType != TrackedResourceTypeEnum.Container)
             {
                 return;
             }
 
-            if (!enabled)
+            if (!isEnabled)
             {
-                ResourcePinManager.RemoveResourcePins(OnionSeedsPrefabName);
+                ResourcePinManager.RemoveResourcePins(definition.ResourcePrefabName);
                 return;
             }
 
@@ -60,23 +61,38 @@ namespace HexResourceTracker.Core
             }
         }
 
-        private static bool ContainsOnionSeeds(Container container)
+        private static bool TryGetTrackedContainerResource(Container container, out TrackedResourceDefinition definition, out string iconItemPrefabName)
         {
-            Inventory inventory = container.GetInventory();
+            var inventory = container.GetInventory();
 
             if (inventory == null)
             {
+                definition = null;
+                iconItemPrefabName = null;
                 return false;
             }
 
             foreach (ItemDrop.ItemData item in inventory.GetAllItems())
             {
-                if (item.m_dropPrefab != null && item.m_dropPrefab.name == OnionSeedsPrefabName)
+                if (item.m_dropPrefab == null)
                 {
-                    return true;
+                    continue;
                 }
+
+                string itemPrefabName = item.m_dropPrefab.name;
+
+                if (!TrackedResources.TryGetByPrefabName(itemPrefabName, out definition) ||
+                    definition.ResourceType != TrackedResourceTypeEnum.Container)
+                {
+                    continue;
+                }
+
+                iconItemPrefabName = itemPrefabName;
+                return true;
             }
 
+            definition = null;
+            iconItemPrefabName = null;
             return false;
         }
     }

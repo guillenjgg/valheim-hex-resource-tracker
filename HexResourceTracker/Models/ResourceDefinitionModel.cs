@@ -1,5 +1,8 @@
+using System;
+
 namespace HexResourceTracker.Models
 {
+    [Obsolete("Delete this class after refactor")]
     internal class ResourceDefinitionModel
     {
         internal string ResourcePrefabName { get; }

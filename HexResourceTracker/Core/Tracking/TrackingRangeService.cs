@@ -1,7 +1,6 @@
-﻿using HexResourceTracker.Core.Tracking;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace HexResourceTracker.Core
+namespace HexResourceTracker.Core.Tracking
 {
     internal static class TrackingRangeService
     {
