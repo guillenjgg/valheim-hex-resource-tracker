@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using HexResourceTracker.Assets.Assetbundles;
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Models;
 using System.Collections.Generic;
@@ -153,6 +154,7 @@ namespace HexResourceTracker.Core.PinManagers
             }
         }
 
+
         private static Sprite GetCreatureSprite(string prefabName)
         {
             if (CreatureSprites.TryGetValue(prefabName, out Sprite sprite))
@@ -160,37 +162,47 @@ namespace HexResourceTracker.Core.PinManagers
                 return sprite;
             }
 
-            string trophyPrefabName;
-
             switch (prefabName)
             {
                 case "Deer":
-                    trophyPrefabName = "TrophyDeer";
+                    sprite = AssetBundleHelper.LoadSprite("HexDeerSprite_Golden_Bold");
                     break;
-                default:
+            }
+
+            if (sprite == null)
+            {
+                string trophyPrefabName;
+
+                switch (prefabName)
+                {
+                    case "Deer":
+                        trophyPrefabName = "TrophyDeer";
+                        break;
+                    default:
+                        return null;
+                }
+
+                if (ObjectDB.instance == null)
+                {
                     return null;
+                }
+
+                var trophyPrefab = ObjectDB.instance.GetItemPrefab(trophyPrefabName);
+
+                if (trophyPrefab == null)
+                {
+                    return null;
+                }
+
+                var itemDrop = trophyPrefab.GetComponent<ItemDrop>();
+
+                if (itemDrop == null)
+                {
+                    return null;
+                }
+
+                sprite = itemDrop.m_itemData.GetIcon();
             }
-
-            if (ObjectDB.instance == null)
-            {
-                return null;
-            }
-
-            var trophyPrefab = ObjectDB.instance.GetItemPrefab(trophyPrefabName);
-
-            if (trophyPrefab == null)
-            {
-                return null;
-            }
-
-            var itemDrop = trophyPrefab.GetComponent<ItemDrop>();
-
-            if (itemDrop == null)
-            {
-                return null;
-            }
-
-            sprite = itemDrop.m_itemData.GetIcon();
 
             if (sprite != null)
             {
@@ -199,6 +211,7 @@ namespace HexResourceTracker.Core.PinManagers
 
             return sprite;
         }
+
 
         private static void SetPinUpdateRequired()
         {
