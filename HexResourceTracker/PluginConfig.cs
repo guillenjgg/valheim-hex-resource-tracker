@@ -194,7 +194,7 @@ namespace HexResourceTracker
 
             entry.SettingChanged += delegate
             {
-                ResourceTrackerMapOverlay.HandleResourceTrackingChanged(prefabName, entry.Value);
+                ResourceTrackerOverlayState.HandleResourceTrackingChanged(prefabName, entry.Value);
                 PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 ContainerResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
@@ -257,7 +257,7 @@ namespace HexResourceTracker
 
             entry.SettingChanged += delegate
             {
-                ResourceTrackerMapOverlay.HandleDungeonTrackingChanged(theme, entry.Value);
+                ResourceTrackerOverlayState.HandleDungeonTrackingChanged(theme, entry.Value);
                 DungeonPinManager.HandleDungeonTrackingChanged(theme, entry.Value);
             };
 
@@ -274,7 +274,7 @@ namespace HexResourceTracker
 
             entry.SettingChanged += delegate
             {
-                ResourceTrackerMapOverlay.HandleCreatureTrackingChanged(prefabName, entry.Value);
+                ResourceTrackerOverlayState.HandleCreatureTrackingChanged(prefabName, entry.Value);
 
                 if (!entry.Value)
                 {

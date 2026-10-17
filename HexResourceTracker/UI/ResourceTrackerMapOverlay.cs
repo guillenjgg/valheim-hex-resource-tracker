@@ -1,6 +1,5 @@
 ﻿using HexResourceTracker.Core;
 using HexResourceTracker.Models;
-using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -21,10 +20,6 @@ namespace HexResourceTracker.UI
         private static TextMeshProUGUI _collapseText;
         private static bool _isCollapsed;
 
-        private static readonly Dictionary<string, Toggle> ResourceToggles = new Dictionary<string, Toggle>();
-        private static readonly Dictionary<Room.Theme, Toggle> DungeonToggles = new Dictionary<Room.Theme, Toggle>();
-        private static readonly Dictionary<string, Toggle> CreatureToggles = new Dictionary<string, Toggle>();
-
         internal static void Create()
         {
             if (_panel != null)
@@ -37,9 +32,7 @@ namespace HexResourceTracker.UI
                 return;
             }
 
-            ResourceToggles.Clear();
-            DungeonToggles.Clear();
-            CreatureToggles.Clear();
+            ResourceTrackerOverlayState.Clear();
 
             _isCollapsed = false;
 
@@ -92,35 +85,6 @@ namespace HexResourceTracker.UI
 
             contentRect.sizeDelta = new Vector2(0f, contentHeight);
             _panelRect.sizeDelta = new Vector2(PanelWidth, HeaderHeight + contentHeight);
-        }
-
-        internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
-        {
-            if (string.IsNullOrWhiteSpace(prefabName))
-            {
-                return;
-            }
-
-            if (ResourceToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
-            {
-                toggle.SetIsOnWithoutNotify(isEnabled);
-            }
-        }
-
-        internal static void HandleDungeonTrackingChanged(Room.Theme theme, bool isEnabled)
-        {
-            if (DungeonToggles.TryGetValue(theme, out Toggle toggle) && toggle != null)
-            {
-                toggle.SetIsOnWithoutNotify(isEnabled);
-            }
-        }
-
-        internal static void HandleCreatureTrackingChanged(string prefabName, bool isEnabled)
-        {
-            if (CreatureToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
-            {
-                toggle.SetIsOnWithoutNotify(isEnabled);
-            }
         }
 
         private static void BuildResources(GameObject parent)
@@ -272,7 +236,7 @@ namespace HexResourceTracker.UI
             bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
-            ResourceToggles[prefabName] = toggle;
+            ResourceTrackerOverlayState.ResourceToggles[prefabName] = toggle;
 
             toggle.onValueChanged.AddListener(delegate (bool value)
             {
@@ -286,7 +250,7 @@ namespace HexResourceTracker.UI
             bool isEnabled = PluginConfig.DungeonConfigs[theme].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
-            DungeonToggles[theme] = toggle;
+            ResourceTrackerOverlayState.DungeonToggles[theme] = toggle;
 
             toggle.onValueChanged.AddListener(delegate (bool value)
             {
@@ -300,7 +264,7 @@ namespace HexResourceTracker.UI
             bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
-            CreatureToggles[prefabName] = toggle;
+            ResourceTrackerOverlayState.CreatureToggles[prefabName] = toggle;
 
             toggle.onValueChanged.AddListener(delegate (bool value)
             {

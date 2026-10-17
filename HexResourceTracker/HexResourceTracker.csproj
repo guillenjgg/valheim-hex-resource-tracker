@@ -129,6 +129,7 @@
     <Compile Include="Models\ResourcePinModel.cs" />
     <Compile Include="UI\ResourceTrackerMapOverlay.cs" />
     <Compile Include="Core\TrackedResourceDefinitions.cs" />
+    <Compile Include="UI\ResourceTrackerOverlayState.cs" />
     <Compile Include="UI\ResourceTrackerOverlayUiFactory.cs" />
   </ItemGroup>
   <ItemGroup>
