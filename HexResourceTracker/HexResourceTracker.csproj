@@ -36,11 +36,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_utils_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0.14\assembly_utils_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.20\assembly_utils_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_valheim_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0.14\assembly_valheim_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.20\assembly_valheim_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
@@ -48,7 +48,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Splatform_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0\Splatform_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.20\Splatform_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -67,8 +67,16 @@
       <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\valheim_mod_libraries\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
@@ -77,20 +85,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Assetbundles\AssetBundleHelper.cs" />
     <Compile Include="Core\ContainerResourcePinService.cs" />
+    <Compile Include="Core\PinManagers\CreaturePinManager.cs" />
     <Compile Include="Core\PinManagers\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
+    <Compile Include="Core\TrackedCreatures.cs" />
+    <Compile Include="Core\TrackedDungeons.cs" />
     <Compile Include="Core\TrackedResources.cs" />
-    <Compile Include="Core\Tracking\MapTrackingScanner.cs" />
-    <Compile Include="Core\Tracking\TrackedDungeonLocation.cs" />
-    <Compile Include="Core\Tracking\TrackedMapObject.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\CreatureTrackingUpdater.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\MapTrackingScanner.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\TrackedCreature.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\TrackedDungeonLocation.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\TrackedMapObject.cs" />
     <Compile Include="Core\Tracking\TrackingRangeService.cs" />
     <Compile Include="Core\Tracking\TrackingModeEnum.cs" />
+    <Compile Include="Models\CreaturePinModel.cs" />
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
-    <Compile Include="Models\TrackedResourceDefinition.cs" />
+    <Compile Include="Models\TrackedCreatureDefinitionModel.cs" />
+    <Compile Include="Models\TrackedDungeonDefinitionModel.cs" />
+    <Compile Include="Models\TrackedResourceDefinitionModel.cs" />
     <Compile Include="Models\TrackedResourceTypeEnum.cs" />
+    <Compile Include="Patches\PatchCharacterAwake.cs" />
     <Compile Include="Patches\PatchContainerAwake.cs" />
     <Compile Include="Patches\PatchContainerOnContainerChanged.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
@@ -113,8 +131,11 @@
     <Compile Include="Models\ResourcePinModel.cs" />
     <Compile Include="UI\ResourceTrackerMapOverlay.cs" />
     <Compile Include="Core\TrackedResourceDefinitions.cs" />
+    <Compile Include="UI\ResourceTrackerOverlayState.cs" />
+    <Compile Include="UI\ResourceTrackerOverlayUiFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Assets\Assetbundles\customicons" />
     <None Include="CHANGELOG.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

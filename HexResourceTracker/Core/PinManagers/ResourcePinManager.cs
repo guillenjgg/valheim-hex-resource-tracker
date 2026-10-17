@@ -366,7 +366,7 @@ namespace HexResourceTracker.Core.PinManagers
             MPinUpdateRequired.SetValue(Minimap.instance, true);
         }
 
-        private static string GetResourcePinLabel(TrackedResourceDefinition definition)
+        private static string GetResourcePinLabel(TrackedResourceDefinitionModel definition)
         {
             if (definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {

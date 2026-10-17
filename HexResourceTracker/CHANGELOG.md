@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.6.0
+
+### Added
+- Creature tracking: deer, boar, hares
+- Collapse toggle for the map tracking overlay
+
+### Changed
+- Split the map tracking overlay into columns
+
+### Changed
+- Compiled against Valheim v1.0.20
+- Updated BepInEx dependency `denikson-BepInExPack_Valheim-5.4.2351`
+
 ## v1.5.0
 
 ### Added

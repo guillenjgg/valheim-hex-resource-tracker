@@ -1,8 +1,7 @@
 ﻿using HexResourceTracker.Core.PinManagers;
-using HexResourceTracker.Core.Tracking;
 using UnityEngine;
 
-namespace HexResourceTracker.Core
+namespace HexResourceTracker.Core.Tracking.Monoscripts
 {
     internal sealed class MapTrackingScanner : MonoBehaviour
     {

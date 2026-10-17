@@ -5,19 +5,19 @@ namespace HexResourceTracker.Core
 {
     internal static class TrackedResources
     {
-        internal static readonly List<TrackedResourceDefinition> AllTrackedResources = new List<TrackedResourceDefinition>
+        internal static readonly List<TrackedResourceDefinitionModel> AllTrackedResources = new List<TrackedResourceDefinitionModel>
         {
             // Meadows
-            new TrackedResourceDefinition("Pickable_Mushroom", "Mushrooms", 100, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_Dandelion", "Dandelions", 110, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("RaspberryBush", "Raspberries", 120, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom", "Mushrooms", 100, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Dandelion", "Dandelions", 110, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("RaspberryBush", "Raspberries", 120, TrackedResourceTypeEnum.Pickable),
 
             // Black Forest
-            new TrackedResourceDefinition("BlueberryBush", "Blueberries", 200, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_Thistle", "Thistle", 210, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_SeedCarrot", "Carrot Seeds", 220, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("BlueberryBush", "Blueberries", 200, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Thistle", "Thistle", 210, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_SeedCarrot", "Carrot Seeds", 220, TrackedResourceTypeEnum.Pickable),
 
-            new TrackedResourceDefinition(
+            new TrackedResourceDefinitionModel(
                 "rock4_copper",
                 "Copper",
                 230,
@@ -26,13 +26,13 @@ namespace HexResourceTracker.Core
                 "$piece_deposit_copper"),
 
             // Swamp
-            new TrackedResourceDefinition("Pickable_SeedTurnip", "Turnip Seeds", 300, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_SeedTurnip", "Turnip Seeds", 300, TrackedResourceTypeEnum.Pickable),
 
             // Mountains
-            new TrackedResourceDefinition("Pickable_DragonEgg", "Dragon Eggs", 400, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("OnionSeeds", "Onion Seeds", 410, TrackedResourceTypeEnum.Container),
+            new TrackedResourceDefinitionModel("Pickable_DragonEgg", "Dragon Eggs", 400, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("OnionSeeds", "Onion Seeds", 410, TrackedResourceTypeEnum.Container),
 
-            new TrackedResourceDefinition(
+            new TrackedResourceDefinitionModel(
                 "silvervein",
                 "Silver",
                 420,
@@ -41,15 +41,15 @@ namespace HexResourceTracker.Core
                 "$piece_deposit_silvervein"),
 
             // Plains
-            new TrackedResourceDefinition("Pickable_Flax_Wild", "Flax", 500, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_Barley_Wild", "Barley", 510, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("CloudberryBush", "Cloudberries", 520, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Flax_Wild", "Flax", 500, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Barley_Wild", "Barley", 510, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("CloudberryBush", "Cloudberries", 520, TrackedResourceTypeEnum.Pickable),
 
             // Mistlands
-            new TrackedResourceDefinition("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", 600, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_Mushroom_Magecap", "Magecap", 610, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", 600, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom_Magecap", "Magecap", 610, TrackedResourceTypeEnum.Pickable),
 
-            new TrackedResourceDefinition(
+            new TrackedResourceDefinitionModel(
                 "giant_skull",
                 "Giant Skull",
                 620,
@@ -58,11 +58,11 @@ namespace HexResourceTracker.Core
                 "$piece_giant_bone"),
 
             // Ashlands
-            new TrackedResourceDefinition("VineAsh", "Vineberries", 700, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_SmokePuff", "Smoke Puffs", 710, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_Fiddlehead", "Fiddleheads", 720, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("VineAsh", "Vineberries", 700, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_SmokePuff", "Smoke Puffs", 710, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Fiddlehead", "Fiddleheads", 720, TrackedResourceTypeEnum.Pickable),
 
-            new TrackedResourceDefinition(
+            new TrackedResourceDefinitionModel(
                 "LeviathanLava",
                 "Flametal",
                 730,
@@ -72,37 +72,37 @@ namespace HexResourceTracker.Core
                 "$item_flametalore"),
 
             // Deep North
-            new TrackedResourceDefinition("LingonberryBush", "Lingonberries", 800, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinition("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable)
+            new TrackedResourceDefinitionModel("LingonberryBush", "Lingonberries", 800, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable)
         };
 
-        private static readonly Dictionary<string, TrackedResourceDefinition> ByPrefabName = new Dictionary<string, TrackedResourceDefinition>();
-        private static readonly Dictionary<string, TrackedResourceDefinition> ByMineRock5Name = new Dictionary<string, TrackedResourceDefinition>();
-        private static readonly Dictionary<string, TrackedResourceDefinition> ByMineRockName = new Dictionary<string, TrackedResourceDefinition>();
+        private static readonly Dictionary<string, TrackedResourceDefinitionModel> ByPrefabName = new Dictionary<string, TrackedResourceDefinitionModel>();
+        private static readonly Dictionary<string, TrackedResourceDefinitionModel> ByMineRock5Name = new Dictionary<string, TrackedResourceDefinitionModel>();
+        private static readonly Dictionary<string, TrackedResourceDefinitionModel> ByMineRockName = new Dictionary<string, TrackedResourceDefinitionModel>();
 
         static TrackedResources()
         {
             BuildResourceLookups();
         }
 
-        internal static bool TryGetByPrefabName(string prefabName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByPrefabName(string prefabName, out TrackedResourceDefinitionModel definition)
         {
             return ByPrefabName.TryGetValue(prefabName, out definition);
         }
 
-        internal static bool TryGetByMineRock5(string mineRockName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByMineRock5(string mineRockName, out TrackedResourceDefinitionModel definition)
         {
             return ByMineRock5Name.TryGetValue(mineRockName, out definition);
         }
 
-        internal static bool TryGetByMineRock(string mineRockName, out TrackedResourceDefinition definition)
+        internal static bool TryGetByMineRock(string mineRockName, out TrackedResourceDefinitionModel definition)
         {
             return ByMineRockName.TryGetValue(mineRockName, out definition);
         }
 
         private static void BuildResourceLookups()
         {
-            foreach (TrackedResourceDefinition resource in AllTrackedResources)
+            foreach (TrackedResourceDefinitionModel resource in AllTrackedResources)
             {
                 ByPrefabName[resource.ResourcePrefabName] = resource;
 
