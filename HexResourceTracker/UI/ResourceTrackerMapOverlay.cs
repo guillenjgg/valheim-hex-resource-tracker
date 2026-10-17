@@ -11,7 +11,21 @@ namespace HexResourceTracker.UI
 {
     internal static class ResourceTrackerMapOverlay
     {
+        private const float PanelWidth = 370f;
+        private const float ColumnWidth = 180f;
+        private const float ColumnSpacing = 6f;
+        private const float HeaderHeight = 28f;
+        private const float SectionHeight = 24f;
+        private const float ToggleHeight = 24f;
+        private const float RowSpacing = 1f;
+        private const float SectionSpacing = 6f;
+        private const float ContentPadding = 6f;
+
         private static GameObject _panel;
+        private static GameObject _content;
+        private static RectTransform _panelRect;
+        private static TextMeshProUGUI _collapseText;
+        private static bool _isCollapsed;
 
         private static readonly Dictionary<string, Toggle> ResourceToggles = new Dictionary<string, Toggle>();
         private static readonly Dictionary<Room.Theme, Toggle> DungeonToggles = new Dictionary<Room.Theme, Toggle>();
@@ -29,98 +43,55 @@ namespace HexResourceTracker.UI
                 return;
             }
 
+            ResourceToggles.Clear();
+            DungeonToggles.Clear();
+            CreatureToggles.Clear();
+
+            _isCollapsed = false;
+
             _panel = new GameObject("HexResourceTrackerOverlay");
             _panel.transform.SetParent(Minimap.instance.m_largeRoot.transform, false);
 
-            RectTransform panelRect = _panel.AddComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(1f, 1f);
-            panelRect.anchorMax = new Vector2(1f, 1f);
-            panelRect.pivot = new Vector2(1f, 1f);
-            panelRect.anchoredPosition = new Vector2(-20f, -50f);
-
-            var creatureCount = TrackedCreatures.AllTrackedCreatures.Count;
-            var panelHeight = 925f + creatureCount * 25f;
-
-            panelRect.sizeDelta = new Vector2(180f, panelHeight);
+            _panelRect = _panel.AddComponent<RectTransform>();
+            _panelRect.anchorMin = new Vector2(1f, 1f);
+            _panelRect.anchorMax = new Vector2(1f, 1f);
+            _panelRect.pivot = new Vector2(1f, 1f);
+            _panelRect.anchoredPosition = new Vector2(-20f, -50f);
+            _panelRect.sizeDelta = new Vector2(PanelWidth, HeaderHeight);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
             AddTitle();
 
-            // Resources
-            AddSectionHeader("Resources", -32f);
+            _content = new GameObject("Content");
+            _content.transform.SetParent(_panel.transform, false);
 
-            // Meadows
-            AddResourceToggle("Pickable_Mushroom", "Mushrooms", -60f);
-            AddResourceToggle("Pickable_Dandelion", "Dandelions", -85f);
-            AddResourceToggle("RaspberryBush", "Raspberries", -110f);
+            RectTransform contentRect = _content.AddComponent<RectTransform>();
+            contentRect.anchorMin = new Vector2(0f, 1f);
+            contentRect.anchorMax = new Vector2(1f, 1f);
+            contentRect.pivot = new Vector2(0.5f, 1f);
+            contentRect.anchoredPosition = new Vector2(0f, -HeaderHeight);
+            contentRect.sizeDelta = new Vector2(0f, 0f);
 
-            // Black Forest
-            AddResourceToggle("BlueberryBush", "Blueberries", -135f);
-            AddResourceToggle("Pickable_Thistle", "Thistle", -160f);
-            AddResourceToggle("Pickable_SeedCarrot", "Carrot Seeds", -185f);
+            GameObject leftColumn = CreateColumn("ResourcesColumn", ContentPadding);
+            GameObject rightColumn = CreateColumn("TrackingColumn", ContentPadding + ColumnWidth + ColumnSpacing);
 
-            // Swamp
-            AddResourceToggle("Pickable_SeedTurnip", "Turnip Seeds", -210f);
+            BuildResources(leftColumn);
+            BuildDeposits(rightColumn);
+            BuildDungeons(rightColumn);
+            BuildCreatures(rightColumn);
 
-            // Mountains
-            AddResourceToggle("Pickable_DragonEgg", "Dragon Eggs", -235f);
-            AddResourceToggle("OnionSeeds", "Onion Seeds", -260f);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(leftColumn.GetComponent<RectTransform>());
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rightColumn.GetComponent<RectTransform>());
 
-            // Plains
-            AddResourceToggle("Pickable_Flax_Wild", "Flax", -285f);
-            AddResourceToggle("Pickable_Barley_Wild", "Barley", -310f);
-            AddResourceToggle("CloudberryBush", "Cloudberries", -335f);
+            float leftHeight = LayoutUtility.GetPreferredHeight(leftColumn.GetComponent<RectTransform>());
+            float rightHeight = LayoutUtility.GetPreferredHeight(rightColumn.GetComponent<RectTransform>());
 
-            // Mistlands
-            AddResourceToggle("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", -360f);
-            AddResourceToggle("Pickable_Mushroom_Magecap", "Magecap", -385f);
+            float contentHeight = Mathf.Max(leftHeight, rightHeight) + ContentPadding * 2f;
 
-            // Ashlands
-            AddResourceToggle("VineAsh", "Vineberries", -410f);
-            AddResourceToggle("Pickable_SmokePuff", "Smoke Puffs", -435f);
-            AddResourceToggle("Pickable_Fiddlehead", "Fiddleheads", -460f);
-
-            // Deep North
-            AddResourceToggle("LingonberryBush", "Lingonberries", -485f);
-            AddResourceToggle("Pickable_SeedKale", "Kale Seeds", -510f);
-
-            // Deposits
-            AddSectionHeader("Deposits", -540f);
-
-            // Black Forest
-            AddResourceToggle("rock4_copper", "Copper", -568f);
-
-            // Mountains
-            AddResourceToggle("silvervein", "Silver", -593f);
-
-            // Mistlands
-            AddResourceToggle("giant_skull", "Giant Skull", -618f);
-
-            // Ashlands
-            AddResourceToggle("LeviathanLava", "Flametal", -643f);
-
-            // Dungeons
-            AddSectionHeader("Dungeons", -673f);
-
-            AddDungeonToggle(Room.Theme.ForestCrypt, "Burial Chambers", -701f);
-            AddDungeonToggle(Room.Theme.SunkenCrypt, "Sunken Crypts", -726f);
-            AddDungeonToggle(Room.Theme.Cave, "Frost Caves", -751f);
-            AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -776f);
-            AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -801f);
-            AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -826f);
-
-            // Creatures
-            AddSectionHeader("Creatures", -856f);
-
-            var creatureYPosition = -884f;
-
-            foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
-            {
-                AddCreatureToggle(creature.PrefabName, creature.DisplayName, creatureYPosition);
-                creatureYPosition -= 25f;
-            }
+            contentRect.sizeDelta = new Vector2(0f, contentHeight);
+            _panelRect.sizeDelta = new Vector2(PanelWidth, HeaderHeight + contentHeight);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
@@ -152,18 +123,77 @@ namespace HexResourceTracker.UI
             }
         }
 
-        private static void AddCreatureToggle(string prefabName, string displayName, float yPosition)
+        private static GameObject CreateColumn(string name, float xPosition)
         {
-            Toggle toggle = CreateToggle($"{prefabName}_Toggle", displayName, yPosition);
-            bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
+            GameObject column = new GameObject(name);
+            column.transform.SetParent(_content.transform, false);
 
-            toggle.SetIsOnWithoutNotify(isEnabled);
-            CreatureToggles[prefabName] = toggle;
+            RectTransform rect = column.AddComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(xPosition, -ContentPadding);
+            rect.sizeDelta = new Vector2(ColumnWidth, 0f);
 
-            toggle.onValueChanged.AddListener(delegate (bool value)
+            VerticalLayoutGroup layout = column.AddComponent<VerticalLayoutGroup>();
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.spacing = RowSpacing;
+            layout.padding = new RectOffset(0, 0, 0, 0);
+
+            ContentSizeFitter fitter = column.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            return column;
+        }
+
+        private static void BuildResources(GameObject parent)
+        {
+            AddSectionHeader(parent, "Resources");
+
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
+                .Where(resource => resource.ResourceType != TrackedResourceTypeEnum.Deposit)
+                .OrderBy(resource => resource.SortOrder))
             {
-                PluginConfig.CreatureConfigs[prefabName].Value = value;
-            });
+                AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
+            }
+        }
+
+        private static void BuildDeposits(GameObject parent)
+        {
+            AddSectionHeader(parent, "Deposits");
+
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
+                .Where(resource => resource.ResourceType == TrackedResourceTypeEnum.Deposit)
+                .OrderBy(resource => resource.SortOrder))
+            {
+                AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
+            }
+        }
+
+        private static void BuildDungeons(GameObject parent)
+        {
+            AddSectionHeader(parent, "Dungeons", SectionSpacing);
+
+            AddDungeonToggle(parent, Room.Theme.ForestCrypt, "Burial Chambers");
+            AddDungeonToggle(parent, Room.Theme.SunkenCrypt, "Sunken Crypts");
+            AddDungeonToggle(parent, Room.Theme.Cave, "Frost Caves");
+            AddDungeonToggle(parent, Room.Theme.DvergerTown, "Infested Mines");
+            AddDungeonToggle(parent, Room.Theme.MorkHalla, "Morkhalla");
+            AddDungeonToggle(parent, Room.Theme.Hole, "Winding Tunnels");
+        }
+
+        private static void BuildCreatures(GameObject parent)
+        {
+            AddSectionHeader(parent, "Creatures", SectionSpacing);
+
+            foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
+            {
+                AddCreatureToggle(parent, creature.PrefabName, creature.DisplayName);
+            }
         }
 
         private static void AddTitle()
@@ -176,7 +206,7 @@ namespace HexResourceTracker.UI
             titleRect.anchorMax = new Vector2(1f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
             titleRect.anchoredPosition = Vector2.zero;
-            titleRect.sizeDelta = new Vector2(0f, 28f);
+            titleRect.sizeDelta = new Vector2(0f, HeaderHeight);
 
             Image dragTarget = titleObject.AddComponent<Image>();
             dragTarget.color = new Color(0.10f, 0.07f, 0.04f, 0.95f);
@@ -190,8 +220,8 @@ namespace HexResourceTracker.UI
             RectTransform titleTextRect = titleTextObject.AddComponent<RectTransform>();
             titleTextRect.anchorMin = Vector2.zero;
             titleTextRect.anchorMax = Vector2.one;
-            titleTextRect.offsetMin = Vector2.zero;
-            titleTextRect.offsetMax = Vector2.zero;
+            titleTextRect.offsetMin = new Vector2(30f, 0f);
+            titleTextRect.offsetMax = new Vector2(-30f, 0f);
 
             TextMeshProUGUI title = titleTextObject.AddComponent<TextMeshProUGUI>();
             title.font = Minimap.instance.m_biomeNameLarge.font;
@@ -199,21 +229,87 @@ namespace HexResourceTracker.UI
             title.fontSize = 12f;
             title.alignment = TextAlignmentOptions.Center;
             title.color = Color.white;
+            title.raycastTarget = false;
 
+            AddCollapseButton(titleObject);
             AddSeparator(titleObject);
         }
 
-        private static void AddSectionHeader(string text, float yPosition)
+        private static void AddCollapseButton(GameObject parent)
+        {
+            GameObject buttonObject = new GameObject("CollapseButton");
+            buttonObject.transform.SetParent(parent.transform, false);
+
+            RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
+            buttonRect.anchorMin = new Vector2(1f, 0.5f);
+            buttonRect.anchorMax = new Vector2(1f, 0.5f);
+            buttonRect.pivot = new Vector2(1f, 0.5f);
+            buttonRect.anchoredPosition = new Vector2(-4f, 0f);
+            buttonRect.sizeDelta = new Vector2(26f, 24f);
+
+            Image buttonImage = buttonObject.AddComponent<Image>();
+            buttonImage.color = new Color(0.25f, 0.19f, 0.12f, 0.95f);
+
+            Button button = buttonObject.AddComponent<Button>();
+            button.targetGraphic = buttonImage;
+            button.onClick.AddListener(ToggleCollapsed);
+
+            GameObject textObject = new GameObject("Arrow");
+            textObject.transform.SetParent(buttonObject.transform, false);
+
+            RectTransform textRect = textObject.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            _collapseText = textObject.AddComponent<TextMeshProUGUI>();
+            _collapseText.font = Minimap.instance.m_biomeNameLarge.font;
+            _collapseText.text = "−";
+            _collapseText.fontSize = 18f;
+            _collapseText.alignment = TextAlignmentOptions.Center;
+            _collapseText.color = Color.white;
+            _collapseText.raycastTarget = false;
+        }
+
+        private static void ToggleCollapsed()
+        {
+            _isCollapsed = !_isCollapsed;
+
+            if (_content != null)
+            {
+                _content.SetActive(!_isCollapsed);
+            }
+
+            if (_panelRect != null)
+            {
+                float contentHeight = _content.GetComponent<RectTransform>().sizeDelta.y;
+                _panelRect.sizeDelta = new Vector2(PanelWidth, _isCollapsed ? HeaderHeight : HeaderHeight + contentHeight);
+            }
+
+            if (_collapseText != null)
+            {
+                _collapseText.text = _isCollapsed ? "+" : "−";
+            }
+        }
+
+        private static void AddSectionHeader(GameObject parent, string text, float topSpacing = 0f)
         {
             GameObject headerObject = new GameObject($"{text}Header");
-            headerObject.transform.SetParent(_panel.transform, false);
+            headerObject.transform.SetParent(parent.transform, false);
 
             RectTransform headerRect = headerObject.AddComponent<RectTransform>();
-            headerRect.anchorMin = new Vector2(0f, 1f);
-            headerRect.anchorMax = new Vector2(1f, 1f);
-            headerRect.pivot = new Vector2(0.5f, 1f);
-            headerRect.anchoredPosition = new Vector2(0f, yPosition);
-            headerRect.sizeDelta = new Vector2(0f, 24f);
+            headerRect.sizeDelta = new Vector2(ColumnWidth, SectionHeight);
+
+            LayoutElement layoutElement = headerObject.AddComponent<LayoutElement>();
+            layoutElement.preferredHeight = SectionHeight;
+            layoutElement.minHeight = SectionHeight;
+
+            if (topSpacing > 0f)
+            {
+                layoutElement.minHeight += topSpacing;
+                layoutElement.preferredHeight += topSpacing;
+            }
 
             Image headerBackground = headerObject.AddComponent<Image>();
             headerBackground.color = new Color(0.14f, 0.10f, 0.06f, 0.90f);
@@ -234,6 +330,7 @@ namespace HexResourceTracker.UI
             headerText.fontSize = 12f;
             headerText.alignment = TextAlignmentOptions.Center;
             headerText.color = Color.white;
+            headerText.raycastTarget = false;
 
             AddSeparator(headerObject);
         }
@@ -254,9 +351,9 @@ namespace HexResourceTracker.UI
             separatorImage.raycastTarget = false;
         }
 
-        private static void AddResourceToggle(string prefabName, string displayName, float yPosition)
+        private static void AddResourceToggle(GameObject parent, string prefabName, string displayName)
         {
-            Toggle toggle = CreateToggle($"{prefabName}_Toggle", displayName, yPosition);
+            Toggle toggle = CreateToggle(parent, $"{prefabName}_Toggle", displayName);
             bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -268,9 +365,9 @@ namespace HexResourceTracker.UI
             });
         }
 
-        private static void AddDungeonToggle(Room.Theme theme, string displayName, float yPosition)
+        private static void AddDungeonToggle(GameObject parent, Room.Theme theme, string displayName)
         {
-            Toggle toggle = CreateToggle($"{theme}_Toggle", displayName, yPosition);
+            Toggle toggle = CreateToggle(parent, $"{theme}_Toggle", displayName);
             bool isEnabled = PluginConfig.DungeonConfigs[theme].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -282,17 +379,31 @@ namespace HexResourceTracker.UI
             });
         }
 
-        private static Toggle CreateToggle(string objectName, string displayName, float yPosition)
+        private static void AddCreatureToggle(GameObject parent, string prefabName, string displayName)
+        {
+            Toggle toggle = CreateToggle(parent, $"{prefabName}_Toggle", displayName);
+            bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
+
+            toggle.SetIsOnWithoutNotify(isEnabled);
+            CreatureToggles[prefabName] = toggle;
+
+            toggle.onValueChanged.AddListener(delegate (bool value)
+            {
+                PluginConfig.CreatureConfigs[prefabName].Value = value;
+            });
+        }
+
+        private static Toggle CreateToggle(GameObject parent, string objectName, string displayName)
         {
             GameObject toggleObject = new GameObject(objectName);
-            toggleObject.transform.SetParent(_panel.transform, false);
+            toggleObject.transform.SetParent(parent.transform, false);
 
             RectTransform toggleRect = toggleObject.AddComponent<RectTransform>();
-            toggleRect.anchorMin = new Vector2(0f, 1f);
-            toggleRect.anchorMax = new Vector2(1f, 1f);
-            toggleRect.pivot = new Vector2(0.5f, 1f);
-            toggleRect.anchoredPosition = new Vector2(0f, yPosition);
-            toggleRect.sizeDelta = new Vector2(0f, 24f);
+            toggleRect.sizeDelta = new Vector2(ColumnWidth, ToggleHeight);
+
+            LayoutElement layoutElement = toggleObject.AddComponent<LayoutElement>();
+            layoutElement.preferredHeight = ToggleHeight;
+            layoutElement.minHeight = ToggleHeight;
 
             Toggle toggle = toggleObject.AddComponent<Toggle>();
 
@@ -339,6 +450,7 @@ namespace HexResourceTracker.UI
             label.fontSize = 14f;
             label.alignment = TextAlignmentOptions.Left;
             label.color = Color.white;
+            label.raycastTarget = false;
 
             return toggle;
         }
