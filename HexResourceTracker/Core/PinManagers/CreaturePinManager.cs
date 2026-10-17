@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Assets.Assetbundles;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 using System.Collections.Generic;
 using System.Reflection;
@@ -161,38 +162,24 @@ namespace HexResourceTracker.Core.PinManagers
                 return sprite;
             }
 
-            switch (prefabName)
+            if (!TrackedCreatures.TryGetDefinition(prefabName, out var definition))
             {
-                case "Deer":
-                    sprite = AssetBundleHelper.LoadSprite("HexDeerSprite_Golden_Bold");
-                    break;
+                return null;
             }
 
-            if (sprite == null)
+            if (!string.IsNullOrWhiteSpace(definition.CustomSpriteName))
             {
-                string trophyPrefabName;
+                sprite = AssetBundleHelper.LoadSprite(definition.CustomSpriteName);
+            }
 
-                switch (prefabName)
-                {
-                    case "Deer":
-                        trophyPrefabName = "TrophyDeer";
-                        break;
-                    case "Boar":
-                        trophyPrefabName = "TrophyBoar";
-                        break;
-                    case "Hare":
-                        trophyPrefabName = "TrophyHare";
-                        break;
-                    default:
-                        return null;
-                }
-
+            if (sprite == null && !string.IsNullOrWhiteSpace(definition.TrophyPrefabName))
+            {
                 if (ObjectDB.instance == null)
                 {
                     return null;
                 }
 
-                var trophyPrefab = ObjectDB.instance.GetItemPrefab(trophyPrefabName);
+                var trophyPrefab = ObjectDB.instance.GetItemPrefab(definition.TrophyPrefabName);
 
                 if (trophyPrefab == null)
                 {

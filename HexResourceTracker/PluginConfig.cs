@@ -2,6 +2,7 @@
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.PinManagers;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 using HexResourceTracker.UI;
 using System.Collections.Generic;
@@ -108,7 +109,7 @@ namespace HexResourceTracker
                 ResourcePinManager.UpdateDepositLabels();
             };
 
-            foreach (TrackedResourceDefinition resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
                 BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
 
@@ -125,9 +126,10 @@ namespace HexResourceTracker
             BindDungeon(config, Room.Theme.MorkHalla, "Morkhalla");
             BindDungeon(config, Room.Theme.Hole, "Winding Tunnel");
 
-            BindCreature(config, "Deer", "Deer");
-            BindCreature(config, "Boar", "Boar");
-            BindCreature(config, "Hare", "Hare");
+            foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
+            {
+                BindCreature(config, creature.PrefabName, creature.DisplayName);
+            }
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)
@@ -201,7 +203,7 @@ namespace HexResourceTracker
             ResourceConfigs[prefabName] = entry;
         }
 
-        private static void BindDepositLabel(ConfigFile config, TrackedResourceDefinition resource)
+        private static void BindDepositLabel(ConfigFile config, TrackedResourceDefinitionModel resource)
         {
             ConfigEntry<string> entry = config.Bind(
                 DepositLabelsSection,

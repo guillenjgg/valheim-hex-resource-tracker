@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Patches

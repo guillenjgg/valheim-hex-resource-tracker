@@ -1,5 +1,8 @@
 ﻿
+using HexResourceTracker.Core;
+using HexResourceTracker.Models;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,7 +37,11 @@ namespace HexResourceTracker.UI
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 1000f);
+
+            var creatureCount = TrackedCreatures.AllTrackedCreatures.Count;
+            var panelHeight = 925f + creatureCount * 25f;
+
+            panelRect.sizeDelta = new Vector2(180f, panelHeight);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -107,9 +114,13 @@ namespace HexResourceTracker.UI
             // Creatures
             AddSectionHeader("Creatures", -856f);
 
-            AddCreatureToggle("Deer", "Deer", -884f);
-            AddCreatureToggle("Boar", "Boar", -909f);
-            AddCreatureToggle("Hare", "Hare", -934f);
+            var creatureYPosition = -884f;
+
+            foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
+            {
+                AddCreatureToggle(creature.PrefabName, creature.DisplayName, creatureYPosition);
+                creatureYPosition -= 25f;
+            }
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)

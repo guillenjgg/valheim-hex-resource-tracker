@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace HexResourceTracker.Core.Tracking
+namespace HexResourceTracker.Core.Tracking.Monoscripts
 {
     internal sealed class TrackedMapObject : MonoBehaviour
     {

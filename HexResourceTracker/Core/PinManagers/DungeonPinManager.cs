@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;

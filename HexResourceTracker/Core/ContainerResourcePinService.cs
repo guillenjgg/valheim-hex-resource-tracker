@@ -1,5 +1,5 @@
 ﻿using HexResourceTracker.Core.PinManagers;
-using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Core
@@ -20,7 +20,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinition definition, out string iconItemPrefabName) ||
+            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinitionModel definition, out string iconItemPrefabName) ||
                 !PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
             {
                 ResourcePinManager.RemoveResourcePin(zdo.m_uid);
@@ -38,7 +38,7 @@ namespace HexResourceTracker.Core
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
         {
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Container)
             {
                 return;
@@ -61,7 +61,7 @@ namespace HexResourceTracker.Core
             }
         }
 
-        private static bool TryGetTrackedContainerResource(Container container, out TrackedResourceDefinition definition, out string iconItemPrefabName)
+        private static bool TryGetTrackedContainerResource(Container container, out TrackedResourceDefinitionModel definition, out string iconItemPrefabName)
         {
             var inventory = container.GetInventory();
 

@@ -1,8 +1,7 @@
-﻿
-using HexResourceTracker.Core.PinManagers;
+﻿using HexResourceTracker.Core.PinManagers;
 using UnityEngine;
 
-namespace HexResourceTracker.Core.Tracking
+namespace HexResourceTracker.Core.Tracking.Monoscripts
 {
     internal sealed class CreatureTrackingUpdater : MonoBehaviour
     {

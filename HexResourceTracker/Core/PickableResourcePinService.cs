@@ -1,5 +1,5 @@
 ﻿using HexResourceTracker.Core.PinManagers;
-using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 using UnityEngine;
 
@@ -28,7 +28,7 @@ namespace HexResourceTracker.Core
 
             string prefabName = pickable.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Pickable)
             {
                 return false;
@@ -60,7 +60,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Pickable)
             {
                 return;

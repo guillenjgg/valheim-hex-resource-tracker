@@ -1,6 +1,6 @@
 ﻿namespace HexResourceTracker.Models
 {
-    internal sealed class TrackedResourceDefinition
+    internal sealed class TrackedResourceDefinitionModel
     {
         internal string ResourcePrefabName { get; }
         internal string DisplayName { get; }
@@ -10,7 +10,7 @@
         internal string MineRock5Name { get; }
         internal string MineRockName { get; }
 
-        internal TrackedResourceDefinition(
+        internal TrackedResourceDefinitionModel(
             string resourcePrefabName,
             string displayName,
             int sortOrder,

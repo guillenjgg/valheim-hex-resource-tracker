@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core.PinManagers;
-using HexResourceTracker.Core.Tracking;
+using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 using System.Reflection;
 using UnityEngine;
@@ -22,7 +22,7 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -61,7 +61,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -110,7 +110,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -157,7 +157,7 @@ namespace HexResourceTracker.Core
 
             string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -187,7 +187,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -217,7 +217,7 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinition definition) ||
+            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return;
@@ -329,7 +329,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinition definition))
+                if (!TrackedResources.TryGetByMineRock5(mineRock.m_name, out TrackedResourceDefinitionModel definition))
                 {
                     continue;
                 }
@@ -354,7 +354,7 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinition definition))
+                if (!TrackedResources.TryGetByMineRock(mineRock.m_name, out TrackedResourceDefinitionModel definition))
                 {
                     continue;
                 }
