@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.6.0
+
+### Added
+-
+
+### Changed
+- Compiled against Valheim v1.0.20
+- Updated BepInEx dependency `denikson-BepInExPack_Valheim-5.4.2351`
+
 ## v1.5.0
 
 ### Added
