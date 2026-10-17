@@ -1,5 +1,4 @@
-﻿
-using HexResourceTracker.Core;
+﻿using HexResourceTracker.Core;
 using HexResourceTracker.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +11,9 @@ namespace HexResourceTracker.UI
     internal static class ResourceTrackerMapOverlay
     {
         private const float PanelWidth = 370f;
-        private const float ColumnWidth = 180f;
         private const float ColumnSpacing = 6f;
         private const float HeaderHeight = 28f;
-        private const float SectionHeight = 24f;
-        private const float ToggleHeight = 24f;
-        private const float RowSpacing = 1f;
         private const float SectionSpacing = 6f;
-        private const float ContentPadding = 6f;
 
         private static GameObject _panel;
         private static GameObject _content;
@@ -74,8 +68,14 @@ namespace HexResourceTracker.UI
             contentRect.anchoredPosition = new Vector2(0f, -HeaderHeight);
             contentRect.sizeDelta = new Vector2(0f, 0f);
 
-            GameObject leftColumn = CreateColumn("ResourcesColumn", ContentPadding);
-            GameObject rightColumn = CreateColumn("TrackingColumn", ContentPadding + ColumnWidth + ColumnSpacing);
+            float columnWidth = ResourceTrackerOverlayUiFactory.ColumnWidth;
+            float contentPadding = ResourceTrackerOverlayUiFactory.ContentPadding;
+
+            GameObject leftColumn = ResourceTrackerOverlayUiFactory.CreateColumn(
+                _content, "ResourcesColumn", contentPadding);
+
+            GameObject rightColumn = ResourceTrackerOverlayUiFactory.CreateColumn(
+                _content, "TrackingColumn", contentPadding + columnWidth + ColumnSpacing);
 
             BuildResources(leftColumn);
             BuildDeposits(rightColumn);
@@ -88,7 +88,7 @@ namespace HexResourceTracker.UI
             float leftHeight = LayoutUtility.GetPreferredHeight(leftColumn.GetComponent<RectTransform>());
             float rightHeight = LayoutUtility.GetPreferredHeight(rightColumn.GetComponent<RectTransform>());
 
-            float contentHeight = Mathf.Max(leftHeight, rightHeight) + ContentPadding * 2f;
+            float contentHeight = Mathf.Max(leftHeight, rightHeight) + contentPadding * 2f;
 
             contentRect.sizeDelta = new Vector2(0f, contentHeight);
             _panelRect.sizeDelta = new Vector2(PanelWidth, HeaderHeight + contentHeight);
@@ -123,36 +123,9 @@ namespace HexResourceTracker.UI
             }
         }
 
-        private static GameObject CreateColumn(string name, float xPosition)
-        {
-            GameObject column = new GameObject(name);
-            column.transform.SetParent(_content.transform, false);
-
-            RectTransform rect = column.AddComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
-            rect.pivot = new Vector2(0f, 1f);
-            rect.anchoredPosition = new Vector2(xPosition, -ContentPadding);
-            rect.sizeDelta = new Vector2(ColumnWidth, 0f);
-
-            VerticalLayoutGroup layout = column.AddComponent<VerticalLayoutGroup>();
-            layout.childAlignment = TextAnchor.UpperLeft;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
-            layout.spacing = RowSpacing;
-            layout.padding = new RectOffset(0, 0, 0, 0);
-
-            ContentSizeFitter fitter = column.AddComponent<ContentSizeFitter>();
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-            return column;
-        }
-
         private static void BuildResources(GameObject parent)
         {
-            AddSectionHeader(parent, "Resources");
+            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Resources");
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
                 .Where(resource => resource.ResourceType != TrackedResourceTypeEnum.Deposit)
@@ -164,7 +137,7 @@ namespace HexResourceTracker.UI
 
         private static void BuildDeposits(GameObject parent)
         {
-            AddSectionHeader(parent, "Deposits");
+            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Deposits");
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
                 .Where(resource => resource.ResourceType == TrackedResourceTypeEnum.Deposit)
@@ -176,7 +149,7 @@ namespace HexResourceTracker.UI
 
         private static void BuildDungeons(GameObject parent)
         {
-            AddSectionHeader(parent, "Dungeons", SectionSpacing);
+            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Dungeons", SectionSpacing);
 
             AddDungeonToggle(parent, Room.Theme.ForestCrypt, "Burial Chambers");
             AddDungeonToggle(parent, Room.Theme.SunkenCrypt, "Sunken Crypts");
@@ -188,7 +161,7 @@ namespace HexResourceTracker.UI
 
         private static void BuildCreatures(GameObject parent)
         {
-            AddSectionHeader(parent, "Creatures", SectionSpacing);
+            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Creatures", SectionSpacing);
 
             foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
             {
@@ -232,7 +205,7 @@ namespace HexResourceTracker.UI
             title.raycastTarget = false;
 
             AddCollapseButton(titleObject);
-            AddSeparator(titleObject);
+            ResourceTrackerOverlayUiFactory.AddSeparator(titleObject);
         }
 
         private static void AddCollapseButton(GameObject parent)
@@ -293,67 +266,9 @@ namespace HexResourceTracker.UI
             }
         }
 
-        private static void AddSectionHeader(GameObject parent, string text, float topSpacing = 0f)
-        {
-            GameObject headerObject = new GameObject($"{text}Header");
-            headerObject.transform.SetParent(parent.transform, false);
-
-            RectTransform headerRect = headerObject.AddComponent<RectTransform>();
-            headerRect.sizeDelta = new Vector2(ColumnWidth, SectionHeight);
-
-            LayoutElement layoutElement = headerObject.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = SectionHeight;
-            layoutElement.minHeight = SectionHeight;
-
-            if (topSpacing > 0f)
-            {
-                layoutElement.minHeight += topSpacing;
-                layoutElement.preferredHeight += topSpacing;
-            }
-
-            Image headerBackground = headerObject.AddComponent<Image>();
-            headerBackground.color = new Color(0.14f, 0.10f, 0.06f, 0.90f);
-            headerBackground.raycastTarget = false;
-
-            GameObject textObject = new GameObject("Text");
-            textObject.transform.SetParent(headerObject.transform, false);
-
-            RectTransform textRect = textObject.AddComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
-
-            TextMeshProUGUI headerText = textObject.AddComponent<TextMeshProUGUI>();
-            headerText.font = Minimap.instance.m_biomeNameLarge.font;
-            headerText.text = text;
-            headerText.fontSize = 12f;
-            headerText.alignment = TextAlignmentOptions.Center;
-            headerText.color = Color.white;
-            headerText.raycastTarget = false;
-
-            AddSeparator(headerObject);
-        }
-
-        private static void AddSeparator(GameObject parent)
-        {
-            GameObject separator = new GameObject("Separator");
-            separator.transform.SetParent(parent.transform, false);
-
-            RectTransform separatorRect = separator.AddComponent<RectTransform>();
-            separatorRect.anchorMin = new Vector2(0f, 0f);
-            separatorRect.anchorMax = new Vector2(1f, 0f);
-            separatorRect.pivot = new Vector2(0.5f, 0f);
-            separatorRect.sizeDelta = new Vector2(0f, 2f);
-
-            Image separatorImage = separator.AddComponent<Image>();
-            separatorImage.color = new Color(0.6f, 0.5f, 0.3f, 0.8f);
-            separatorImage.raycastTarget = false;
-        }
-
         private static void AddResourceToggle(GameObject parent, string prefabName, string displayName)
         {
-            Toggle toggle = CreateToggle(parent, $"{prefabName}_Toggle", displayName);
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", displayName);
             bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -367,7 +282,7 @@ namespace HexResourceTracker.UI
 
         private static void AddDungeonToggle(GameObject parent, Room.Theme theme, string displayName)
         {
-            Toggle toggle = CreateToggle(parent, $"{theme}_Toggle", displayName);
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{theme}_Toggle", displayName);
             bool isEnabled = PluginConfig.DungeonConfigs[theme].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -381,7 +296,7 @@ namespace HexResourceTracker.UI
 
         private static void AddCreatureToggle(GameObject parent, string prefabName, string displayName)
         {
-            Toggle toggle = CreateToggle(parent, $"{prefabName}_Toggle", displayName);
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", displayName);
             bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -391,68 +306,6 @@ namespace HexResourceTracker.UI
             {
                 PluginConfig.CreatureConfigs[prefabName].Value = value;
             });
-        }
-
-        private static Toggle CreateToggle(GameObject parent, string objectName, string displayName)
-        {
-            GameObject toggleObject = new GameObject(objectName);
-            toggleObject.transform.SetParent(parent.transform, false);
-
-            RectTransform toggleRect = toggleObject.AddComponent<RectTransform>();
-            toggleRect.sizeDelta = new Vector2(ColumnWidth, ToggleHeight);
-
-            LayoutElement layoutElement = toggleObject.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = ToggleHeight;
-            layoutElement.minHeight = ToggleHeight;
-
-            Toggle toggle = toggleObject.AddComponent<Toggle>();
-
-            GameObject backgroundObject = new GameObject("Background");
-            backgroundObject.transform.SetParent(toggleObject.transform, false);
-
-            RectTransform backgroundRect = backgroundObject.AddComponent<RectTransform>();
-            backgroundRect.anchorMin = new Vector2(0f, 0.5f);
-            backgroundRect.anchorMax = new Vector2(0f, 0.5f);
-            backgroundRect.pivot = new Vector2(0f, 0.5f);
-            backgroundRect.anchoredPosition = new Vector2(12f, 0f);
-            backgroundRect.sizeDelta = new Vector2(14f, 14f);
-
-            Image backgroundImage = backgroundObject.AddComponent<Image>();
-            backgroundImage.color = Color.white;
-
-            GameObject checkmarkObject = new GameObject("Checkmark");
-            checkmarkObject.transform.SetParent(backgroundObject.transform, false);
-
-            RectTransform checkmarkRect = checkmarkObject.AddComponent<RectTransform>();
-            checkmarkRect.anchorMin = Vector2.zero;
-            checkmarkRect.anchorMax = Vector2.one;
-            checkmarkRect.offsetMin = new Vector2(3f, 3f);
-            checkmarkRect.offsetMax = new Vector2(-3f, -3f);
-
-            Image checkmarkImage = checkmarkObject.AddComponent<Image>();
-            checkmarkImage.color = Color.green;
-
-            toggle.targetGraphic = backgroundImage;
-            toggle.graphic = checkmarkImage;
-
-            GameObject labelObject = new GameObject("Label");
-            labelObject.transform.SetParent(toggleObject.transform, false);
-
-            RectTransform labelRect = labelObject.AddComponent<RectTransform>();
-            labelRect.anchorMin = Vector2.zero;
-            labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = new Vector2(34f, 0f);
-            labelRect.offsetMax = new Vector2(-10f, 0f);
-
-            TextMeshProUGUI label = labelObject.AddComponent<TextMeshProUGUI>();
-            label.font = Minimap.instance.m_biomeNameLarge.font;
-            label.text = displayName;
-            label.fontSize = 14f;
-            label.alignment = TextAlignmentOptions.Left;
-            label.color = Color.white;
-            label.raycastTarget = false;
-
-            return toggle;
         }
     }
 }
