@@ -49,7 +49,7 @@ namespace HexResourceTracker.UI
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
-            AddTitle();
+            _collapseText = ResourceTrackerOverlayUiFactory.CreateTitle(_panel, HeaderHeight, ToggleCollapsed);
 
             _content = new GameObject("Content");
             _content.transform.SetParent(_panel.transform, false);
@@ -131,82 +131,6 @@ namespace HexResourceTracker.UI
             {
                 AddCreatureToggle(parent, creature.PrefabName, creature.DisplayName);
             }
-        }
-
-        private static void AddTitle()
-        {
-            GameObject titleObject = new GameObject("Title");
-            titleObject.transform.SetParent(_panel.transform, false);
-
-            RectTransform titleRect = titleObject.AddComponent<RectTransform>();
-            titleRect.anchorMin = new Vector2(0f, 1f);
-            titleRect.anchorMax = new Vector2(1f, 1f);
-            titleRect.pivot = new Vector2(0.5f, 1f);
-            titleRect.anchoredPosition = Vector2.zero;
-            titleRect.sizeDelta = new Vector2(0f, HeaderHeight);
-
-            Image dragTarget = titleObject.AddComponent<Image>();
-            dragTarget.color = new Color(0.10f, 0.07f, 0.04f, 0.95f);
-            dragTarget.raycastTarget = true;
-
-            titleObject.AddComponent<ResourceTrackerDragHandler>();
-
-            GameObject titleTextObject = new GameObject("TitleText");
-            titleTextObject.transform.SetParent(titleObject.transform, false);
-
-            RectTransform titleTextRect = titleTextObject.AddComponent<RectTransform>();
-            titleTextRect.anchorMin = Vector2.zero;
-            titleTextRect.anchorMax = Vector2.one;
-            titleTextRect.offsetMin = new Vector2(30f, 0f);
-            titleTextRect.offsetMax = new Vector2(-30f, 0f);
-
-            TextMeshProUGUI title = titleTextObject.AddComponent<TextMeshProUGUI>();
-            title.font = Minimap.instance.m_biomeNameLarge.font;
-            title.text = "Map Tracking";
-            title.fontSize = 12f;
-            title.alignment = TextAlignmentOptions.Center;
-            title.color = Color.white;
-            title.raycastTarget = false;
-
-            AddCollapseButton(titleObject);
-            ResourceTrackerOverlayUiFactory.AddSeparator(titleObject);
-        }
-
-        private static void AddCollapseButton(GameObject parent)
-        {
-            GameObject buttonObject = new GameObject("CollapseButton");
-            buttonObject.transform.SetParent(parent.transform, false);
-
-            RectTransform buttonRect = buttonObject.AddComponent<RectTransform>();
-            buttonRect.anchorMin = new Vector2(1f, 0.5f);
-            buttonRect.anchorMax = new Vector2(1f, 0.5f);
-            buttonRect.pivot = new Vector2(1f, 0.5f);
-            buttonRect.anchoredPosition = new Vector2(-4f, 0f);
-            buttonRect.sizeDelta = new Vector2(26f, 24f);
-
-            Image buttonImage = buttonObject.AddComponent<Image>();
-            buttonImage.color = new Color(0.25f, 0.19f, 0.12f, 0.95f);
-
-            Button button = buttonObject.AddComponent<Button>();
-            button.targetGraphic = buttonImage;
-            button.onClick.AddListener(ToggleCollapsed);
-
-            GameObject textObject = new GameObject("Arrow");
-            textObject.transform.SetParent(buttonObject.transform, false);
-
-            RectTransform textRect = textObject.AddComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
-
-            _collapseText = textObject.AddComponent<TextMeshProUGUI>();
-            _collapseText.font = Minimap.instance.m_biomeNameLarge.font;
-            _collapseText.text = "−";
-            _collapseText.fontSize = 18f;
-            _collapseText.alignment = TextAlignmentOptions.Center;
-            _collapseText.color = Color.white;
-            _collapseText.raycastTarget = false;
         }
 
         private static void ToggleCollapsed()
