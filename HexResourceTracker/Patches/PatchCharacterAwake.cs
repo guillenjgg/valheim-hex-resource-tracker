@@ -1,5 +1,4 @@
-﻿
-using HarmonyLib;
+﻿using HarmonyLib;
 using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
@@ -14,14 +13,22 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+            var prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (prefabName == "Deer_0")
+            switch (prefabName)
             {
-                prefabName = "Deer";
+                case "Deer_0":
+                    prefabName = "Deer";
+                    break;
+                case "Boar_0":
+                    prefabName = "Boar";
+                    break;
+                case "Hare_0":
+                    prefabName = "Hare";
+                    break;
             }
 
-            if (prefabName != "Deer")
+            if (prefabName != "Deer" && prefabName != "Boar" && prefabName != "Hare")
             {
                 return;
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,7 +34,7 @@ namespace HexResourceTracker.UI
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 960f);
+            panelRect.sizeDelta = new Vector2(180f, 1000f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -107,6 +108,8 @@ namespace HexResourceTracker.UI
             AddSectionHeader("Creatures", -856f);
 
             AddCreatureToggle("Deer", "Deer", -884f);
+            AddCreatureToggle("Boar", "Boar", -909f);
+            AddCreatureToggle("Hare", "Hare", -934f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
@@ -151,7 +154,6 @@ namespace HexResourceTracker.UI
                 PluginConfig.CreatureConfigs[prefabName].Value = value;
             });
         }
-
 
         private static void AddTitle()
         {

@@ -59,7 +59,7 @@ namespace HexResourceTracker
                 "Tracking Range",
                 50f,
                 new ConfigDescription(
-                    "Maximum distance in meters from the player to track resources and dungeons when using RangeScanner mode.",
+                    "Maximum distance in meters from the player to track resources, dungeons, and creatures when using RangeScanner mode.",
                     new AcceptableValueRange<float>(50f, 2000f)));
 
             TrackingRange.SettingChanged += delegate
@@ -126,6 +126,8 @@ namespace HexResourceTracker
             BindDungeon(config, Room.Theme.Hole, "Winding Tunnel");
 
             BindCreature(config, "Deer", "Deer");
+            BindCreature(config, "Boar", "Boar");
+            BindCreature(config, "Hare", "Hare");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)

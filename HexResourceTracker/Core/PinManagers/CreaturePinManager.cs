@@ -154,7 +154,6 @@ namespace HexResourceTracker.Core.PinManagers
             }
         }
 
-
         private static Sprite GetCreatureSprite(string prefabName)
         {
             if (CreatureSprites.TryGetValue(prefabName, out Sprite sprite))
@@ -177,6 +176,12 @@ namespace HexResourceTracker.Core.PinManagers
                 {
                     case "Deer":
                         trophyPrefabName = "TrophyDeer";
+                        break;
+                    case "Boar":
+                        trophyPrefabName = "TrophyBoar";
+                        break;
+                    case "Hare":
+                        trophyPrefabName = "TrophyHare";
                         break;
                     default:
                         return null;
@@ -211,7 +216,6 @@ namespace HexResourceTracker.Core.PinManagers
 
             return sprite;
         }
-
 
         private static void SetPinUpdateRequired()
         {
