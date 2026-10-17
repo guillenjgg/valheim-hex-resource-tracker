@@ -17,6 +17,7 @@ namespace HexResourceTracker
         private const string TrackingModeSection = "Tracking Mode";
         private const string DungeonLabelsSection = "Dungeon Labels";
         private const string DepositLabelsSection = "Deposit Labels";
+        private const string CreaturesSection = "Creatures To Track";
 
         private const int HideLabelOrder = 1000;
         private const int LabelOrder = 900;
@@ -32,6 +33,7 @@ namespace HexResourceTracker
         internal static readonly Dictionary<Room.Theme, ConfigEntry<bool>> DungeonConfigs = new Dictionary<Room.Theme, ConfigEntry<bool>>();
         internal static readonly Dictionary<string, ConfigEntry<string>> DepositLabelConfigs = new Dictionary<string, ConfigEntry<string>>();
         internal static readonly Dictionary<Room.Theme, ConfigEntry<string>> DungeonLabelConfigs = new Dictionary<Room.Theme, ConfigEntry<string>>();
+        internal static readonly Dictionary<string, ConfigEntry<bool>> CreatureConfigs = new Dictionary<string, ConfigEntry<bool>>();
 
         internal static void Initialize(ConfigFile config)
         {
@@ -122,6 +124,8 @@ namespace HexResourceTracker
             BindDungeon(config, Room.Theme.DvergerTown, "Infested Mines");
             BindDungeon(config, Room.Theme.MorkHalla, "Morkhalla");
             BindDungeon(config, Room.Theme.Hole, "Winding Tunnel");
+
+            BindCreature(config, "Deer", "Deer");
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)
@@ -167,6 +171,14 @@ namespace HexResourceTracker
 
             return labelConfig.Value;
         }
+
+        internal static bool IsCreatureTrackingEnabled(string prefabName)
+        {
+            return IsModEnabled.Value &&
+                   CreatureConfigs.TryGetValue(prefabName, out ConfigEntry<bool> config) &&
+                   config.Value;
+        }
+
 
         private static void BindResource(ConfigFile config, string prefabName, string displayName)
         {
@@ -247,6 +259,32 @@ namespace HexResourceTracker
 
             DungeonConfigs[theme] = entry;
         }
+
+        private static void BindCreature(ConfigFile config, string prefabName, string displayName)
+        {
+            ConfigEntry<bool> entry = config.Bind(
+                CreaturesSection,
+                $"Track {displayName}",
+                true,
+                $"Enable or disable tracking for {displayName}.");
+
+            entry.SettingChanged += delegate
+            {
+                ResourceTrackerMapOverlay.HandleCreatureTrackingChanged(prefabName, entry.Value);
+
+                if (!entry.Value)
+                {
+                    CreaturePinManager.RemoveCreaturePins(prefabName);
+                }
+                else
+                {
+                    CreaturePinManager.ReconcileCreaturePins();
+                }
+            };
+
+            CreatureConfigs[prefabName] = entry;
+        }
+
 
         private sealed class ConfigurationManagerAttributes
         {

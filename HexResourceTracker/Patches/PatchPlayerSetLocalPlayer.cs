@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿
+using HarmonyLib;
 using HexResourceTracker.Core;
+using HexResourceTracker.Core.Tracking;
 
 namespace HexResourceTracker.Patches
 {
@@ -14,6 +16,7 @@ namespace HexResourceTracker.Patches
             }
 
             MapTrackingScanner.HandleTrackingModeChanged();
+            CreatureTrackingUpdater.EnsureCreated();
         }
     }
 }

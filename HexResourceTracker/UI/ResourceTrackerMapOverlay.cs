@@ -11,6 +11,7 @@ namespace HexResourceTracker.UI
 
         private static readonly Dictionary<string, Toggle> ResourceToggles = new Dictionary<string, Toggle>();
         private static readonly Dictionary<Room.Theme, Toggle> DungeonToggles = new Dictionary<Room.Theme, Toggle>();
+        private static readonly Dictionary<string, Toggle> CreatureToggles = new Dictionary<string, Toggle>();
 
         internal static void Create()
         {
@@ -32,7 +33,7 @@ namespace HexResourceTracker.UI
             panelRect.anchorMax = new Vector2(1f, 1f);
             panelRect.pivot = new Vector2(1f, 1f);
             panelRect.anchoredPosition = new Vector2(-20f, -50f);
-            panelRect.sizeDelta = new Vector2(180f, 885f);
+            panelRect.sizeDelta = new Vector2(180f, 960f);
 
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
@@ -101,6 +102,11 @@ namespace HexResourceTracker.UI
             AddDungeonToggle(Room.Theme.DvergerTown, "Infested Mines", -776f);
             AddDungeonToggle(Room.Theme.MorkHalla, "Morkhalla", -801f);
             AddDungeonToggle(Room.Theme.Hole, "Winding Tunnels", -826f);
+
+            // Creatures
+            AddSectionHeader("Creatures", -856f);
+
+            AddCreatureToggle("Deer", "Deer", -884f);
         }
 
         internal static void HandleResourceTrackingChanged(string prefabName, bool isEnabled)
@@ -123,6 +129,29 @@ namespace HexResourceTracker.UI
                 toggle.SetIsOnWithoutNotify(isEnabled);
             }
         }
+
+        internal static void HandleCreatureTrackingChanged(string prefabName, bool isEnabled)
+        {
+            if (CreatureToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
+            {
+                toggle.SetIsOnWithoutNotify(isEnabled);
+            }
+        }
+
+        private static void AddCreatureToggle(string prefabName, string displayName, float yPosition)
+        {
+            Toggle toggle = CreateToggle($"{prefabName}_Toggle", displayName, yPosition);
+            bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
+
+            toggle.SetIsOnWithoutNotify(isEnabled);
+            CreatureToggles[prefabName] = toggle;
+
+            toggle.onValueChanged.AddListener(delegate (bool value)
+            {
+                PluginConfig.CreatureConfigs[prefabName].Value = value;
+            });
+        }
+
 
         private static void AddTitle()
         {
