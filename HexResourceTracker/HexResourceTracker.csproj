@@ -92,6 +92,7 @@
     <Compile Include="Core\OreResourcePinService.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
     <Compile Include="Core\TrackedCreatures.cs" />
+    <Compile Include="Core\TrackedDungeons.cs" />
     <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\Tracking\Monoscripts\CreatureTrackingUpdater.cs" />
     <Compile Include="Core\Tracking\Monoscripts\MapTrackingScanner.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Models\DungeonPinModel.cs" />
     <Compile Include="Models\ResourceDefinitionModel.cs" />
     <Compile Include="Models\TrackedCreatureDefinitionModel.cs" />
+    <Compile Include="Models\TrackedDungeonDefinitionModel.cs" />
     <Compile Include="Models\TrackedResourceDefinitionModel.cs" />
     <Compile Include="Models\TrackedResourceTypeEnum.cs" />
     <Compile Include="Patches\PatchCharacterAwake.cs" />

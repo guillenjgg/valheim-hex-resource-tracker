@@ -115,12 +115,10 @@ namespace HexResourceTracker.UI
         {
             ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Dungeons", SectionSpacing);
 
-            AddDungeonToggle(parent, Room.Theme.ForestCrypt, "Burial Chambers");
-            AddDungeonToggle(parent, Room.Theme.SunkenCrypt, "Sunken Crypts");
-            AddDungeonToggle(parent, Room.Theme.Cave, "Frost Caves");
-            AddDungeonToggle(parent, Room.Theme.DvergerTown, "Infested Mines");
-            AddDungeonToggle(parent, Room.Theme.MorkHalla, "Morkhalla");
-            AddDungeonToggle(parent, Room.Theme.Hole, "Winding Tunnels");
+            foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
+            {
+                AddDungeonToggle(parent, dungeon.Theme, dungeon.UiDisplayName);
+            }
         }
 
         private static void BuildCreatures(GameObject parent)

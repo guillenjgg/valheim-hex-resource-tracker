@@ -2,6 +2,7 @@
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Core.Tracking.Monoscripts;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static Minimap;
@@ -18,16 +19,6 @@ namespace HexResourceTracker.Core.PinManagers
         private static readonly FieldInfo MinimapPinUpdateRequiredField = AccessTools.Field(typeof(Minimap), "m_pinUpdateRequired");
 
         private static Minimap _trackedMinimap;
-
-        private static readonly Dictionary<Room.Theme, string> SupportedDungeons = new Dictionary<Room.Theme, string>
-        {
-            { Room.Theme.ForestCrypt, "Burial Chamber" },
-            { Room.Theme.SunkenCrypt, "Sunken Crypt" },
-            { Room.Theme.Cave, "Frost Cave" },
-            { Room.Theme.DvergerTown, "Infested Mine" },
-            { Room.Theme.MorkHalla, "Morkhalla" },
-            { Room.Theme.Hole, "Winding Tunnel" }
-        };
 
         internal static bool TryAddDungeonPin(Location location)
         {
@@ -209,7 +200,8 @@ namespace HexResourceTracker.Core.PinManagers
 
             theme = generator.m_themes;
 
-            return SupportedDungeons.ContainsKey(theme);
+            Room.Theme capturedTheme = theme;
+            return TrackedDungeons.AllTrackedDungeons.Any(dungeon => dungeon.Theme == capturedTheme);
         }
 
         internal static void UpdateDungeonLabels()

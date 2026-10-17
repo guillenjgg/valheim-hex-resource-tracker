@@ -85,12 +85,10 @@ namespace HexResourceTracker
                 DungeonPinManager.UpdateDungeonLabels();
             };
 
-            BindDungeonLabel(config, Room.Theme.ForestCrypt, "Burial Chamber");
-            BindDungeonLabel(config, Room.Theme.SunkenCrypt, "Sunken Crypt");
-            BindDungeonLabel(config, Room.Theme.Cave, "Frost Cave");
-            BindDungeonLabel(config, Room.Theme.DvergerTown, "Infested Mine");
-            BindDungeonLabel(config, Room.Theme.MorkHalla, "Morkhalla");
-            BindDungeonLabel(config, Room.Theme.Hole, "Winding Tunnel");
+            foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
+            {
+                BindDungeonLabel(config, dungeon);
+            }
 
             HideDepositLabels = config.Bind(
                 DepositLabelsSection,
@@ -119,12 +117,10 @@ namespace HexResourceTracker
                 }
             }
 
-            BindDungeon(config, Room.Theme.ForestCrypt, "Burial Chambers");
-            BindDungeon(config, Room.Theme.SunkenCrypt, "Sunken Crypts");
-            BindDungeon(config, Room.Theme.Cave, "Frost Caves");
-            BindDungeon(config, Room.Theme.DvergerTown, "Infested Mines");
-            BindDungeon(config, Room.Theme.MorkHalla, "Morkhalla");
-            BindDungeon(config, Room.Theme.Hole, "Winding Tunnel");
+            foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
+            {
+                BindDungeon(config, dungeon);
+            }
 
             foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
             {
@@ -225,14 +221,14 @@ namespace HexResourceTracker
             DepositLabelConfigs[resource.ResourcePrefabName] = entry;
         }
 
-        private static void BindDungeonLabel(ConfigFile config, Room.Theme theme, string displayName)
+        private static void BindDungeonLabel(ConfigFile config, TrackedDungeonDefinitionModel dungeon)
         {
             ConfigEntry<string> entry = config.Bind(
                 DungeonLabelsSection,
-                $"{displayName} Label",
-                displayName,
+                $"{dungeon.DefaultLabel} Label",
+                dungeon.DefaultLabel,
                 new ConfigDescription(
-                    $"Label displayed for {displayName}.",
+                    $"Label displayed for {dungeon.DefaultLabel}.",
                     null,
                     new ConfigurationManagerAttributes
                     {
@@ -244,24 +240,24 @@ namespace HexResourceTracker
                 DungeonPinManager.UpdateDungeonLabels();
             };
 
-            DungeonLabelConfigs[theme] = entry;
+            DungeonLabelConfigs[dungeon.Theme] = entry;
         }
 
-        private static void BindDungeon(ConfigFile config, Room.Theme theme, string displayName)
+        private static void BindDungeon(ConfigFile config, TrackedDungeonDefinitionModel dungeon)
         {
             ConfigEntry<bool> entry = config.Bind(
                 DungeonsSection,
-                $"Track {displayName}",
+                $"Track {dungeon.ConfigKeyName}",
                 true,
-                $"Enable or disable tracking for {displayName}.");
+                $"Enable or disable tracking for {dungeon.ConfigKeyName}.");
 
             entry.SettingChanged += delegate
             {
-                ResourceTrackerOverlayState.HandleDungeonTrackingChanged(theme, entry.Value);
-                DungeonPinManager.HandleDungeonTrackingChanged(theme, entry.Value);
+                ResourceTrackerOverlayState.HandleDungeonTrackingChanged(dungeon.Theme, entry.Value);
+                DungeonPinManager.HandleDungeonTrackingChanged(dungeon.Theme, entry.Value);
             };
 
-            DungeonConfigs[theme] = entry;
+            DungeonConfigs[dungeon.Theme] = entry;
         }
 
         private static void BindCreature(ConfigFile config, string prefabName, string displayName)
