@@ -85,7 +85,7 @@ namespace HexResourceTracker.Core.PinManagers
                 return;
             }
 
-            AddLoadedDungeonPins(theme);
+            AddLoadedDungeonPins();
         }
 
         internal static void UpdateCheckedStates()
@@ -258,36 +258,6 @@ namespace HexResourceTracker.Core.PinManagers
 
             model.Pin = pin;
             return true;
-        }
-
-        private static void AddLoadedDungeonPins(Room.Theme theme)
-        {
-            if (Minimap.instance == null)
-            {
-                return;
-            }
-
-            foreach (TrackedDungeonLocation trackedLocation in TrackedDungeonLocation.GetTrackedLocations())
-            {
-                if (trackedLocation == null || trackedLocation.Location == null)
-                {
-                    continue;
-                }
-
-                Location location = trackedLocation.Location;
-
-                if (!TryGetSupportedDungeonTheme(location, out Room.Theme locationTheme))
-                {
-                    continue;
-                }
-
-                if (locationTheme != theme)
-                {
-                    continue;
-                }
-
-                TryAddDungeonPin(location);
-            }
         }
 
         private static bool HasDungeonPin(Room.Theme theme, Vector3 position)

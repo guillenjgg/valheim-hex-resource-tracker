@@ -1,12 +1,12 @@
 # HexResourceTracker
 
-Automatically adds minimap pins for supported gatherable resources and dungeon entrances.
+Automatically adds minimap pins for supported gatherable resources, dungeon entrances and tracked creatures.
 
 Includes a draggable **Map Tracking** overlay for enabling or disabling individual resources and dungeons in-game.
 
 ## Features
 
-- Tracks supported gatherable resources and dungeon entrances.
+- Tracks supported gatherable resources, dungeon entrances and certain creatures.
 - Removes resource pins when resources are harvested or otherwise depleted.
 - Restores resource pins when resources respawn.
 - Tracks **Onion Seeds found inside Mountain chests** and removes the pin when the seeds are taken.
@@ -32,16 +32,9 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 ## Tracking Modes
 
 ### Zone Based
+* Zone Based - Tracks supported objects as Valheim loads surrounding zones, without a configured distance limit.
 
-Tracks supported resources and dungeons as their surrounding zones are loaded by Valheim.
-
-There is no configured distance limit in this mode.
-
-### Range Scanner
-
-Only displays supported resources and dungeons within the configured **Tracking Range** of the player.
-
-Pins are automatically added and removed as the player moves through the world.
+* Range Scanner - Automatically adds and removes pins based on the player's configured tracking range. The tracking range is based on the players current position.
 
 ## Tracked Resources
 
@@ -84,6 +77,13 @@ Pins are automatically added and removed as the player moves through the world.
 - Lingonberries
 - Kale Seeds
 
+## Tracked Creatures
+
+### Creatures
+- Deer
+- Boars
+- Hares
+
 ## Tracked Dungeons
 
 - Burial Chambers
@@ -99,10 +99,11 @@ Tracking can be configured through the BepInEx configuration file or the in-game
 
 Configuration options include:
 
-- Tracking mode
-- Range Scanner distance
-- Individual resource tracking
-- Individual dungeon tracking
+* Tracking mode
+* Range Scanner distance
+* Individual resource tracking
+* Individual dungeon tracking
+* Individual creature tracking
 
 ## Installation
 
@@ -124,7 +125,6 @@ Configuration options include:
 
 ## Known Limitations
 
-- Only supported resources and dungeon entrances are tracked.
 - Valheim must load an object before the mod can discover and track it.
 - Onion Seeds are tracked through naturally generated Mountain chests, not dropped or player-planted Onion Seed items.
 - Pins do not persist across game sessions.

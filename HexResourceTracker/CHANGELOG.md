@@ -3,7 +3,11 @@
 ## v1.6.0
 
 ### Added
--
+- Creature tracking: deer, boar, hares
+- Collapse toggle for the map tracking overlay
+
+### Changed
+- Split the map tracking overlay into columns
 
 ### Changed
 - Compiled against Valheim v1.0.20

@@ -2,7 +2,7 @@
   "name": "HexResourceTracker",
   "version_number": "1.6.0",
   "website_url": "https://discord.gg/wU2FXD94v4",
-  "description": "Automatically adds minimap pins for gatherable resources and dungeon entrances. Includes a custom draggable Map Tracking overlay for enabling or disabling resource and dungeon tracking in-game.",
+  "description": "Automatically adds minimap pins for supported gatherable resources, dungeon entrances and tracked creatures.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2351"
   ]
