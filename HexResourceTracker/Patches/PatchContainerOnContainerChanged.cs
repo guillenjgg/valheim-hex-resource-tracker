@@ -1,13 +1,18 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.Tracking.Monoscripts;
+using System.Collections.Generic;
 
 namespace HexResourceTracker.Patches
 {
     [HarmonyPatch(typeof(Container), nameof(Container.OnContainerChanged))]
     internal static class PatchContainerOnContainerChanged
     {
-        private const string MountainChestPrefabName = "TreasureChest_mountains";
+        private static readonly HashSet<string> TrackedContainerPrefabNames = new HashSet<string>
+        {
+            "TreasureChest_mountains",
+            "loot_deepNorth_Granary"
+        };
 
         private static void Postfix(Container __instance)
         {
@@ -18,7 +23,7 @@ namespace HexResourceTracker.Patches
 
             string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (prefabName != MountainChestPrefabName)
+            if (!TrackedContainerPrefabNames.Contains(prefabName))
             {
                 return;
             }

@@ -73,7 +73,9 @@ namespace HexResourceTracker.Core
 
             // Deep North
             new TrackedResourceDefinitionModel("LingonberryBush", "Lingonberries", 800, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable)
+            new TrackedResourceDefinitionModel("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("OatSeeds", "Oat Seeds", 820, TrackedResourceTypeEnum.Container),
+            new TrackedResourceDefinitionModel("PoteitrSeeds", "Potato Seeds", 830, TrackedResourceTypeEnum.Container)
         };
 
         private static readonly Dictionary<string, TrackedResourceDefinitionModel> ByPrefabName = new Dictionary<string, TrackedResourceDefinitionModel>();

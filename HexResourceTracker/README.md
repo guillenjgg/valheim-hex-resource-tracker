@@ -76,6 +76,8 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 ### Deep North
 - Lingonberries
 - Kale Seeds
+- Oat Seeds
+- Poteitr Seeds
 
 ## Tracked Creatures
 

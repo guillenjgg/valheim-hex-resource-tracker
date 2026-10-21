@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.6.1
+
+### Added
+- Oat seeds
+- Poteitr seeds
+
+
 ## v1.6.0
 
 ### Added
