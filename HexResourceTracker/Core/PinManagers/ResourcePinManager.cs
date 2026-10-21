@@ -15,9 +15,16 @@ namespace HexResourceTracker.Core.PinManagers
         private const float ClusterRadius = 25f;
         private const float OnionSeedsBorderPadding = -16f;
         private const string OnionSeedsPrefabName = "OnionSeeds";
+        private const string OatSeedsPrefabName = "OatSeeds";
+        private const string PoteitrSeedsPrefabName = "PoteitrSeeds";
         private const string OnionSeedsBorderName = "OnionSeedsBorder";
 
         private static readonly Color OnionSeedsBorderColor = new Color(1f, 0.75f, 0.15f, 1f);
+
+        private static readonly HashSet<string> BorderedResourcePrefabNames = new HashSet<string>
+        {
+            OnionSeedsPrefabName
+        };
 
         private static readonly Dictionary<string, Sprite> ResourceSprites = new Dictionary<string, Sprite>();
         private static readonly Dictionary<ZDOID, ResourcePinModel> ResourcePinByZdoId = new Dictionary<ZDOID, ResourcePinModel>();
@@ -30,7 +37,9 @@ namespace HexResourceTracker.Core.PinManagers
             { "CopperOre", 32f },
             { "SilverOre", 32f },
             { "Softtissue", 32f },
-            { OnionSeedsPrefabName, 32f }
+            { OnionSeedsPrefabName, 32f },
+            { OatSeedsPrefabName, 32f },
+            { PoteitrSeedsPrefabName, 32f }
         };
 
         internal static bool TryAddResourcePin(ResourcePinModel model)
@@ -110,7 +119,7 @@ namespace HexResourceTracker.Core.PinManagers
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size);
                 pin.m_uiElement.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
 
-                if (model.ResourceDefinition.ResourcePrefabName == OnionSeedsPrefabName)
+                if (BorderedResourcePrefabNames.Contains(model.ResourceDefinition.ResourcePrefabName))
                 {
                     AddOnionSeedsBorder(pin.m_uiElement, size);
                 }
