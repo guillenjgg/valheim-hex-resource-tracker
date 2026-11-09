@@ -13,6 +13,7 @@ namespace HexResourceTracker.Core.PinManagers
             internal Vector3 Position;
             internal Minimap.PinData Pin;
             internal bool IsChecked;
+            internal bool IsSearchResult;
         }
 
         private static readonly List<LocationPin> KnownLocations = new List<LocationPin>();
@@ -39,6 +40,67 @@ namespace HexResourceTracker.Core.PinManagers
             }
 
             return Minimap.instance != null;
+        }
+
+        internal static void RegisterSavedLocation(Minimap.PinData pin, string prefabName)
+        {
+            if (pin == null || !EnsureMinimapState())
+            {
+                return;
+            }
+
+            foreach (LocationPin model in KnownLocations)
+            {
+                if (model.PrefabName == prefabName &&
+                    new Vector2(model.Position.x - pin.m_pos.x, model.Position.z - pin.m_pos.z).sqrMagnitude <= 25f)
+                {
+                    // Restored map data may replace a pin while this session cache already exists.
+                    if (model.Pin != null && model.Pin != pin)
+                    {
+                        Minimap.instance.RemovePin(model.Pin);
+                    }
+                    model.Pin = pin;
+                    model.IsChecked = pin.m_checked;
+                    return;
+                }
+            }
+
+            KnownLocations.Add(new LocationPin
+            {
+                PrefabName = prefabName,
+                Position = pin.m_pos,
+                Pin = pin,
+                IsChecked = pin.m_checked
+            });
+        }
+
+        internal static void RevealLocation(string prefabName, Vector3 position)
+        {
+            if (!EnsureMinimapState())
+            {
+                return;
+            }
+
+            LocationPin result = null;
+            foreach (LocationPin model in KnownLocations)
+            {
+                if (model.PrefabName != prefabName)
+                {
+                    continue;
+                }
+                model.IsSearchResult = false;
+                if (new Vector2(model.Position.x - position.x, model.Position.z - position.z).sqrMagnitude <= 25f)
+                {
+                    result = model;
+                }
+            }
+            if (result == null)
+            {
+                result = new LocationPin { PrefabName = prefabName, Position = position };
+                KnownLocations.Add(result);
+            }
+            result.IsSearchResult = true;
+            ReconcileKnownPins();
         }
 
         internal static void ReconcilePins()
@@ -76,8 +138,12 @@ namespace HexResourceTracker.Core.PinManagers
                     model.IsChecked = model.Pin.m_checked;
                 }
 
-                bool visible = PluginConfig.IsLocationTrackingEnabled(model.PrefabName) &&
-                    TrackingRangeService.IsWithinTrackingRange(model.Position);
+                bool enabled = PluginConfig.IsLocationTrackingEnabled(model.PrefabName);
+                if (!enabled)
+                {
+                    model.IsSearchResult = false;
+                }
+                bool visible = enabled && (model.IsSearchResult || TrackingRangeService.IsWithinTrackingRange(model.Position));
                 if (!visible)
                 {
                     if (model.Pin != null)
@@ -91,7 +157,8 @@ namespace HexResourceTracker.Core.PinManagers
                 if (model.Pin == null)
                 {
                     model.Pin = Minimap.instance.AddPin(model.Position, TrackedLocations.GetPinType(model.PrefabName),
-                        PluginConfig.GetLocationLabel(model.PrefabName), false, model.IsChecked);
+                        PluginConfig.GetLocationLabel(model.PrefabName), true, model.IsChecked);
+                    SavedPinLabelService.RegisterLocation(model.Pin, model.PrefabName);
                 }
                 else
                 {

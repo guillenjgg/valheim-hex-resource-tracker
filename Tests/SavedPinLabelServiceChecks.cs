@@ -48,6 +48,7 @@ class Checks {
   var dungeon=Pin("Sunken Crypt");var location=Pin("Charred Fortress");var memorial=Pin("Memorial Site",Minimap.PinType.Icon3);
   var boss=Pin("Bonemass");var home=Pin("Home");var wrongIcon=Pin("Sunken Crypt",Minimap.PinType.Icon1);var transient=Pin("Sunken Crypt",Minimap.PinType.Icon2,false);
   SavedPinLabelService.Reconcile(Minimap.instance);
+  Check(LocationPinManager.Restored==2,"restored location pins reconnect to location manager");
   Check(dungeon.m_name=="" && location.m_name=="" && memorial.m_name=="","hide preexisting distant pins without loaded world objects");
   Check(dungeon.m_NamePinData==null && dungeon.m_checked && location.m_type==Minimap.PinType.Icon2,"hide cleans marker and preserves checked state/icon");
   Check(boss.m_name=="Bonemass" && home.m_name=="Home" && wrongIcon.m_name=="Sunken Crypt" && transient.m_name=="Sunken Crypt","unrelated pins untouched");
@@ -74,3 +75,5 @@ class Checks {
  }
 }
 namespace HexResourceTracker.Core.PinManagers { internal static class LocationPinIconService { internal static void Apply(Minimap.PinData pin, string prefabName) { } } }
+
+namespace HexResourceTracker.Core.PinManagers { internal static class LocationPinManager { internal static int Restored; internal static void RegisterSavedLocation(Minimap.PinData pin,string name) { Restored++; } } }

@@ -143,6 +143,8 @@ namespace HexResourceTracker.UI
                 ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
                 toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[prefabName].Value = value);
             }
+            ResourceTrackerOverlayUiFactory.CreateActionButton(parent, "FindNearestMemorialSite",
+                "Find Nearest\nMemorial Site", LocationSearchService.FindNearestMemorialSite);
         }
 
         private static void ToggleCollapsed()

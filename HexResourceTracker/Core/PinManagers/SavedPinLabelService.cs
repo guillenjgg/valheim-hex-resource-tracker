@@ -48,6 +48,7 @@ namespace HexResourceTracker.Core.PinManagers
             if (TrackedLocations.All.TryGetValue(prefabName, out string defaultLabel))
             {
                 Register(pin, defaultLabel, () => PluginConfig.GetLocationLabel(prefabName), prefabName);
+                LocationPinManager.RegisterSavedLocation(pin, prefabName);
             }
         }
 
@@ -88,7 +89,7 @@ namespace HexResourceTracker.Core.PinManagers
                 Bindings.Remove(pin);
             }
 
-            foreach (PinData pin in pins)
+            foreach (PinData pin in new List<PinData>(pins))
             {
                 if (!pin.m_save)
                 {

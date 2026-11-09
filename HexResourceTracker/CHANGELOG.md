@@ -3,119 +3,105 @@
 ## Unreleased
 
 ### Added
-- Embedded castle and runestone icons for Charred Fortress and Memorial Site pins, including recognized saved location pins.
-- Charred Fortress location tracking in the Ashlands, using a custom castle icon, with a tracking toggle and customizable label.
-- Hide Location Labels setting; updates existing pins immediately while keeping their icons.
-- Customizable location labels, including Memorial Site Label.
-- Label edits, empty labels, and hide/show changes reconcile all cached location pins even after their objects unload.
 
-### Fixed
-- Apply dungeon and location label settings to recognized saved pins as soon as map data loads, without loading their world objects.
-- Preserve saved pin identity across hidden labels, custom names, and subsequent sessions.
+- Charred Fortress tracking in the Ashlands.
+- Castle and runestone icons for Charred Fortresses and Memorial Sites.
+- Customizable location labels and a Hide Location Labels setting.
+- Find Nearest Memorial Site button for single player and world hosts.
 
 ### Changed
-- Shared label updates for locations, dungeons, and deposits, including cleanup when hiding labels.
 
+- Larger search button with a gold border and hover/pressed states.
+- Discovered and searched location pins now save with the character’s map.
+
+### Fixed
+
+- Apply label changes to cached pins even when their world objects are unloaded.
+- Apply label settings to recognized saved dungeon and location pins on world entry.
+- Preserve pin identity when saving hidden or customized labels.
 
 ## v1.6.2
 
 ### Added
-- Location tracking, starting with Memorial Sites
-- Locations toggles in the map overlay
+
+- Memorial Site tracking and location toggles in the map overlay.
 
 ### Changed
-- Compiled against Valheim v1.0.21
-- Updated BepInEx dependency `denikson-BepInExPack_Valheim-5.4.2360`
 
+- Compiled against Valheim v1.0.21.
+- Updated BepInEx dependency to `denikson-BepInExPack_Valheim-5.4.2360`.
 
 ## v1.6.1
 
 ### Added
-- Oat seeds
-- Poteitr seeds
 
+- Oat seed and Poteitr seed tracking.
 
 ## v1.6.0
 
 ### Added
-- Creature tracking: deer, boar, hares
-- Collapse toggle for the map tracking overlay
+
+- Deer, boar, and hare tracking.
+- Collapse button for the map overlay.
 
 ### Changed
-- Split the map tracking overlay into columns
 
-### Changed
-- Compiled against Valheim v1.0.20
-- Updated BepInEx dependency `denikson-BepInExPack_Valheim-5.4.2351`
+- Split the overlay into columns.
+- Compiled against Valheim v1.0.20.
+- Updated BepInEx dependency to `denikson-BepInExPack_Valheim-5.4.2351`.
 
 ## v1.5.0
 
 ### Added
-- Added customizable labels for tracked dungeon pins.
-- Added customizable labels for Copper, Silver, Giant Skull, and Flametal deposit pins.
-- Added configuration options to hide all dungeon labels or all deposit labels.
-- Dungeon and deposit labels update immediately when changed in the configuration.
+
+- Customizable dungeon and deposit labels, with hide settings and immediate updates.
 
 ### Improved
-- Improved dungeon pin tracking by reducing unnecessary scans of all minimap pins.
-- Improved internal tracking of existing dungeon pins.
+
+- Dungeon pin tracking and handling of existing pins.
 
 ## v1.4.0
 
 ### Added
-- Added a new **Range Scanner** tracking mode.
-- Added the ability to switch between **Zone Based** and **Range Scanner** tracking modes.
-- Added a configurable tracking range from **50 to 2000 meters**.
-- Resource and dungeon pins are automatically added or removed as they enter or leave the configured tracking range.
-- Added tracking for **Dragon Eggs**.
-- Added tracking for **Onion Seeds** found in Mountain chests.
-- Added Onion Seeds to the in-game **Map Tracking** overlay.
+
+- Range Scanner mode with a configurable range of 50–2000 meters.
+- Dragon egg and Mountain chest onion seed tracking.
+- Larger onion seed icons with a gold border.
 
 ### Improved
-- Resource and dungeon tracking now immediately updates when changing tracking modes or tracking range.
-- Improved handling of existing resource and dungeon pins when switching tracking modes.
-- Improved resource tracking for Copper, Silver, Giant Skulls, and Flametal.
-- Improved map visibility for Onion Seed pins with a larger icon and gold border.
+
+- Immediate pin updates when changing tracking modes or range.
+- Copper, silver, giant skull, and flametal tracking.
 
 ## v1.3.0
 
 ### Added
-- Added support for Valheim's Deep North content.
-- Added tracking for new Deep North resources:
-  - Lingonberries
-  - Kale Seeds
-- Added automatic tracking for new Deep North dungeon entrances:
-  - Morkhalla
-  - Winding Tunnels
+
+- Deep North support: lingonberries, kale seeds, Morkhalla, and Winding Tunnels.
 
 ## v1.2.1
 
-### Added
-- Update for 1.0 release
+### Changed
+
+- Updated for Valheim 1.0.
 
 ## v1.2.0
 
 ### Added
-- Added automatic tracking for dungeon entrances:
-  - Burial Chambers
-  - Sunken Crypts
-  - Frost Caves
-  - Infested Mines
-- Added dungeon tracking options to the in-game **Map Tracking** overlay.
-- Added configuration options for enabling or disabling individual dungeon types.
 
-### Improved
-- Renamed the in-game overlay to **Map Tracking**.
-- Updated the in-game overlay to organize tracking options into separate **Resources** and **Dungeons** sections.
+- Burial Chamber, Sunken Crypt, Frost Cave, and Infested Mine tracking.
+- Dungeon toggles in the overlay and configuration.
+
+### Changed
+
+- Renamed the overlay to Map Tracking and separated resources from dungeons.
 
 ## v1.1.0
 
 ### Added
-- Added tracking for ore deposits and veins.
-- Added tracking for Giant Skulls (Soft Tissue) in the Mistlands.
-- Added tracking for Ashlands resources.
+
+- Ore deposit, giant skull, and Ashlands resource tracking.
 
 ## v1.0.0
 
-### Added
 - Initial release.

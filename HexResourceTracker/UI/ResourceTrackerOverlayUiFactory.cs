@@ -94,6 +94,51 @@ namespace HexResourceTracker.UI
             return collapseText;
         }
 
+        internal static Button CreateActionButton(GameObject parent, string name, string label, UnityAction onClick)
+        {
+            var buttonObject = new GameObject(name);
+            buttonObject.transform.SetParent(parent.transform, false);
+            var rect = buttonObject.AddComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(ColumnWidth, 38f);
+            var layout = buttonObject.AddComponent<LayoutElement>();
+            layout.minHeight = 38f;
+            layout.preferredHeight = 38f;
+            var background = buttonObject.AddComponent<Image>();
+            background.color = Color.white;
+            var outline = buttonObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.95f, 0.73f, 0.30f, 1f);
+            outline.effectDistance = new Vector2(1f, -1f);
+            var button = buttonObject.AddComponent<Button>();
+            button.targetGraphic = background;
+            button.transition = Selectable.Transition.ColorTint;
+            ColorBlock colors = button.colors;
+            colors.normalColor = new Color(0.46f, 0.30f, 0.10f, 1f);
+            colors.highlightedColor = new Color(0.68f, 0.46f, 0.17f, 1f);
+            colors.pressedColor = new Color(0.28f, 0.17f, 0.05f, 1f);
+            colors.selectedColor = colors.highlightedColor;
+            colors.disabledColor = new Color(0.22f, 0.20f, 0.17f, 0.6f);
+            colors.fadeDuration = 0.08f;
+            button.colors = colors;
+            button.onClick.AddListener(onClick);
+
+            var textObject = new GameObject("Text");
+            textObject.transform.SetParent(buttonObject.transform, false);
+            var textRect = textObject.AddComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(4f, 0f);
+            textRect.offsetMax = new Vector2(-4f, 0f);
+            var text = textObject.AddComponent<TextMeshProUGUI>();
+            text.font = Minimap.instance.m_biomeNameLarge.font;
+            text.fontSize = 12f;
+            text.fontStyle = FontStyles.Bold;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+            text.text = label;
+            text.raycastTarget = false;
+            return button;
+        }
+
         internal static void AddSectionHeader(GameObject parent, string text, float topSpacing = 0f)
         {
             GameObject headerObject = new GameObject($"{text}Header");

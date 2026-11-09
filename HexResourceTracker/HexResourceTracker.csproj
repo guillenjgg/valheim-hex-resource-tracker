@@ -95,6 +95,7 @@
     <Compile Include="Core\TrackedDungeons.cs" />
     <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\TrackedLocations.cs" />
+    <Compile Include="Core\LocationSearchService.cs" />
     <Compile Include="Core\PinManagers\LocationPinManager.cs" />
     <Compile Include="Core\PinManagers\LocationPinIconService.cs" />
     <Compile Include="Core\PinManagers\PinLabelService.cs" />
