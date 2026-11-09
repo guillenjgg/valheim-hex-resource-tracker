@@ -36,6 +36,8 @@ namespace HexResourceTracker
         internal static readonly Dictionary<Room.Theme, ConfigEntry<string>> DungeonLabelConfigs = new Dictionary<Room.Theme, ConfigEntry<string>>();
         internal static readonly Dictionary<string, ConfigEntry<bool>> CreatureConfigs = new Dictionary<string, ConfigEntry<bool>>();
 
+        internal static readonly Dictionary<string, ConfigEntry<bool>> LocationConfigs = new Dictionary<string, ConfigEntry<bool>>();
+
         internal static void Initialize(ConfigFile config)
         {
             IsModEnabled = config.Bind(
@@ -43,6 +45,19 @@ namespace HexResourceTracker
                 "Enable",
                 true,
                 "Enable or disable the HexResourceTracker mod.");
+
+            foreach (var location in TrackedLocations.All)
+            {
+                string prefabName = location.Key;
+                ConfigEntry<bool> entry = config.Bind("Locations To Track", $"Track {location.Value}", true,
+                    $"Enable or disable tracking for {location.Value}.");
+                LocationConfigs[prefabName] = entry;
+                entry.SettingChanged += delegate
+                {
+                    ResourceTrackerOverlayState.HandleLocationTrackingChanged(prefabName, entry.Value);
+                    LocationPinManager.ReconcilePins();
+                };
+            }
 
             TrackingMode = config.Bind(
                 TrackingModeSection,
@@ -60,7 +75,7 @@ namespace HexResourceTracker
                 "Tracking Range",
                 50f,
                 new ConfigDescription(
-                    "Maximum distance in meters from the player to track resources, dungeons, and creatures when using RangeScanner mode.",
+                    "Maximum distance in meters from the player to track resources, dungeons, locations, and creatures when using RangeScanner mode.",
                     new AcceptableValueRange<float>(50f, 2000f)));
 
             TrackingRange.SettingChanged += delegate
@@ -126,6 +141,11 @@ namespace HexResourceTracker
             {
                 BindCreature(config, creature.PrefabName, creature.DisplayName);
             }
+        }
+
+        internal static bool IsLocationTrackingEnabled(string prefabName)
+        {
+            return IsModEnabled.Value && LocationConfigs.TryGetValue(prefabName, out ConfigEntry<bool> config) && config.Value;
         }
 
         internal static bool IsResourceTrackingEnabled(string prefabName)

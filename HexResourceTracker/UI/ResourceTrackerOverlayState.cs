@@ -38,8 +38,19 @@ namespace HexResourceTracker.UI
             }
         }
 
+        internal static readonly Dictionary<string, Toggle> LocationToggles = new Dictionary<string, Toggle>();
+
+        internal static void HandleLocationTrackingChanged(string prefabName, bool isEnabled)
+        {
+            if (LocationToggles.TryGetValue(prefabName, out Toggle toggle) && toggle != null)
+            {
+                toggle.SetIsOnWithoutNotify(isEnabled);
+            }
+        }
+
         internal static void Clear()
         {
+            LocationToggles.Clear();
             ResourceToggles.Clear();
             DungeonToggles.Clear();
             CreatureToggles.Clear();

@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.6.2
+
+### Added
+- Location tracking, starting with Memorial Sites
+- Locations toggles in the map overlay
+
+### Changed
+- Compiled against Valheim v1.0.21
+- Updated BepInEx dependency `denikson-BepInExPack_Valheim-5.4.2360`
+
+
 ## v1.6.1
 
 ### Added

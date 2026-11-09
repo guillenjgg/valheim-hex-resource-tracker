@@ -1,4 +1,4 @@
-# HexResourceTracker
+﻿# HexResourceTracker
 
 Automatically adds minimap pins for supported gatherable resources, dungeon entrances and tracked creatures.
 
@@ -78,6 +78,13 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 - Kale Seeds
 - Oat Seeds
 - Poteitr Seeds
+
+## Tracked Locations
+
+- Memorial Site (`NorthMemorialPlace`)
+- Toggle location tracking in the **Locations** section of the map overlay or configuration.
+- Supports Zone Based and Range Scanner modes; locations must be loaded before discovery.
+- Location pins remain known during the current session and are not saved between sessions.
 
 ## Tracked Creatures
 
