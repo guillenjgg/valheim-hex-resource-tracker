@@ -96,6 +96,7 @@
     <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\TrackedLocations.cs" />
     <Compile Include="Core\PinManagers\LocationPinManager.cs" />
+    <Compile Include="Core\PinManagers\LocationPinIconService.cs" />
     <Compile Include="Core\PinManagers\PinLabelService.cs" />
     <Compile Include="Core\PinManagers\SavedPinLabelService.cs" />
     <Compile Include="Patches\PatchMinimapSavedLabels.cs" />
@@ -142,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\Assetbundles\customicons" />
+    <None Include="THIRD_PARTY_NOTICES.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="CHANGELOG.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -151,6 +155,11 @@
     <None Include="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Icons\castle.png" />
+    <EmbeddedResource Include="Assets\Icons\rune-stone.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

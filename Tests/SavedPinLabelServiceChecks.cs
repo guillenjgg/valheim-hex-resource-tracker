@@ -73,3 +73,4 @@ class Checks {
   Console.WriteLine("PASS: restored distant pins, safe matching, hide/show/custom names, serialization, next session, deletion");
  }
 }
+namespace HexResourceTracker.Core.PinManagers { internal static class LocationPinIconService { internal static void Apply(Minimap.PinData pin, string prefabName) { } } }

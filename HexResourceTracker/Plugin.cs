@@ -36,6 +36,7 @@ namespace HexResourceTracker
             Log.LogInfo($"{PluginName} v{PluginVersion} unloaded.");
 
             _harmonyInstance?.UnpatchSelf();
+            Core.PinManagers.LocationPinIconService.Clear();
             _harmonyInstance = null;
             Instance = null;
             Log = null;

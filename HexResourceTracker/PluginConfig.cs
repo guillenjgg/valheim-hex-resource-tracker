@@ -187,7 +187,6 @@ namespace HexResourceTracker
                    config.Value;
         }
 
-
         private static ConfigEntry<bool> BindHideLabels(ConfigFile config, string section, string category, string descriptionCategory, Action updateLabels)
         {
             ConfigEntry<bool> entry = config.Bind(section, $"Hide {category} Labels", false,

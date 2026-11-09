@@ -90,6 +90,10 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 - Newly discovered location pins remain known during the current session and are not saved between sessions.
 - Existing saved dungeon/location pins with recognized default or configured labels apply label settings immediately on map load, including distant sites. Their icons and checked states are preserved.
 
+## Icon credits
+
+Castle and rune stone icons by Lorc from Game-icons.net, licensed under CC BY 3.0. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 ## Tracked Creatures
 
 ### Creatures

@@ -3,7 +3,8 @@
 ## Unreleased
 
 ### Added
-- Charred Fortress location tracking in the Ashlands, using the dungeon pin icon, with a tracking toggle and customizable label.
+- Embedded castle and runestone icons for Charred Fortress and Memorial Site pins, including recognized saved location pins.
+- Charred Fortress location tracking in the Ashlands, using a custom castle icon, with a tracking toggle and customizable label.
 - Hide Location Labels setting; updates existing pins immediately while keeping their icons.
 - Customizable location labels, including Memorial Site Label.
 - Label edits, empty labels, and hide/show changes reconcile all cached location pins even after their objects unload.

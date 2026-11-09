@@ -97,6 +97,7 @@ namespace HexResourceTracker.Core.PinManagers
                 {
                     PinLabelService.SetLabel(model.Pin, PluginConfig.GetLocationLabel(model.PrefabName));
                 }
+                LocationPinIconService.Apply(model.Pin, model.PrefabName);
             }
 
             PinLabelService.RefreshLabels();

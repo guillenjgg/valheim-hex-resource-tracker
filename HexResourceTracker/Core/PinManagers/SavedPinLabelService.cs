@@ -12,6 +12,7 @@ namespace HexResourceTracker.Core.PinManagers
         private sealed class LabelBinding
         {
             internal string DefaultLabel;
+            internal string LocationPrefabName;
             internal Func<string> GetLabel;
         }
 
@@ -46,18 +47,22 @@ namespace HexResourceTracker.Core.PinManagers
             EnsureMap(Minimap.instance);
             if (TrackedLocations.All.TryGetValue(prefabName, out string defaultLabel))
             {
-                Register(pin, defaultLabel, () => PluginConfig.GetLocationLabel(prefabName));
+                Register(pin, defaultLabel, () => PluginConfig.GetLocationLabel(prefabName), prefabName);
             }
         }
 
-        private static void Register(PinData pin, string defaultLabel, Func<string> getLabel)
+        private static void Register(PinData pin, string defaultLabel, Func<string> getLabel, string locationPrefabName = null)
         {
             if (pin == null || !pin.m_save)
             {
                 return;
             }
 
-            Bindings[pin] = new LabelBinding { DefaultLabel = defaultLabel, GetLabel = getLabel };
+            Bindings[pin] = new LabelBinding { DefaultLabel = defaultLabel, GetLabel = getLabel, LocationPrefabName = locationPrefabName };
+            if (locationPrefabName != null)
+            {
+                LocationPinIconService.Apply(pin, locationPrefabName);
+            }
             PinLabelService.SetLabel(pin, getLabel());
         }
 
@@ -97,6 +102,10 @@ namespace HexResourceTracker.Core.PinManagers
                 if (Bindings.TryGetValue(pin, out LabelBinding binding))
                 {
                     PinLabelService.SetLabel(pin, binding.GetLabel());
+                    if (binding.LocationPrefabName != null)
+                    {
+                        LocationPinIconService.Apply(pin, binding.LocationPrefabName);
+                    }
                 }
             }
             PinLabelService.RefreshLabels();
