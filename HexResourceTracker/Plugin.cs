@@ -10,7 +10,7 @@ namespace HexResourceTracker
     {
         private const string PluginGuid = "com.hex.resourcetracker";
         private const string PluginName = "HexResourceTracker";
-        private const string PluginVersion = "1.6.1";
+        private const string PluginVersion = "1.6.2";
 
         private Harmony _harmonyInstance;
 
@@ -36,6 +36,7 @@ namespace HexResourceTracker
             Log.LogInfo($"{PluginName} v{PluginVersion} unloaded.");
 
             _harmonyInstance?.UnpatchSelf();
+            Core.PinManagers.LocationPinIconService.Clear();
             _harmonyInstance = null;
             Instance = null;
             Log = null;

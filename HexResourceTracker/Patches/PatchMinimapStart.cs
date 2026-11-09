@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.UI;
+using HexResourceTracker.Core.PinManagers;
 
 namespace HexResourceTracker.Patches
 {
@@ -14,6 +15,7 @@ namespace HexResourceTracker.Patches
             }
 
             ResourceTrackerMapOverlay.Create();
+            SavedPinLabelService.Reconcile(Minimap.instance);
         }
     }
 }

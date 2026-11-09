@@ -36,11 +36,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_utils_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0.20\assembly_utils_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.21\assembly_utils_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_valheim_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0.20\assembly_valheim_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.21\assembly_valheim_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
@@ -48,7 +48,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Splatform_publicized">
-      <HintPath>..\..\..\publicized_assemblies\v1.0.20\Splatform_publicized.dll</HintPath>
+      <HintPath>..\..\..\publicized_assemblies\v1.0.21\Splatform_publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -94,6 +94,14 @@
     <Compile Include="Core\TrackedCreatures.cs" />
     <Compile Include="Core\TrackedDungeons.cs" />
     <Compile Include="Core\TrackedResources.cs" />
+    <Compile Include="Core\TrackedLocations.cs" />
+    <Compile Include="Core\LocationSearchService.cs" />
+    <Compile Include="Core\PinManagers\LocationPinManager.cs" />
+    <Compile Include="Core\PinManagers\LocationPinIconService.cs" />
+    <Compile Include="Core\PinManagers\PinLabelService.cs" />
+    <Compile Include="Core\PinManagers\SavedPinLabelService.cs" />
+    <Compile Include="Patches\PatchMinimapSavedLabels.cs" />
+    <Compile Include="Core\Tracking\Monoscripts\TrackedLocation.cs" />
     <Compile Include="Core\Tracking\Monoscripts\CreatureTrackingUpdater.cs" />
     <Compile Include="Core\Tracking\Monoscripts\MapTrackingScanner.cs" />
     <Compile Include="Core\Tracking\Monoscripts\TrackedCreature.cs" />
@@ -136,6 +144,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\Assetbundles\customicons" />
+    <None Include="THIRD_PARTY_NOTICES.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="CHANGELOG.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -145,6 +156,11 @@
     <None Include="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Icons\castle.png" />
+    <EmbeddedResource Include="Assets\Icons\rune-stone.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

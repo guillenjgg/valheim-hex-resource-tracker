@@ -74,6 +74,7 @@ namespace HexResourceTracker.UI
             BuildDeposits(rightColumn);
             BuildDungeons(rightColumn);
             BuildCreatures(rightColumn);
+            BuildLocations(rightColumn);
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(leftColumn.GetComponent<RectTransform>());
             LayoutRebuilder.ForceRebuildLayoutImmediate(rightColumn.GetComponent<RectTransform>());
@@ -129,6 +130,21 @@ namespace HexResourceTracker.UI
             {
                 AddCreatureToggle(parent, creature.PrefabName, creature.DisplayName);
             }
+        }
+
+        private static void BuildLocations(GameObject parent)
+        {
+            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Locations", SectionSpacing);
+            foreach (var location in TrackedLocations.All)
+            {
+                string prefabName = location.Key;
+                Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", location.Value);
+                toggle.SetIsOnWithoutNotify(PluginConfig.LocationConfigs[prefabName].Value);
+                ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
+                toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[prefabName].Value = value);
+            }
+            ResourceTrackerOverlayUiFactory.CreateActionButton(parent, "FindNearestMemorialSite",
+                "Find Nearest\nMemorial Site", LocationSearchService.FindNearestMemorialSite);
         }
 
         private static void ToggleCollapsed()

@@ -15,6 +15,10 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
+            if (TrackedLocation.TryAdd(__instance))
+            {
+                LocationPinManager.ReconcilePins();
+            }
             TrackedDungeonLocation.TryAdd(__instance);
 
             if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)

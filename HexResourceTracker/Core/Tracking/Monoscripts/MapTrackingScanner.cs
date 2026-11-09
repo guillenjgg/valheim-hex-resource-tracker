@@ -72,6 +72,7 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
             }
 
             DungeonPinManager.ReconcileTrackingRange();
+            LocationPinManager.ReconcilePins();
 
             _lastScanPosition = currentPosition;
             _hasScanned = true;
@@ -168,6 +169,7 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
             }
 
             DungeonPinManager.AddLoadedDungeonPins();
+            LocationPinManager.ReconcilePins();
         }
     }
 }
