@@ -18,7 +18,19 @@ namespace HexResourceTracker.Core.PinManagers
         private static readonly List<LocationPin> KnownLocations = new List<LocationPin>();
         private static Minimap _trackedMinimap;
 
-        internal static void ReconcilePins()
+        internal static void UpdateLocationLabels()
+        {
+            SavedPinLabelService.Reconcile(Minimap.instance);
+            // Configuration changes apply to the session cache, even when no location objects are loaded.
+            if (!EnsureMinimapState())
+            {
+                return;
+            }
+
+            ReconcileKnownPins();
+        }
+
+        private static bool EnsureMinimapState()
         {
             if (_trackedMinimap != Minimap.instance)
             {
@@ -26,7 +38,12 @@ namespace HexResourceTracker.Core.PinManagers
                 _trackedMinimap = Minimap.instance;
             }
 
-            if (Minimap.instance == null)
+            return Minimap.instance != null;
+        }
+
+        internal static void ReconcilePins()
+        {
+            if (!EnsureMinimapState())
             {
                 return;
             }
@@ -47,6 +64,11 @@ namespace HexResourceTracker.Core.PinManagers
                 }
             }
 
+            ReconcileKnownPins();
+        }
+
+        private static void ReconcileKnownPins()
+        {
             foreach (LocationPin model in KnownLocations)
             {
                 if (model.Pin != null)
@@ -68,10 +90,16 @@ namespace HexResourceTracker.Core.PinManagers
 
                 if (model.Pin == null)
                 {
-                    model.Pin = Minimap.instance.AddPin(model.Position, Minimap.PinType.Icon3,
-                        TrackedLocations.All[model.PrefabName], false, model.IsChecked);
+                    model.Pin = Minimap.instance.AddPin(model.Position, TrackedLocations.GetPinType(model.PrefabName),
+                        PluginConfig.GetLocationLabel(model.PrefabName), false, model.IsChecked);
+                }
+                else
+                {
+                    PinLabelService.SetLabel(model.Pin, PluginConfig.GetLocationLabel(model.PrefabName));
                 }
             }
+
+            PinLabelService.RefreshLabels();
         }
     }
 }

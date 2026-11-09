@@ -246,7 +246,7 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                model.Pin.m_name = PluginConfig.GetDepositLabel(model.ResourceDefinition.ResourcePrefabName);
+                PinLabelService.SetLabel(model.Pin, PluginConfig.GetDepositLabel(model.ResourceDefinition.ResourcePrefabName));
             }
 
             SetPinUpdateRequired();

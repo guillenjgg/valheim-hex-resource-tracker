@@ -96,6 +96,9 @@
     <Compile Include="Core\TrackedResources.cs" />
     <Compile Include="Core\TrackedLocations.cs" />
     <Compile Include="Core\PinManagers\LocationPinManager.cs" />
+    <Compile Include="Core\PinManagers\PinLabelService.cs" />
+    <Compile Include="Core\PinManagers\SavedPinLabelService.cs" />
+    <Compile Include="Patches\PatchMinimapSavedLabels.cs" />
     <Compile Include="Core\Tracking\Monoscripts\TrackedLocation.cs" />
     <Compile Include="Core\Tracking\Monoscripts\CreatureTrackingUpdater.cs" />
     <Compile Include="Core\Tracking\Monoscripts\MapTrackingScanner.cs" />

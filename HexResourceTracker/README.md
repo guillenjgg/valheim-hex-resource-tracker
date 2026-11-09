@@ -81,10 +81,14 @@ Includes a draggable **Map Tracking** overlay for enabling or disabling individu
 
 ## Tracked Locations
 
-- Memorial Site (`NorthMemorialPlace`)
+- Memorial Site (`NorthMemorialPlace`) — Deep North
+- Charred Fortress (`CharredFortress`) — Ashlands
 - Toggle location tracking in the **Locations** section of the map overlay or configuration.
+- Set **Location Labels → Hide Location Labels** to `true` in the configuration to hide location text while keeping the icons. Changes apply immediately, including pins for locations whose objects have unloaded.
+- Customize **Location Labels → Memorial Site Label** or **Charred Fortress Label** to rename their pins. An empty label hides that location type’s text; **Hide Location Labels** hides all location text without losing custom names.
 - Supports Zone Based and Range Scanner modes; locations must be loaded before discovery.
-- Location pins remain known during the current session and are not saved between sessions.
+- Newly discovered location pins remain known during the current session and are not saved between sessions.
+- Existing saved dungeon/location pins with recognized default or configured labels apply label settings immediately on map load, including distant sites. Their icons and checked states are preserved.
 
 ## Tracked Creatures
 

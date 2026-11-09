@@ -3,7 +3,6 @@ using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Core.Tracking.Monoscripts;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using static Minimap;
 
@@ -16,7 +15,6 @@ namespace HexResourceTracker.Core.PinManagers
 
         private static readonly List<DungeonPinModel> DungeonPins = new List<DungeonPinModel>();
         private static readonly AccessTools.FieldRef<Minimap, List<PinData>> MinimapPins = AccessTools.FieldRefAccess<Minimap, List<PinData>>("m_pins");
-        private static readonly FieldInfo MinimapPinUpdateRequiredField = AccessTools.Field(typeof(Minimap), "m_pinUpdateRequired");
 
         private static Minimap _trackedMinimap;
 
@@ -64,6 +62,7 @@ namespace HexResourceTracker.Core.PinManagers
             {
                 model.Pin = existingPin;
                 model.IsChecked = existingPin.m_checked;
+                SavedPinLabelService.RegisterDungeon(existingPin, theme);
             }
             else if (!CreatePin(model))
             {
@@ -206,6 +205,7 @@ namespace HexResourceTracker.Core.PinManagers
 
         internal static void UpdateDungeonLabels()
         {
+            SavedPinLabelService.Reconcile(Minimap.instance);
             EnsureMinimapState();
 
             if (Minimap.instance == null)
@@ -220,21 +220,10 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                string label = PluginConfig.GetDungeonLabel(model.Theme);
-
-                model.Pin.m_name = label;
-
-                if (model.Pin.m_NamePinData != null && model.Pin.m_NamePinData.PinNameText != null)
-                {
-                    model.Pin.m_NamePinData.PinNameText.text = label;
-                }
-
-                model.Pin.m_NamePinData = string.IsNullOrEmpty(label)
-                    ? null
-                    : model.Pin.m_NamePinData ?? new Minimap.PinNameData(model.Pin);
+                PinLabelService.SetLabel(model.Pin, PluginConfig.GetDungeonLabel(model.Theme));
             }
 
-            MinimapPinUpdateRequiredField.SetValue(Minimap.instance, true);
+            PinLabelService.RefreshLabels();
         }
 
         private static bool CreatePin(DungeonPinModel model)
@@ -257,6 +246,7 @@ namespace HexResourceTracker.Core.PinManagers
             }
 
             model.Pin = pin;
+            SavedPinLabelService.RegisterDungeon(pin, model.Theme);
             return true;
         }
 

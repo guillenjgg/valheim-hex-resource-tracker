@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Charred Fortress location tracking in the Ashlands, using the dungeon pin icon, with a tracking toggle and customizable label.
+- Hide Location Labels setting; updates existing pins immediately while keeping their icons.
+- Customizable location labels, including Memorial Site Label.
+- Label edits, empty labels, and hide/show changes reconcile all cached location pins even after their objects unload.
+
+### Fixed
+- Apply dungeon and location label settings to recognized saved pins as soon as map data loads, without loading their world objects.
+- Preserve saved pin identity across hidden labels, custom names, and subsequent sessions.
+
+### Changed
+- Shared label updates for locations, dungeons, and deposits, including cleanup when hiding labels.
+
+
 ## v1.6.2
 
 ### Added
