@@ -1,9 +1,15 @@
 # Changelog
 
-## Unreleased
+## v1.6.3
 
 ### Added
+- Tracking for beehives
+- Tracking for tin ore deposits
 
+## v1.6.2
+
+### Added
+- Memorial Site tracking and location toggles in the map overlay.
 - Charred Fortress tracking in the Ashlands.
 - Castle and runestone icons for Charred Fortresses and Memorial Sites.
 - Customizable location labels and a Hide Location Labels setting.
@@ -13,23 +19,14 @@
 
 - Larger search button with a gold border and hover/pressed states.
 - Discovered and searched location pins now save with the character’s map.
+- Compiled against Valheim v1.0.21.
+- Updated BepInEx dependency to `denikson-BepInExPack_Valheim-5.4.2360`.
 
 ### Fixed
 
 - Apply label changes to cached pins even when their world objects are unloaded.
 - Apply label settings to recognized saved dungeon and location pins on world entry.
 - Preserve pin identity when saving hidden or customized labels.
-
-## v1.6.2
-
-### Added
-
-- Memorial Site tracking and location toggles in the map overlay.
-
-### Changed
-
-- Compiled against Valheim v1.0.21.
-- Updated BepInEx dependency to `denikson-BepInExPack_Valheim-5.4.2360`.
 
 ## v1.6.1
 

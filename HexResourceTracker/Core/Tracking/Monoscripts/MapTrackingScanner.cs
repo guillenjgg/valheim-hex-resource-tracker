@@ -150,6 +150,12 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
                     continue;
                 }
 
+                if (trackedObject.WearNTear != null)
+                {
+                    OreResourcePinService.TryAddResourcePinFromDestructibleOre(trackedObject.WearNTear);
+                    continue;
+                }
+
                 if (trackedObject.Destructible != null)
                 {
                     OreResourcePinService.TryAddResourcePinFromDestructibleOre(trackedObject.Destructible);

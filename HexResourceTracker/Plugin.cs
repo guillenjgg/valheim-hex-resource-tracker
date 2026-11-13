@@ -10,7 +10,7 @@ namespace HexResourceTracker
     {
         private const string PluginGuid = "com.hex.resourcetracker";
         private const string PluginName = "HexResourceTracker";
-        private const string PluginVersion = "1.6.2";
+        private const string PluginVersion = "1.6.3";
 
         private Harmony _harmonyInstance;
 

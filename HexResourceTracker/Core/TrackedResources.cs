@@ -1,4 +1,4 @@
-﻿using HexResourceTracker.Models;
+using HexResourceTracker.Models;
 using System.Collections.Generic;
 
 namespace HexResourceTracker.Core
@@ -12,6 +12,8 @@ namespace HexResourceTracker.Core
             new TrackedResourceDefinitionModel("Pickable_Dandelion", "Dandelions", 110, TrackedResourceTypeEnum.Pickable),
             new TrackedResourceDefinitionModel("RaspberryBush", "Raspberries", 120, TrackedResourceTypeEnum.Pickable),
 
+            new TrackedResourceDefinitionModel("Beehive", "Beehive", 130, TrackedResourceTypeEnum.Deposit, "Honey"),
+
             // Black Forest
             new TrackedResourceDefinitionModel("BlueberryBush", "Blueberries", 200, TrackedResourceTypeEnum.Pickable),
             new TrackedResourceDefinitionModel("Pickable_Thistle", "Thistle", 210, TrackedResourceTypeEnum.Pickable),
@@ -24,6 +26,8 @@ namespace HexResourceTracker.Core
                 TrackedResourceTypeEnum.Deposit,
                 "CopperOre",
                 "$piece_deposit_copper"),
+
+            new TrackedResourceDefinitionModel("MineRock_Tin", "Tin", 240, TrackedResourceTypeEnum.Deposit, "TinOre"),
 
             // Swamp
             new TrackedResourceDefinitionModel("Pickable_SeedTurnip", "Turnip Seeds", 300, TrackedResourceTypeEnum.Pickable),

@@ -10,6 +10,7 @@ namespace HexResourceTracker.Core
         internal static readonly Dictionary<string, ResourceDefinitionModel> DestructibleResourcesByPrefabName =
             new Dictionary<string, ResourceDefinitionModel>
             {
+                { "MineRock_Tin", new ResourceDefinitionModel("MineRock_Tin", "TinOre") },
                 { "rock4_copper", new ResourceDefinitionModel("rock4_copper", "CopperOre") },
                 { "silvervein", new ResourceDefinitionModel("silvervein", "SilverOre") },
                 { "giant_skull", new ResourceDefinitionModel("giant_skull", "Softtissue") }

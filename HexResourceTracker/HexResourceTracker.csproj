@@ -30,6 +30,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Game|AnyCPU'">
+    <OutputPath>..\..\..\..\..\AppData\Roaming\com.kesomannen.gale\valheim\profiles\Dev\BepInEx\plugins\HexResourceTracker\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\..\..\bepinex_mod_libs\0Harmony.dll</HintPath>
@@ -119,6 +126,7 @@
     <Compile Include="Patches\PatchCharacterAwake.cs" />
     <Compile Include="Patches\PatchContainerAwake.cs" />
     <Compile Include="Patches\PatchContainerOnContainerChanged.cs" />
+    <Compile Include="Patches\PatchWearNTearTracking.cs" />
     <Compile Include="Patches\PatchDestructibleAwake.cs" />
     <Compile Include="Patches\PatchDestructibleDestroy.cs" />
     <Compile Include="UI\ResourceTrackerDragHandler.cs" />
