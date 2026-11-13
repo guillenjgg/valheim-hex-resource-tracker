@@ -49,6 +49,10 @@ namespace HexResourceTracker.Core
             new TrackedResourceDefinitionModel("Pickable_Barley_Wild", "Barley", 510, TrackedResourceTypeEnum.Pickable),
             new TrackedResourceDefinitionModel("CloudberryBush", "Cloudberries", 520, TrackedResourceTypeEnum.Pickable),
 
+            new TrackedResourceDefinitionModel(TarPitResourcePinService.ResourcePrefabName, "Tar Pit", 530, TrackedResourceTypeEnum.Deposit, "Tar"),
+
+            new TrackedResourceDefinitionModel("GoblinTotem", "Fuling Totem", 540, TrackedResourceTypeEnum.Pickable, showInLocations: true),
+
             // Mistlands
             new TrackedResourceDefinitionModel("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", 600, TrackedResourceTypeEnum.Pickable),
             new TrackedResourceDefinitionModel("Pickable_Mushroom_Magecap", "Magecap", 610, TrackedResourceTypeEnum.Pickable),

@@ -97,6 +97,8 @@
     <Compile Include="Core\PinManagers\CreaturePinManager.cs" />
     <Compile Include="Core\PinManagers\DungeonPinManager.cs" />
     <Compile Include="Core\OreResourcePinService.cs" />
+    <Compile Include="Core\TarPitResourcePinService.cs" />
+    <Compile Include="Patches\PatchLiquidVolumeAwake.cs" />
     <Compile Include="Core\PickableResourcePinService.cs" />
     <Compile Include="Core\TrackedCreatures.cs" />
     <Compile Include="Core\TrackedDungeons.cs" />

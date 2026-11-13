@@ -2,6 +2,7 @@
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Core.Tracking.Monoscripts;
+using HexResourceTracker.Models;
 
 namespace HexResourceTracker.Patches
 {
@@ -15,12 +16,12 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
-            string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
-
-            if (PluginConfig.ResourceConfigs.ContainsKey(prefabName))
+            if (!PickableResourcePinService.TryGetResourceDefinition(__instance, out TrackedResourceDefinitionModel definition))
             {
-                TrackedMapObject.TryAdd(__instance.gameObject, prefabName);
+                return;
             }
+
+            TrackedMapObject.TryAdd(__instance.gameObject, definition.ResourcePrefabName);
 
             if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
             {

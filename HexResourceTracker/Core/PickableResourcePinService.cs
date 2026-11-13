@@ -7,6 +7,37 @@ namespace HexResourceTracker.Core
 {
     internal static class PickableResourcePinService
     {
+        internal static bool TryGetResourceDefinition(Pickable pickable, out TrackedResourceDefinitionModel definition)
+        {
+            definition = null;
+
+            if (pickable == null)
+            {
+                return false;
+            }
+
+            string prefabName = Utils.GetPrefabName(pickable.gameObject);
+
+            if (TrackedResources.TryGetByPrefabName(prefabName, out definition))
+            {
+                return definition.ResourceType == TrackedResourceTypeEnum.Pickable;
+            }
+
+            if (pickable.m_itemPrefab == null)
+            {
+                return false;
+            }
+
+            string itemPrefabName = Utils.GetPrefabName(pickable.m_itemPrefab);
+
+            if (!TrackedResources.TryGetByPrefabName(itemPrefabName, out definition))
+            {
+                return false;
+            }
+
+            return definition.ResourceType == TrackedResourceTypeEnum.Pickable;
+        }
+
         internal static bool TryAddResourcePinFromPickable(Pickable pickable)
         {
             if (pickable == null || Minimap.instance == null || pickable.m_itemPrefab == null)
@@ -26,10 +57,7 @@ namespace HexResourceTracker.Core
                 return false;
             }
 
-            string prefabName = pickable.gameObject.name.Replace("(Clone)", string.Empty).Trim();
-
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
-                definition.ResourceType != TrackedResourceTypeEnum.Pickable)
+            if (!TryGetResourceDefinition(pickable, out TrackedResourceDefinitionModel definition))
             {
                 return false;
             }
@@ -86,9 +114,12 @@ namespace HexResourceTracker.Core
                     continue;
                 }
 
-                string loadedPrefabName = pickable.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+                if (!TryGetResourceDefinition(pickable, out TrackedResourceDefinitionModel loadedDefinition))
+                {
+                    continue;
+                }
 
-                if (loadedPrefabName != definition.ResourcePrefabName)
+                if (loadedDefinition.ResourcePrefabName != definition.ResourcePrefabName)
                 {
                     continue;
                 }

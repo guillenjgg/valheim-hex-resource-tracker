@@ -93,7 +93,7 @@ namespace HexResourceTracker.UI
             ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Resources");
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
-                .Where(resource => resource.ResourceType != TrackedResourceTypeEnum.Deposit)
+                .Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit)
                 .OrderBy(resource => resource.SortOrder))
             {
                 AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
@@ -105,7 +105,7 @@ namespace HexResourceTracker.UI
             ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Deposits");
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
-                .Where(resource => resource.ResourceType == TrackedResourceTypeEnum.Deposit)
+                .Where(resource => !resource.ShowInLocations && resource.ResourceType == TrackedResourceTypeEnum.Deposit)
                 .OrderBy(resource => resource.SortOrder))
             {
                 AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
@@ -143,6 +143,11 @@ namespace HexResourceTracker.UI
                 ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
                 toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[prefabName].Value = value);
             }
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.Where(resource => resource.ShowInLocations).OrderBy(resource => resource.SortOrder))
+            {
+                AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
+            }
+
             ResourceTrackerOverlayUiFactory.CreateActionButton(parent, "FindNearestMemorialSite",
                 "Find Nearest\nMemorial Site", LocationSearchService.FindNearestMemorialSite);
         }

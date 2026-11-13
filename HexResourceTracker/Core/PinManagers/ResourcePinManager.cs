@@ -37,6 +37,7 @@ namespace HexResourceTracker.Core.PinManagers
             { "CopperOre", 32f },
             { "SilverOre", 32f },
             { "Softtissue", 32f },
+            { "GoblinTotem", ResourcePinSize * 2f },
             { OnionSeedsPrefabName, 32f },
             { OatSeedsPrefabName, 32f },
             { PoteitrSeedsPrefabName, 32f }

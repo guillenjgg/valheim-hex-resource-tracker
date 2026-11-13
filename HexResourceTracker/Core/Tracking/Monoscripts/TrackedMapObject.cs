@@ -17,6 +17,7 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
         internal MineRock MineRock { get; private set; }
         internal ZNetView ZNetView { get; private set; }
         internal Container Container { get; private set; }
+        internal LiquidVolume LiquidVolume { get; private set; }
 
         internal static IReadOnlyCollection<TrackedMapObject> GetTrackedObjects()
         {
@@ -34,6 +35,7 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
             TryGetComponent(out MineRock mineRock);
             TryGetComponent(out ZNetView zNetView);
             TryGetComponent(out Container container);
+            TryGetComponent(out LiquidVolume liquidVolume);
 
             Pickable = pickable;
             Destructible = destructible;
@@ -42,6 +44,7 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
             MineRock = mineRock;
             ZNetView = zNetView;
             Container = container;
+            LiquidVolume = liquidVolume;
 
             TrackedObjects.Add(this);
         }

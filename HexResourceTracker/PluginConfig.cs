@@ -15,6 +15,7 @@ namespace HexResourceTracker
     {
         private const string GeneralSection = "General";
         private const string ResourcesSection = "Resources To Track";
+        private const string LocationsSection = "Locations To Track";
         private const string DungeonsSection = "Dungeons To Track";
         private const string TrackingModeSection = "Tracking Mode";
         private const string DungeonLabelsSection = "Dungeon Labels";
@@ -54,7 +55,7 @@ namespace HexResourceTracker
             foreach (var location in TrackedLocations.All)
             {
                 string prefabName = location.Key;
-                ConfigEntry<bool> entry = config.Bind("Locations To Track", $"Track {location.Value}", true,
+                ConfigEntry<bool> entry = config.Bind(LocationsSection, $"Track {location.Value}", true,
                     $"Enable or disable tracking for {location.Value}.");
                 LocationConfigs[prefabName] = entry;
                 entry.SettingChanged += delegate
@@ -105,7 +106,7 @@ namespace HexResourceTracker
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
-                BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
+                BindResource(config, resource.ResourcePrefabName, resource.DisplayName, resource.ShowInLocations);
 
                 if (resource.ResourceType == TrackedResourceTypeEnum.Deposit)
                 {
@@ -196,10 +197,10 @@ namespace HexResourceTracker
             return entry;
         }
 
-        private static void BindResource(ConfigFile config, string prefabName, string displayName)
+        private static void BindResource(ConfigFile config, string prefabName, string displayName, bool showInLocations)
         {
             ConfigEntry<bool> entry = config.Bind(
-                ResourcesSection,
+                showInLocations ? LocationsSection : ResourcesSection,
                 $"Track {displayName}",
                 true,
                 $"Enable or disable tracking for {displayName}.");
@@ -209,6 +210,7 @@ namespace HexResourceTracker
                 ResourceTrackerOverlayState.HandleResourceTrackingChanged(prefabName, entry.Value);
                 PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
+                TarPitResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 ContainerResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
             };
 
