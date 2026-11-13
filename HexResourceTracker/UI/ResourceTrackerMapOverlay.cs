@@ -17,8 +17,9 @@ namespace HexResourceTracker.UI
         private static GameObject _panel;
         private static GameObject _content;
         private static RectTransform _panelRect;
+        private static RectTransform _leftColumnRect;
+        private static RectTransform _rightColumnRect;
         private static TextMeshProUGUI _collapseText;
-        private static bool _isCollapsed;
 
         internal static void Create()
         {
@@ -34,8 +35,6 @@ namespace HexResourceTracker.UI
 
             ResourceTrackerOverlayState.Clear();
 
-            _isCollapsed = false;
-
             _panel = new GameObject("HexResourceTrackerOverlay");
             _panel.transform.SetParent(Minimap.instance.m_largeRoot.transform, false);
 
@@ -49,7 +48,7 @@ namespace HexResourceTracker.UI
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
-            _collapseText = ResourceTrackerOverlayUiFactory.CreateTitle(_panel, HeaderHeight, ToggleCollapsed);
+            _collapseText = ResourceTrackerOverlayUiFactory.CreateTitle(_panel, HeaderHeight, ToggleCollapsed, () => SetAllSectionsCollapsed(false), () => SetAllSectionsCollapsed(true));
 
             _content = new GameObject("Content");
             _content.transform.SetParent(_panel.transform, false);
@@ -76,96 +75,131 @@ namespace HexResourceTracker.UI
             BuildCreatures(rightColumn);
             BuildLocations(rightColumn);
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(leftColumn.GetComponent<RectTransform>());
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rightColumn.GetComponent<RectTransform>());
+            _leftColumnRect = leftColumn.GetComponent<RectTransform>();
+            _rightColumnRect = rightColumn.GetComponent<RectTransform>();
+            ApplyCollapsedState();
+        }
 
-            float leftHeight = LayoutUtility.GetPreferredHeight(leftColumn.GetComponent<RectTransform>());
-            float rightHeight = LayoutUtility.GetPreferredHeight(rightColumn.GetComponent<RectTransform>());
+        private static void UpdateLayout()
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_leftColumnRect);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_rightColumnRect);
 
-            float contentHeight = Mathf.Max(leftHeight, rightHeight) + contentPadding * 2f;
+            float leftHeight = LayoutUtility.GetPreferredHeight(_leftColumnRect);
+            float rightHeight = LayoutUtility.GetPreferredHeight(_rightColumnRect);
+            float contentHeight = Mathf.Max(leftHeight, rightHeight) + ResourceTrackerOverlayUiFactory.ContentPadding * 2f;
 
+            RectTransform contentRect = _content.GetComponent<RectTransform>();
             contentRect.sizeDelta = new Vector2(0f, contentHeight);
-            _panelRect.sizeDelta = new Vector2(PanelWidth, HeaderHeight + contentHeight);
+            _panelRect.sizeDelta = new Vector2(PanelWidth, PluginConfig.OverlayCollapsed.Value ? HeaderHeight : HeaderHeight + contentHeight);
         }
 
         private static void BuildResources(GameObject parent)
         {
-            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Resources");
+            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Resources", UpdateLayout);
 
-            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
-                .Where(resource => resource.ResourceType != TrackedResourceTypeEnum.Deposit)
-                .OrderBy(resource => resource.SortOrder))
+            var biomeGroups = TrackedResources.AllTrackedResources.Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit).OrderBy(resource => resource.SortOrder).GroupBy(resource => resource.BiomeName);
+
+            foreach (var biomeGroup in biomeGroups)
             {
-                AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
+                GameObject biomeContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(sectionContent, biomeGroup.Key, UpdateLayout, SectionSpacing);
+
+                foreach (TrackedResourceDefinitionModel resource in biomeGroup)
+                {
+                    AddResourceToggle(biomeContent, resource.ResourcePrefabName, resource.DisplayName);
+                }
             }
         }
 
         private static void BuildDeposits(GameObject parent)
         {
-            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Deposits");
+            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Deposits", UpdateLayout);
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
-                .Where(resource => resource.ResourceType == TrackedResourceTypeEnum.Deposit)
+                .Where(resource => !resource.ShowInLocations && resource.ResourceType == TrackedResourceTypeEnum.Deposit)
                 .OrderBy(resource => resource.SortOrder))
             {
-                AddResourceToggle(parent, resource.ResourcePrefabName, resource.DisplayName);
+                AddResourceToggle(sectionContent, resource.ResourcePrefabName, resource.DisplayName);
             }
         }
 
         private static void BuildDungeons(GameObject parent)
         {
-            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Dungeons", SectionSpacing);
+            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Dungeons", UpdateLayout, SectionSpacing);
 
             foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
             {
-                AddDungeonToggle(parent, dungeon.Theme, dungeon.UiDisplayName);
+                AddDungeonToggle(sectionContent, dungeon.Theme, dungeon.UiDisplayName);
             }
         }
 
         private static void BuildCreatures(GameObject parent)
         {
-            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Creatures", SectionSpacing);
+            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Creatures", UpdateLayout, SectionSpacing);
 
             foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
             {
-                AddCreatureToggle(parent, creature.PrefabName, creature.DisplayName);
+                AddCreatureToggle(sectionContent, creature.PrefabName, creature.DisplayName);
             }
         }
 
         private static void BuildLocations(GameObject parent)
         {
-            ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, "Locations", SectionSpacing);
+            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Locations", UpdateLayout, SectionSpacing);
             foreach (var location in TrackedLocations.All)
             {
                 string prefabName = location.Key;
-                Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", location.Value);
+                Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(sectionContent, $"{prefabName}_Toggle", location.Value);
                 toggle.SetIsOnWithoutNotify(PluginConfig.LocationConfigs[prefabName].Value);
                 ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
                 toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[prefabName].Value = value);
             }
-            ResourceTrackerOverlayUiFactory.CreateActionButton(parent, "FindNearestMemorialSite",
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.Where(resource => resource.ShowInLocations).OrderBy(resource => resource.SortOrder))
+            {
+                AddResourceToggle(sectionContent, resource.ResourcePrefabName, resource.DisplayName);
+            }
+
+            ResourceTrackerOverlayUiFactory.CreateActionButton(sectionContent, "FindNearestMemorialSite",
                 "Find Nearest\nMemorial Site", LocationSearchService.FindNearestMemorialSite);
+        }
+
+        private static void SetAllSectionsCollapsed(bool collapsed)
+        {
+            foreach (var entry in PluginConfig.OverlaySectionCollapsedConfigs.Values)
+            {
+                entry.Value = collapsed;
+            }
+
+            PluginConfig.OverlayCollapsed.Value = false;
+            ApplyCollapsedState();
         }
 
         private static void ToggleCollapsed()
         {
-            _isCollapsed = !_isCollapsed;
+            PluginConfig.OverlayCollapsed.Value = !PluginConfig.OverlayCollapsed.Value;
+        }
 
-            if (_content != null)
+        internal static void ApplyCollapsedState()
+        {
+            if (_panel == null)
             {
-                _content.SetActive(!_isCollapsed);
+                return;
             }
 
-            if (_panelRect != null)
+            if (_content == null)
             {
-                float contentHeight = _content.GetComponent<RectTransform>().sizeDelta.y;
-                _panelRect.sizeDelta = new Vector2(PanelWidth, _isCollapsed ? HeaderHeight : HeaderHeight + contentHeight);
+                return;
             }
 
-            if (_collapseText != null)
+            if (_leftColumnRect == null || _rightColumnRect == null)
             {
-                _collapseText.text = _isCollapsed ? "+" : "−";
+                return;
             }
+
+            _content.SetActive(true);
+            UpdateLayout();
+            _content.SetActive(!PluginConfig.OverlayCollapsed.Value);
+            _collapseText.text = PluginConfig.OverlayCollapsed.Value ? "+" : "−";
         }
 
         private static void AddResourceToggle(GameObject parent, string prefabName, string displayName)

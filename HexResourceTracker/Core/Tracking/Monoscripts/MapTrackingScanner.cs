@@ -57,7 +57,11 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
 
                 trackedObject.IsInTrackingRange = isInRange;
 
-                if (trackedObject.Container != null)
+                if (trackedObject.LiquidVolume != null)
+                {
+                    TarPitResourcePinService.ReconcileTrackedTarPit(trackedObject);
+                }
+                else if (trackedObject.Container != null)
                 {
                     ContainerResourcePinService.ReconcileTrackedContainer(trackedObject);
                 }
@@ -138,7 +142,12 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
                     continue;
                 }
 
-                if (trackedObject.Container != null)
+                if (trackedObject.LiquidVolume != null)
+                {
+                    TarPitResourcePinService.ReconcileTrackedTarPit(trackedObject);
+                    continue;
+                }
+                else if (trackedObject.Container != null)
                 {
                     ContainerResourcePinService.ReconcileTrackedContainer(trackedObject);
                     continue;
@@ -147,6 +156,12 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
                 if (trackedObject.Pickable != null)
                 {
                     PickableResourcePinService.TryAddResourcePinFromPickable(trackedObject.Pickable);
+                    continue;
+                }
+
+                if (trackedObject.WearNTear != null)
+                {
+                    OreResourcePinService.TryAddResourcePinFromDestructibleOre(trackedObject.WearNTear);
                     continue;
                 }
 

@@ -14,7 +14,9 @@ namespace HexResourceTracker
     internal static class PluginConfig
     {
         private const string GeneralSection = "General";
+        private const string MapOverlaySection = "Map Overlay";
         private const string ResourcesSection = "Resources To Track";
+        private const string LocationsSection = "Locations To Track";
         private const string DungeonsSection = "Dungeons To Track";
         private const string TrackingModeSection = "Tracking Mode";
         private const string DungeonLabelsSection = "Dungeon Labels";
@@ -24,6 +26,9 @@ namespace HexResourceTracker
 
         private const int HideLabelOrder = 1000;
         private const int LabelOrder = 900;
+
+        internal static ConfigEntry<bool> OverlayCollapsed { get; private set; }
+        internal static readonly Dictionary<string, ConfigEntry<bool>> OverlaySectionCollapsedConfigs = new Dictionary<string, ConfigEntry<bool>>();
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
         internal static ConfigEntry<float> TrackingRange { get; private set; }
@@ -45,6 +50,36 @@ namespace HexResourceTracker
 
         internal static void Initialize(ConfigFile config)
         {
+            bool saveOnConfigSet = config.SaveOnConfigSet;
+            config.SaveOnConfigSet = false;
+
+            try
+            {
+                ConfigMigration.Migrate(config);
+                BindSettings(config);
+                config.Save();
+            }
+            finally
+            {
+                config.SaveOnConfigSet = saveOnConfigSet;
+            }
+        }
+
+        private static void BindSettings(ConfigFile config)
+        {
+            OverlayCollapsed = config.Bind(MapOverlaySection, "Overlay Collapsed", false, "Remember whether the entire map tracking overlay is collapsed.");
+            OverlayCollapsed.SettingChanged += delegate { ResourceTrackerMapOverlay.ApplyCollapsedState(); };
+
+            foreach (string sectionName in new[] { "Resources", "Deposits", "Dungeons", "Creatures", "Locations" })
+            {
+                BindOverlaySection(config, sectionName);
+            }
+
+            foreach (string biomeName in TrackedResources.AllTrackedResources.Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit).Select(resource => resource.BiomeName).Distinct())
+            {
+                BindOverlaySection(config, biomeName);
+            }
+
             IsModEnabled = config.Bind(
                 GeneralSection,
                 "Enable",
@@ -54,7 +89,7 @@ namespace HexResourceTracker
             foreach (var location in TrackedLocations.All)
             {
                 string prefabName = location.Key;
-                ConfigEntry<bool> entry = config.Bind("Locations To Track", $"Track {location.Value}", true,
+                ConfigEntry<bool> entry = config.Bind(LocationsSection, $"Track {location.Value}", true,
                     $"Enable or disable tracking for {location.Value}.");
                 LocationConfigs[prefabName] = entry;
                 entry.SettingChanged += delegate
@@ -105,7 +140,7 @@ namespace HexResourceTracker
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.OrderBy(resource => resource.SortOrder))
             {
-                BindResource(config, resource.ResourcePrefabName, resource.DisplayName);
+                BindResource(config, resource.ResourcePrefabName, resource.DisplayName, resource.ShowInLocations);
 
                 if (resource.ResourceType == TrackedResourceTypeEnum.Deposit)
                 {
@@ -122,6 +157,13 @@ namespace HexResourceTracker
             {
                 BindCreature(config, creature.PrefabName, creature.DisplayName);
             }
+        }
+
+        private static void BindOverlaySection(ConfigFile config, string sectionName)
+        {
+            ConfigEntry<bool> entry = config.Bind(MapOverlaySection, $"{sectionName} Collapsed", false, $"Remember whether the {sectionName} section is collapsed in the map overlay.");
+            OverlaySectionCollapsedConfigs[sectionName] = entry;
+            entry.SettingChanged += delegate { ResourceTrackerOverlayState.HandleSectionCollapsedChanged(sectionName); };
         }
 
         internal static bool IsLocationTrackingEnabled(string prefabName)
@@ -196,10 +238,10 @@ namespace HexResourceTracker
             return entry;
         }
 
-        private static void BindResource(ConfigFile config, string prefabName, string displayName)
+        private static void BindResource(ConfigFile config, string prefabName, string displayName, bool showInLocations)
         {
             ConfigEntry<bool> entry = config.Bind(
-                ResourcesSection,
+                showInLocations ? LocationsSection : ResourcesSection,
                 $"Track {displayName}",
                 true,
                 $"Enable or disable tracking for {displayName}.");
@@ -209,6 +251,7 @@ namespace HexResourceTracker
                 ResourceTrackerOverlayState.HandleResourceTrackingChanged(prefabName, entry.Value);
                 PickableResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 OreResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
+                TarPitResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
                 ContainerResourcePinService.HandleResourceTrackingChanged(prefabName, entry.Value);
             };
 

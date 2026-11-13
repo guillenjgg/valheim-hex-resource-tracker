@@ -11,11 +11,13 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
         internal bool IsInTrackingRange { get; set; }
 
         internal Pickable Pickable { get; private set; }
+        internal WearNTear WearNTear { get; private set; }
         internal Destructible Destructible { get; private set; }
         internal MineRock5 MineRock5 { get; private set; }
         internal MineRock MineRock { get; private set; }
         internal ZNetView ZNetView { get; private set; }
         internal Container Container { get; private set; }
+        internal LiquidVolume LiquidVolume { get; private set; }
 
         internal static IReadOnlyCollection<TrackedMapObject> GetTrackedObjects()
         {
@@ -28,17 +30,21 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
 
             TryGetComponent(out Pickable pickable);
             TryGetComponent(out Destructible destructible);
+            TryGetComponent(out WearNTear wearNTear);
             TryGetComponent(out MineRock5 mineRock5);
             TryGetComponent(out MineRock mineRock);
             TryGetComponent(out ZNetView zNetView);
             TryGetComponent(out Container container);
+            TryGetComponent(out LiquidVolume liquidVolume);
 
             Pickable = pickable;
             Destructible = destructible;
+            WearNTear = wearNTear;
             MineRock5 = mineRock5;
             MineRock = mineRock;
             ZNetView = zNetView;
             Container = container;
+            LiquidVolume = liquidVolume;
 
             TrackedObjects.Add(this);
         }

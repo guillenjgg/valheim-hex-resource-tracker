@@ -1,4 +1,4 @@
-﻿using HexResourceTracker.Models;
+using HexResourceTracker.Models;
 using System.Collections.Generic;
 
 namespace HexResourceTracker.Core
@@ -10,7 +10,8 @@ namespace HexResourceTracker.Core
             {
                 new TrackedCreatureDefinitionModel("Deer", "Deer", "TrophyDeer", 0, "HexDeerSprite_Golden_Bold"),
                 new TrackedCreatureDefinitionModel("Boar", "Boar", "TrophyBoar", 1),
-                new TrackedCreatureDefinitionModel("Hare", "Hare", "TrophyHare", 2)
+                new TrackedCreatureDefinitionModel("Hare", "Hare", "TrophyHare", 2),
+                new TrackedCreatureDefinitionModel("Lox", "Lox", "TrophyLox", 3)
             };
 
         private static readonly Dictionary<string, TrackedCreatureDefinitionModel> DefinitionsByPrefabName =

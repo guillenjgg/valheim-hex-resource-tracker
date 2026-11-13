@@ -14,7 +14,7 @@ namespace HexResourceTracker.UI
         internal const float ColumnWidth = 180f;
         internal const float ContentPadding = 6f;
 
-        internal static TextMeshProUGUI CreateTitle(GameObject parent, float headerHeight, UnityAction onCollapse)
+        internal static TextMeshProUGUI CreateTitle(GameObject parent, float headerHeight, UnityAction onCollapse, UnityAction onExpandAll, UnityAction onCollapseAll)
         {
             GameObject titleObject = new GameObject("Title");
             titleObject.transform.SetParent(parent.transform, false);
@@ -38,7 +38,7 @@ namespace HexResourceTracker.UI
             RectTransform titleTextRect = titleTextObject.AddComponent<RectTransform>();
             titleTextRect.anchorMin = Vector2.zero;
             titleTextRect.anchorMax = Vector2.one;
-            titleTextRect.offsetMin = new Vector2(30f, 0f);
+            titleTextRect.offsetMin = new Vector2(152f, 0f);
             titleTextRect.offsetMax = new Vector2(-30f, 0f);
 
             TextMeshProUGUI title = titleTextObject.AddComponent<TextMeshProUGUI>();
@@ -49,10 +49,34 @@ namespace HexResourceTracker.UI
             title.color = Color.white;
             title.raycastTarget = false;
 
+            CreateHeaderAction(titleObject, "ExpandAll", "Expand All", 4f, onExpandAll);
+            CreateHeaderAction(titleObject, "CollapseAll", "Collapse All", 78f, onCollapseAll);
+
             TextMeshProUGUI collapseText = CreateCollapseButton(titleObject, onCollapse);
             AddSeparator(titleObject);
 
             return collapseText;
+        }
+
+        private static void CreateHeaderAction(GameObject parent, string name, string label, float xPosition, UnityAction onClick)
+        {
+            const float ButtonWidth = 70f;
+            const float ButtonHeight = 24f;
+            const float FontSize = 11f;
+
+            TextMeshProUGUI text = CreateCollapseButton(parent, onClick);
+            GameObject button = text.transform.parent.gameObject;
+            button.name = name;
+
+            RectTransform rect = button.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0f, 0.5f);
+            rect.anchorMax = new Vector2(0f, 0.5f);
+            rect.pivot = new Vector2(0f, 0.5f);
+            rect.anchoredPosition = new Vector2(xPosition, 0f);
+            rect.sizeDelta = new Vector2(ButtonWidth, ButtonHeight);
+
+            text.text = label;
+            text.fontSize = FontSize;
         }
 
         internal static TextMeshProUGUI CreateCollapseButton(GameObject parent, UnityAction onCollapse)
@@ -139,7 +163,7 @@ namespace HexResourceTracker.UI
             return button;
         }
 
-        internal static void AddSectionHeader(GameObject parent, string text, float topSpacing = 0f)
+        internal static GameObject AddSectionHeader(GameObject parent, string text, float topSpacing = 0f)
         {
             GameObject headerObject = new GameObject($"{text}Header");
             headerObject.transform.SetParent(parent.transform, false);
@@ -179,6 +203,54 @@ namespace HexResourceTracker.UI
             headerText.raycastTarget = false;
 
             AddSeparator(headerObject);
+
+            return headerObject;
+        }
+
+        internal static GameObject CreateCollapsibleSection(GameObject parent, string title, UnityAction onLayoutChanged, float topSpacing = 0f)
+        {
+            GameObject header = AddSectionHeader(parent, title, topSpacing);
+            GameObject body = new GameObject($"{title}Content");
+            body.transform.SetParent(parent.transform, false);
+            body.AddComponent<RectTransform>();
+
+            VerticalLayoutGroup layout = body.AddComponent<VerticalLayoutGroup>();
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.spacing = RowSpacing;
+
+            var collapsedConfig = PluginConfig.OverlaySectionCollapsedConfigs[title];
+            UnityAction toggleSection = delegate { collapsedConfig.Value = !collapsedConfig.Value; };
+
+            Image background = header.GetComponent<Image>();
+            background.raycastTarget = true;
+
+            Button headerButton = header.AddComponent<Button>();
+            headerButton.targetGraphic = background;
+            headerButton.onClick.AddListener(toggleSection);
+
+            RectTransform labelRect = header.transform.Find("Text").GetComponent<RectTransform>();
+            labelRect.offsetMax = new Vector2(-30f, 0f);
+            TextMeshProUGUI collapseText = CreateCollapseButton(header, toggleSection);
+            body.SetActive(!collapsedConfig.Value);
+            collapseText.text = collapsedConfig.Value ? "+" : "−";
+
+            ResourceTrackerOverlayState.SectionCollapsedHandlers[title] = delegate
+            {
+                if (body == null)
+                {
+                    return;
+                }
+
+                body.SetActive(!collapsedConfig.Value);
+                collapseText.text = collapsedConfig.Value ? "+" : "−";
+                onLayoutChanged();
+            };
+
+            return body;
         }
 
         internal static GameObject CreateColumn(GameObject parent, string name, float xPosition)

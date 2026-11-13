@@ -13,7 +13,7 @@ namespace HexResourceTracker.Core
 
         private static readonly MethodInfo MineRockAllDestroyedMethod = AccessTools.Method(typeof(MineRock), "AllDestroyed");
 
-        internal static bool TryAddResourcePinFromDestructibleOre(Destructible destructible)
+        internal static bool TryAddResourcePinFromDestructibleOre(Component destructible)
         {
             if (destructible == null || Minimap.instance == null)
             {
@@ -148,7 +148,7 @@ namespace HexResourceTracker.Core
                 mineRock.transform.position));
         }
 
-        internal static bool TryRemoveResourcePinFromDestructibleOre(Destructible destructible)
+        internal static bool TryRemoveResourcePinFromDestructibleOre(Component destructible)
         {
             if (destructible == null)
             {
@@ -235,6 +235,7 @@ namespace HexResourceTracker.Core
             }
 
             RescanLoadedDestructibles(prefabName);
+            RescanLoadedBuildings(prefabName);
             RescanLoadedMineRock5(prefabName);
             RescanLoadedMineRock(prefabName);
         }
@@ -257,6 +258,18 @@ namespace HexResourceTracker.Core
 
             if (zdo == null)
             {
+                return;
+            }
+
+            if (trackedObject.WearNTear != null)
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddResourcePinFromDestructibleOre(trackedObject.WearNTear);
                 return;
             }
 
@@ -293,6 +306,28 @@ namespace HexResourceTracker.Core
                 }
 
                 TryAddResourcePinFromMineRock(trackedObject.MineRock);
+            }
+        }
+
+        private static void RescanLoadedBuildings(string prefabName)
+        {
+            WearNTear[] buildings = Object.FindObjectsByType<WearNTear>(FindObjectsSortMode.None);
+
+            foreach (WearNTear building in buildings)
+            {
+                if (building == null)
+                {
+                    continue;
+                }
+
+                string buildingPrefabName = building.gameObject.name.Replace("(Clone)", string.Empty).Trim();
+
+                if (buildingPrefabName != prefabName)
+                {
+                    continue;
+                }
+
+                TryAddResourcePinFromDestructibleOre(building);
             }
         }
 

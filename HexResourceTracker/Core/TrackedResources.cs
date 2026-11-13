@@ -1,4 +1,4 @@
-﻿using HexResourceTracker.Models;
+using HexResourceTracker.Models;
 using System.Collections.Generic;
 
 namespace HexResourceTracker.Core
@@ -8,14 +8,16 @@ namespace HexResourceTracker.Core
         internal static readonly List<TrackedResourceDefinitionModel> AllTrackedResources = new List<TrackedResourceDefinitionModel>
         {
             // Meadows
-            new TrackedResourceDefinitionModel("Pickable_Mushroom", "Mushrooms", 100, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_Dandelion", "Dandelions", 110, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("RaspberryBush", "Raspberries", 120, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom", "Mushrooms", 100, TrackedResourceTypeEnum.Pickable, biomeName: "Meadows"),
+            new TrackedResourceDefinitionModel("Pickable_Dandelion", "Dandelions", 110, TrackedResourceTypeEnum.Pickable, biomeName: "Meadows"),
+            new TrackedResourceDefinitionModel("RaspberryBush", "Raspberries", 120, TrackedResourceTypeEnum.Pickable, biomeName: "Meadows"),
+
+            new TrackedResourceDefinitionModel("Beehive", "Beehive", 130, TrackedResourceTypeEnum.Deposit, "Honey"),
 
             // Black Forest
-            new TrackedResourceDefinitionModel("BlueberryBush", "Blueberries", 200, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_Thistle", "Thistle", 210, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_SeedCarrot", "Carrot Seeds", 220, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("BlueberryBush", "Blueberries", 200, TrackedResourceTypeEnum.Pickable, biomeName: "Black Forest"),
+            new TrackedResourceDefinitionModel("Pickable_Thistle", "Thistle", 210, TrackedResourceTypeEnum.Pickable, biomeName: "Black Forest"),
+            new TrackedResourceDefinitionModel("Pickable_SeedCarrot", "Carrot Seeds", 220, TrackedResourceTypeEnum.Pickable, biomeName: "Black Forest"),
 
             new TrackedResourceDefinitionModel(
                 "rock4_copper",
@@ -25,12 +27,14 @@ namespace HexResourceTracker.Core
                 "CopperOre",
                 "$piece_deposit_copper"),
 
+            new TrackedResourceDefinitionModel("MineRock_Tin", "Tin", 240, TrackedResourceTypeEnum.Deposit, "TinOre"),
+
             // Swamp
-            new TrackedResourceDefinitionModel("Pickable_SeedTurnip", "Turnip Seeds", 300, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_SeedTurnip", "Turnip Seeds", 300, TrackedResourceTypeEnum.Pickable, biomeName: "Swamp"),
 
             // Mountains
-            new TrackedResourceDefinitionModel("Pickable_DragonEgg", "Dragon Eggs", 400, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("OnionSeeds", "Onion Seeds", 410, TrackedResourceTypeEnum.Container),
+            new TrackedResourceDefinitionModel("Pickable_DragonEgg", "Dragon Eggs", 400, TrackedResourceTypeEnum.Pickable, biomeName: "Mountains"),
+            new TrackedResourceDefinitionModel("OnionSeeds", "Onion Seeds", 410, TrackedResourceTypeEnum.Container, biomeName: "Mountains"),
 
             new TrackedResourceDefinitionModel(
                 "silvervein",
@@ -41,13 +45,17 @@ namespace HexResourceTracker.Core
                 "$piece_deposit_silvervein"),
 
             // Plains
-            new TrackedResourceDefinitionModel("Pickable_Flax_Wild", "Flax", 500, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_Barley_Wild", "Barley", 510, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("CloudberryBush", "Cloudberries", 520, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Flax_Wild", "Flax", 500, TrackedResourceTypeEnum.Pickable, biomeName: "Plains"),
+            new TrackedResourceDefinitionModel("Pickable_Barley_Wild", "Barley", 510, TrackedResourceTypeEnum.Pickable, biomeName: "Plains"),
+            new TrackedResourceDefinitionModel("CloudberryBush", "Cloudberries", 520, TrackedResourceTypeEnum.Pickable, biomeName: "Plains"),
+
+            new TrackedResourceDefinitionModel(TarPitResourcePinService.ResourcePrefabName, "Tar Pit", 530, TrackedResourceTypeEnum.Deposit, "Tar"),
+
+            new TrackedResourceDefinitionModel("GoblinTotem", "Fuling Totem", 540, TrackedResourceTypeEnum.Pickable, showInLocations: true, biomeName: "Plains"),
 
             // Mistlands
-            new TrackedResourceDefinitionModel("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", 600, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_Mushroom_Magecap", "Magecap", 610, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom_JotunPuffs", "Jotun Puffs", 600, TrackedResourceTypeEnum.Pickable, biomeName: "Mistlands"),
+            new TrackedResourceDefinitionModel("Pickable_Mushroom_Magecap", "Magecap", 610, TrackedResourceTypeEnum.Pickable, biomeName: "Mistlands"),
 
             new TrackedResourceDefinitionModel(
                 "giant_skull",
@@ -58,9 +66,9 @@ namespace HexResourceTracker.Core
                 "$piece_giant_bone"),
 
             // Ashlands
-            new TrackedResourceDefinitionModel("VineAsh", "Vineberries", 700, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_SmokePuff", "Smoke Puffs", 710, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_Fiddlehead", "Fiddleheads", 720, TrackedResourceTypeEnum.Pickable),
+            new TrackedResourceDefinitionModel("VineAsh", "Vineberries", 700, TrackedResourceTypeEnum.Pickable, biomeName: "Ashlands"),
+            new TrackedResourceDefinitionModel("Pickable_SmokePuff", "Smoke Puffs", 710, TrackedResourceTypeEnum.Pickable, biomeName: "Ashlands"),
+            new TrackedResourceDefinitionModel("Pickable_Fiddlehead", "Fiddleheads", 720, TrackedResourceTypeEnum.Pickable, biomeName: "Ashlands"),
 
             new TrackedResourceDefinitionModel(
                 "LeviathanLava",
@@ -72,10 +80,10 @@ namespace HexResourceTracker.Core
                 "$item_flametalore"),
 
             // Deep North
-            new TrackedResourceDefinitionModel("LingonberryBush", "Lingonberries", 800, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable),
-            new TrackedResourceDefinitionModel("OatSeeds", "Oat Seeds", 820, TrackedResourceTypeEnum.Container),
-            new TrackedResourceDefinitionModel("PoteitrSeeds", "Potato Seeds", 830, TrackedResourceTypeEnum.Container)
+            new TrackedResourceDefinitionModel("LingonberryBush", "Lingonberries", 800, TrackedResourceTypeEnum.Pickable, biomeName: "Deep North"),
+            new TrackedResourceDefinitionModel("Pickable_SeedKale", "Kale Seeds", 810, TrackedResourceTypeEnum.Pickable, biomeName: "Deep North"),
+            new TrackedResourceDefinitionModel("OatSeeds", "Oat Seeds", 820, TrackedResourceTypeEnum.Container, biomeName: "Deep North"),
+            new TrackedResourceDefinitionModel("PoteitrSeeds", "Potato Seeds", 830, TrackedResourceTypeEnum.Container, biomeName: "Deep North")
         };
 
         private static readonly Dictionary<string, TrackedResourceDefinitionModel> ByPrefabName = new Dictionary<string, TrackedResourceDefinitionModel>();
