@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 namespace HexResourceTracker.UI
@@ -48,8 +49,19 @@ namespace HexResourceTracker.UI
             }
         }
 
+        internal static readonly Dictionary<string, Action> SectionCollapsedHandlers = new Dictionary<string, Action>();
+
+        internal static void HandleSectionCollapsedChanged(string sectionName)
+        {
+            if (SectionCollapsedHandlers.TryGetValue(sectionName, out Action handler))
+            {
+                handler();
+            }
+        }
+
         internal static void Clear()
         {
+            SectionCollapsedHandlers.Clear();
             LocationToggles.Clear();
             ResourceToggles.Clear();
             DungeonToggles.Clear();

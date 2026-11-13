@@ -2,9 +2,32 @@
 
 ## v1.6.3
 
-### Added
-- Tracking for beehives
-- Tracking for tin ore deposits
+### Creatures
+
+- Lox are now tracked.
+
+### Locations
+
+- Fuling Totems are now tracked under Locations.
+
+### Resources and deposits
+
+- Beehives are now tracked.
+- Tin deposits tracked.
+- Tar pits tracked.
+
+### Map overlay
+
+- Resources are grouped by biome.
+- Each section can be collapsed or expanded.
+- Added Expand All and Collapse All buttons.
+- Collapsed sections are remembered between sessions.
+- Adjusted Tin and Fuling Totem icon sizes.
+
+### Configuration
+
+- Renamed and moved settings migrate automatically.
+- Existing preferences and custom labels are preserved.
 
 ## v1.6.2
 

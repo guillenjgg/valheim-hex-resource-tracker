@@ -10,8 +10,9 @@
         internal string MineRock5Name { get; }
         internal string MineRockName { get; }
         internal bool ShowInLocations { get; }
+        internal string BiomeName { get; }
 
-        internal TrackedResourceDefinitionModel(string resourcePrefabName, string displayName, int sortOrder, TrackedResourceTypeEnum resourceType, string iconItemPrefabName = null, string mineRock5Name = null, string mineRockName = null, bool showInLocations = false)
+        internal TrackedResourceDefinitionModel(string resourcePrefabName, string displayName, int sortOrder, TrackedResourceTypeEnum resourceType, string iconItemPrefabName = null, string mineRock5Name = null, string mineRockName = null, bool showInLocations = false, string biomeName = null)
         {
             ResourcePrefabName = resourcePrefabName;
             DisplayName = displayName;
@@ -21,6 +22,7 @@
             MineRock5Name = mineRock5Name;
             MineRockName = mineRockName;
             ShowInLocations = showInLocations;
+            BiomeName = biomeName;
         }
     }
 }
