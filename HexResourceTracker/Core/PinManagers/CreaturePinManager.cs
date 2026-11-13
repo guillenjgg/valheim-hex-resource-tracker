@@ -35,7 +35,17 @@ namespace HexResourceTracker.Core.PinManagers
 
             foreach (TrackedCreature creature in TrackedCreature.GetTrackedCreatures())
             {
-                if (creature == null || creature.Character == null || creature.ZNetView == null)
+                if (creature == null)
+                {
+                    continue;
+                }
+
+                if (creature.Character == null)
+                {
+                    continue;
+                }
+
+                if (creature.ZNetView == null)
                 {
                     continue;
                 }
@@ -54,9 +64,19 @@ namespace HexResourceTracker.Core.PinManagers
 
                 activeIds.Add(zdoId);
 
-                if (!PluginConfig.IsCreatureTrackingEnabled(creature.PrefabName) ||
-                    creature.Character.IsDead() ||
-                    !TrackingRangeService.IsWithinTrackingRange(creature.transform.position))
+                if (!PluginConfig.IsCreatureTrackingEnabled(creature.PrefabName))
+                {
+                    RemoveCreaturePin(zdoId);
+                    continue;
+                }
+
+                if (creature.Character.IsDead())
+                {
+                    RemoveCreaturePin(zdoId);
+                    continue;
+                }
+
+                if (!TrackingRangeService.IsWithinTrackingRange(creature.transform.position))
                 {
                     RemoveCreaturePin(zdoId);
                     continue;

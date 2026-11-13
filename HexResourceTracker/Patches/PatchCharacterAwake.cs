@@ -9,7 +9,12 @@ namespace HexResourceTracker.Patches
     {
         private static void Postfix(Character __instance)
         {
-            if (!PluginConfig.IsModEnabled.Value || __instance == null)
+            if (!PluginConfig.IsModEnabled.Value)
+            {
+                return;
+            }
+
+            if (__instance == null)
             {
                 return;
             }
