@@ -1,5 +1,6 @@
 ﻿using HexResourceTracker.Core;
 using HexResourceTracker.Models;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace HexResourceTracker.UI
         private const float ColumnSpacing = 6f;
         private const float HeaderHeight = 28f;
         private const float SectionSpacing = 6f;
+        private const string Title = "Map Tracking";
 
         private static GameObject _panel;
         private static GameObject _content;
@@ -20,6 +22,19 @@ namespace HexResourceTracker.UI
         private static RectTransform _leftColumnRect;
         private static RectTransform _rightColumnRect;
         private static TextMeshProUGUI _collapseText;
+        private static TextMeshProUGUI _titleText;
+        private static GameObject _emptyText;
+
+        // The panel shows only the rows of the player's current biome; a section with no rows showing is hidden.
+        private static readonly List<BiomeSection> Sections = new List<BiomeSection>();
+        private static Heightmap.Biome _shownBiome;
+
+        private sealed class BiomeSection
+        {
+            internal GameObject Header;
+            internal GameObject Body;
+            internal readonly List<KeyValuePair<GameObject, Heightmap.Biome>> Rows = new List<KeyValuePair<GameObject, Heightmap.Biome>>();
+        }
 
         internal static void Create()
         {
@@ -34,6 +49,8 @@ namespace HexResourceTracker.UI
             }
 
             ResourceTrackerOverlayState.Clear();
+            Sections.Clear();
+            _shownBiome = Heightmap.Biome.None;
 
             _panel = new GameObject("HexResourceTrackerOverlay");
             _panel.transform.SetParent(Minimap.instance.m_largeRoot.transform, false);
@@ -48,7 +65,7 @@ namespace HexResourceTracker.UI
             Image background = _panel.AddComponent<Image>();
             background.color = new Color(0.22f, 0.16f, 0.10f, 0.75f);
 
-            _collapseText = ResourceTrackerOverlayUiFactory.CreateTitle(_panel, HeaderHeight, ToggleCollapsed, () => SetAllSectionsCollapsed(false), () => SetAllSectionsCollapsed(true));
+            _collapseText = ResourceTrackerOverlayUiFactory.CreateTitle(_panel, HeaderHeight, ToggleCollapsed, out _titleText);
 
             _content = new GameObject("Content");
             _content.transform.SetParent(_panel.transform, false);
@@ -69,14 +86,58 @@ namespace HexResourceTracker.UI
             GameObject rightColumn = ResourceTrackerOverlayUiFactory.CreateColumn(
                 _content, "TrackingColumn", contentPadding + columnWidth + ColumnSpacing);
 
+            _emptyText = ResourceTrackerOverlayUiFactory.CreateNote(leftColumn, "EmptyNote", "Nothing tracked here yet");
+
             BuildResources(leftColumn);
-            BuildDeposits(rightColumn);
+            BuildDeposits(leftColumn);
             BuildDungeons(rightColumn);
             BuildCreatures(rightColumn);
             BuildLocations(rightColumn);
 
             _leftColumnRect = leftColumn.GetComponent<RectTransform>();
             _rightColumnRect = rightColumn.GetComponent<RectTransform>();
+            ApplyBiome();
+        }
+
+        // Called every frame from the minimap; redraws the panel only when the player's biome changes.
+        internal static void UpdateBiome()
+        {
+            if (_panel == null || Player.m_localPlayer == null)
+            {
+                return;
+            }
+
+            Heightmap.Biome biome = Player.m_localPlayer.GetCurrentBiome();
+            if (biome == _shownBiome)
+            {
+                return;
+            }
+
+            _shownBiome = biome;
+            ApplyBiome();
+        }
+
+        private static void ApplyBiome()
+        {
+            bool anyShown = false;
+            foreach (BiomeSection section in Sections)
+            {
+                bool sectionShown = false;
+                foreach (var row in section.Rows)
+                {
+                    bool shown = TrackedBiomes.IsShown(row.Value, _shownBiome);
+                    row.Key.SetActive(shown);
+                    sectionShown |= shown;
+                }
+
+                section.Header.SetActive(sectionShown);
+                section.Body.SetActive(sectionShown);
+                anyShown |= sectionShown;
+            }
+
+            _emptyText.SetActive(!anyShown);
+            string biomeName = TrackedBiomes.DisplayName(_shownBiome);
+            _titleText.text = string.IsNullOrEmpty(biomeName) ? Title : $"{Title}: {biomeName}";
             ApplyCollapsedState();
         }
 
@@ -94,84 +155,86 @@ namespace HexResourceTracker.UI
             _panelRect.sizeDelta = new Vector2(PanelWidth, PluginConfig.OverlayCollapsed.Value ? HeaderHeight : HeaderHeight + contentHeight);
         }
 
+        private static BiomeSection CreateSection(GameObject parent, string title, float topSpacing = 0f)
+        {
+            GameObject header = ResourceTrackerOverlayUiFactory.AddSectionHeader(parent, title, topSpacing);
+            BiomeSection section = new BiomeSection
+            {
+                Header = header,
+                Body = ResourceTrackerOverlayUiFactory.CreateSectionBody(parent, title)
+            };
+            Sections.Add(section);
+            return section;
+        }
+
         private static void BuildResources(GameObject parent)
         {
-            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Resources", UpdateLayout);
+            BiomeSection section = CreateSection(parent, "Resources");
 
-            var biomeGroups = TrackedResources.AllTrackedResources.Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit).OrderBy(resource => resource.SortOrder).GroupBy(resource => resource.BiomeName);
-
-            foreach (var biomeGroup in biomeGroups)
+            foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
+                .Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit)
+                .OrderBy(resource => resource.SortOrder))
             {
-                GameObject biomeContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(sectionContent, biomeGroup.Key, UpdateLayout, SectionSpacing);
-
-                foreach (TrackedResourceDefinitionModel resource in biomeGroup)
-                {
-                    AddResourceToggle(biomeContent, resource.ResourcePrefabName, resource.DisplayName);
-                }
+                AddResourceToggle(section, resource);
             }
         }
 
         private static void BuildDeposits(GameObject parent)
         {
-            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Deposits", UpdateLayout);
+            BiomeSection section = CreateSection(parent, "Deposits", SectionSpacing);
 
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources
                 .Where(resource => !resource.ShowInLocations && resource.ResourceType == TrackedResourceTypeEnum.Deposit)
                 .OrderBy(resource => resource.SortOrder))
             {
-                AddResourceToggle(sectionContent, resource.ResourcePrefabName, resource.DisplayName);
+                AddResourceToggle(section, resource);
             }
         }
 
         private static void BuildDungeons(GameObject parent)
         {
-            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Dungeons", UpdateLayout, SectionSpacing);
+            BiomeSection section = CreateSection(parent, "Dungeons");
 
             foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
             {
-                AddDungeonToggle(sectionContent, dungeon.Theme, dungeon.UiDisplayName);
+                AddDungeonToggle(section, dungeon.Theme, dungeon.UiDisplayName);
             }
         }
 
         private static void BuildCreatures(GameObject parent)
         {
-            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Creatures", UpdateLayout, SectionSpacing);
+            BiomeSection section = CreateSection(parent, "Creatures", SectionSpacing);
 
             foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
             {
-                AddCreatureToggle(sectionContent, creature.PrefabName, creature.DisplayName);
+                AddCreatureToggle(section, creature.PrefabName, creature.DisplayName);
             }
         }
 
         private static void BuildLocations(GameObject parent)
         {
-            GameObject sectionContent = ResourceTrackerOverlayUiFactory.CreateCollapsibleSection(parent, "Locations", UpdateLayout, SectionSpacing);
-            foreach (var location in TrackedLocations.All)
+            BiomeSection section = CreateSection(parent, "Locations", SectionSpacing);
+            foreach (var location in TrackedLocations.Groups())
             {
-                string prefabName = location.Key;
-                Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(sectionContent, $"{prefabName}_Toggle", location.Value);
-                toggle.SetIsOnWithoutNotify(PluginConfig.LocationConfigs[prefabName].Value);
-                ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
-                toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[prefabName].Value = value);
+                string firstPrefabName = location.Value[0];
+                Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(section.Body, $"{firstPrefabName}_Toggle", location.Key);
+                toggle.SetIsOnWithoutNotify(PluginConfig.LocationConfigs[firstPrefabName].Value);
+                foreach (string prefabName in location.Value)
+                {
+                    ResourceTrackerOverlayState.LocationToggles[prefabName] = toggle;
+                }
+
+                toggle.onValueChanged.AddListener(value => PluginConfig.LocationConfigs[firstPrefabName].Value = value);
+                section.Rows.Add(new KeyValuePair<GameObject, Heightmap.Biome>(toggle.gameObject, TrackedBiomes.ForLocations(location.Value)));
             }
             foreach (TrackedResourceDefinitionModel resource in TrackedResources.AllTrackedResources.Where(resource => resource.ShowInLocations).OrderBy(resource => resource.SortOrder))
             {
-                AddResourceToggle(sectionContent, resource.ResourcePrefabName, resource.DisplayName);
+                AddResourceToggle(section, resource);
             }
 
-            ResourceTrackerOverlayUiFactory.CreateActionButton(sectionContent, "FindNearestMemorialSite",
+            Button button = ResourceTrackerOverlayUiFactory.CreateActionButton(section.Body, "FindNearestMemorialSite",
                 "Find Nearest\nMemorial Site", LocationSearchService.FindNearestMemorialSite);
-        }
-
-        private static void SetAllSectionsCollapsed(bool collapsed)
-        {
-            foreach (var entry in PluginConfig.OverlaySectionCollapsedConfigs.Values)
-            {
-                entry.Value = collapsed;
-            }
-
-            PluginConfig.OverlayCollapsed.Value = false;
-            ApplyCollapsedState();
+            section.Rows.Add(new KeyValuePair<GameObject, Heightmap.Biome>(button.gameObject, TrackedBiomes.MemorialSiteSearch));
         }
 
         private static void ToggleCollapsed()
@@ -202,9 +265,10 @@ namespace HexResourceTracker.UI
             _collapseText.text = PluginConfig.OverlayCollapsed.Value ? "+" : "−";
         }
 
-        private static void AddResourceToggle(GameObject parent, string prefabName, string displayName)
+        private static void AddResourceToggle(BiomeSection section, TrackedResourceDefinitionModel resource)
         {
-            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", displayName);
+            string prefabName = resource.ResourcePrefabName;
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(section.Body, $"{prefabName}_Toggle", resource.DisplayName);
             bool isEnabled = PluginConfig.ResourceConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -214,11 +278,13 @@ namespace HexResourceTracker.UI
             {
                 PluginConfig.ResourceConfigs[prefabName].Value = value;
             });
+
+            section.Rows.Add(new KeyValuePair<GameObject, Heightmap.Biome>(toggle.gameObject, TrackedBiomes.ForResource(resource)));
         }
 
-        private static void AddDungeonToggle(GameObject parent, Room.Theme theme, string displayName)
+        private static void AddDungeonToggle(BiomeSection section, Room.Theme theme, string displayName)
         {
-            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{theme}_Toggle", displayName);
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(section.Body, $"{theme}_Toggle", displayName);
             bool isEnabled = PluginConfig.DungeonConfigs[theme].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -228,11 +294,13 @@ namespace HexResourceTracker.UI
             {
                 PluginConfig.DungeonConfigs[theme].Value = value;
             });
+
+            section.Rows.Add(new KeyValuePair<GameObject, Heightmap.Biome>(toggle.gameObject, TrackedBiomes.ForDungeon(theme)));
         }
 
-        private static void AddCreatureToggle(GameObject parent, string prefabName, string displayName)
+        private static void AddCreatureToggle(BiomeSection section, string prefabName, string displayName)
         {
-            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(parent, $"{prefabName}_Toggle", displayName);
+            Toggle toggle = ResourceTrackerOverlayUiFactory.CreateToggle(section.Body, $"{prefabName}_Toggle", displayName);
             bool isEnabled = PluginConfig.CreatureConfigs[prefabName].Value;
 
             toggle.SetIsOnWithoutNotify(isEnabled);
@@ -242,6 +310,8 @@ namespace HexResourceTracker.UI
             {
                 PluginConfig.CreatureConfigs[prefabName].Value = value;
             });
+
+            section.Rows.Add(new KeyValuePair<GameObject, Heightmap.Biome>(toggle.gameObject, TrackedBiomes.ForCreature(prefabName)));
         }
     }
 }

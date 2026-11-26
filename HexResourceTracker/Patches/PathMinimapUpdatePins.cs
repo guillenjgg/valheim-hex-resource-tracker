@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core;
 using HexResourceTracker.Core.PinManagers;
+using HexResourceTracker.UI;
 
 namespace HexResourceTracker.Patches
 {
@@ -15,6 +16,7 @@ namespace HexResourceTracker.Patches
             }
 
             ResourcePinManager.UpdateResourcePinVisuals(__instance);
+            ResourceTrackerMapOverlay.UpdateBiome();
         }
     }
 }

@@ -8,12 +8,6 @@ namespace HexResourceTracker.Patches
     [HarmonyPatch(typeof(Container), nameof(Container.OnContainerChanged))]
     internal static class PatchContainerOnContainerChanged
     {
-        private static readonly HashSet<string> TrackedContainerPrefabNames = new HashSet<string>
-        {
-            "TreasureChest_mountains",
-            "loot_deepNorth_Granary"
-        };
-
         private static void Postfix(Container __instance)
         {
             if (!PluginConfig.IsModEnabled.Value || __instance == null)
@@ -23,7 +17,12 @@ namespace HexResourceTracker.Patches
 
             string prefabName = __instance.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-            if (!TrackedContainerPrefabNames.Contains(prefabName))
+            // World chests carry a Piece too, so only a piece a player placed counts as theirs.
+            Piece piece = __instance.GetComponent<Piece>();
+
+            if (!TrackedResources.IsWorldContainer(
+                    piece != null && piece.IsPlacedByPlayer(),
+                    __instance.GetComponent<TombStone>() != null))
             {
                 return;
             }

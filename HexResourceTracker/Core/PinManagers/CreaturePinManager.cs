@@ -32,6 +32,7 @@ namespace HexResourceTracker.Core.PinManagers
             }
 
             var activeIds = new HashSet<ZDOID>();
+            var shownByPrefab = new Dictionary<string, List<TrackedCreature>>();
 
             foreach (TrackedCreature creature in TrackedCreature.GetTrackedCreatures())
             {
@@ -40,7 +41,7 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                if (creature.Character == null)
+                if (creature.Body == null)
                 {
                     continue;
                 }
@@ -62,67 +63,58 @@ namespace HexResourceTracker.Core.PinManagers
                     continue;
                 }
 
-                activeIds.Add(zdoId);
-
                 if (!PluginConfig.IsCreatureTrackingEnabled(creature.PrefabName))
                 {
-                    RemoveCreaturePin(zdoId);
                     continue;
                 }
 
-                if (creature.Character.IsDead())
+                if (creature.Character != null && creature.Character.IsDead())
                 {
-                    RemoveCreaturePin(zdoId);
+                    continue;
+                }
+
+                // A caught fish lying on land is an item now, not a fish to find.
+                if (creature.Body is Fish fish && fish.IsOutOfWater())
+                {
                     continue;
                 }
 
                 if (!TrackingRangeService.IsWithinTrackingRange(creature.transform.position))
                 {
-                    RemoveCreaturePin(zdoId);
                     continue;
                 }
 
-                if (CreaturePins.TryGetValue(zdoId, out CreaturePinModel model))
+                if (!shownByPrefab.TryGetValue(creature.PrefabName, out List<TrackedCreature> shown))
                 {
-                    if (model.Pin != null)
+                    shown = new List<TrackedCreature>();
+                    shownByPrefab[creature.PrefabName] = shown;
+                }
+
+                shown.Add(creature);
+            }
+
+            float packRadius = PluginConfig.GroupCreaturePacks.Value ? PluginConfig.CreaturePackRadius.Value : 0f;
+
+            foreach (KeyValuePair<string, List<TrackedCreature>> entry in shownByPrefab)
+            {
+                // A stable order keeps each pack's first member, and so its pin, the same from pass to pass.
+                entry.Value.Sort((a, b) => a.ZdoId.CompareTo(b.ZdoId));
+
+                foreach (List<TrackedCreature> pack in CreaturePacks.Group(entry.Value, c => c.transform.position.x, c => c.transform.position.z, packRadius))
+                {
+                    Vector3 position = Vector3.zero;
+
+                    foreach (TrackedCreature member in pack)
                     {
-                        var position = creature.transform.position;
-
-                        if ((model.Pin.m_pos - position).sqrMagnitude > 0.01f)
-                        {
-                            model.Pin.m_pos = position;
-                            SetPinUpdateRequired();
-                        }
-
-                        continue;
+                        position += member.transform.position;
                     }
 
-                    CreaturePins.Remove(zdoId);
+                    position /= pack.Count;
+
+                    ZDOID zdoId = pack[0].ZdoId;
+                    activeIds.Add(zdoId);
+                    ShowCreaturePin(zdoId, entry.Key, position);
                 }
-
-                Sprite sprite = GetCreatureSprite(creature.PrefabName);
-
-                if (sprite == null)
-                {
-                    continue;
-                }
-
-                PinData pin = Minimap.instance.AddPin(
-                    creature.transform.position,
-                    PinType.None,
-                    string.Empty,
-                    false,
-                    false);
-
-                if (pin == null)
-                {
-                    continue;
-                }
-
-                pin.m_icon = sprite;
-                CreaturePins[zdoId] = new CreaturePinModel(zdoId, creature.PrefabName, pin);
-
-                SetPinUpdateRequired();
             }
 
             var idsToRemove = new List<ZDOID>();
@@ -141,6 +133,49 @@ namespace HexResourceTracker.Core.PinManagers
             }
         }
         
+        private static void ShowCreaturePin(ZDOID zdoId, string prefabName, Vector3 position)
+        {
+            if (CreaturePins.TryGetValue(zdoId, out CreaturePinModel model))
+            {
+                if (model.Pin != null && model.PrefabName == prefabName)
+                {
+                    if ((model.Pin.m_pos - position).sqrMagnitude > 0.01f)
+                    {
+                        model.Pin.m_pos = position;
+                        SetPinUpdateRequired();
+                    }
+
+                    return;
+                }
+
+                RemoveCreaturePin(zdoId);
+            }
+
+            Sprite sprite = GetCreatureSprite(prefabName);
+
+            if (sprite == null)
+            {
+                return;
+            }
+
+            PinData pin = Minimap.instance.AddPin(
+                position,
+                PinType.None,
+                string.Empty,
+                false,
+                false);
+
+            if (pin == null)
+            {
+                return;
+            }
+
+            pin.m_icon = sprite;
+            CreaturePins[zdoId] = new CreaturePinModel(zdoId, prefabName, pin);
+
+            SetPinUpdateRequired();
+        }
+
         internal static void RemoveCreaturePin(ZDOID zdoId)
         {
             if (!CreaturePins.TryGetValue(zdoId, out CreaturePinModel model))

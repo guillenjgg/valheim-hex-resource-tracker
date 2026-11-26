@@ -20,8 +20,24 @@ namespace HexResourceTracker.Core
                 return;
             }
 
-            if (!TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinitionModel definition, out string iconItemPrefabName) ||
-                !PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
+            bool found = TryGetTrackedContainerResource(trackedObject.Container, out TrackedResourceDefinitionModel definition, out string iconItemPrefabName);
+
+            if (PluginConfig.LogDepositChanges.Value)
+            {
+                var inventory = trackedObject.Container.GetInventory();
+                var items = new System.Collections.Generic.List<string>();
+                if (inventory != null)
+                {
+                    foreach (ItemDrop.ItemData item in inventory.GetAllItems())
+                    {
+                        items.Add((item.m_dropPrefab != null ? item.m_dropPrefab.name : "<no prefab>") + " " + item.m_shared?.m_name);
+                    }
+                }
+
+                UnityEngine.Debug.Log($"[HexResourceTracker] [DepositLog] container '{trackedObject.PrefabName}' at ({trackedObject.transform.position.x:0}, {trackedObject.transform.position.z:0}): {items.Count} item(s) [{string.Join(", ", items)}], tracked {found}");
+            }
+
+            if (!found || !PluginConfig.IsResourceTrackingEnabled(definition.ResourcePrefabName))
             {
                 ResourcePinManager.RemoveResourcePin(zdo.m_uid);
                 return;
@@ -80,8 +96,10 @@ namespace HexResourceTracker.Core
                 }
 
                 string itemPrefabName = item.m_dropPrefab.name;
+                string resourceKey = TrackedResources.ContainerKeyForItem(itemPrefabName, item.m_shared?.m_name);
 
-                if (!TrackedResources.TryGetByPrefabName(itemPrefabName, out definition) ||
+                if (resourceKey == null ||
+                    !TrackedResources.TryGetByPrefabName(resourceKey, out definition) ||
                     definition.ResourceType != TrackedResourceTypeEnum.Container)
                 {
                     continue;

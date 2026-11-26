@@ -13,6 +13,8 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
+            DepositChangeLog.LogMinedOut(__instance, __instance.m_name);
+
             OreResourcePinService.TryRemoveResourcePinFromMineRock(__instance);
         }
     }

@@ -13,6 +13,7 @@ namespace HexResourceTracker.Patches
                 return;
             }
 
+            DepositChangeLog.LogDestructibleDestroyed(__instance);
             OreResourcePinService.TryRemoveResourcePinFromDestructibleOre(__instance);
         }
     }

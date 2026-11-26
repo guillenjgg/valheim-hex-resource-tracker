@@ -23,16 +23,19 @@ namespace HexResourceTracker
         private const string DepositLabelsSection = "Deposit Labels";
         private const string LocationLabelsSection = "Location Labels";
         private const string CreaturesSection = "Creatures To Track";
+        private const string DebugSection = "Debug";
 
         private const int HideLabelOrder = 1000;
         private const int LabelOrder = 900;
 
         internal static ConfigEntry<bool> OverlayCollapsed { get; private set; }
-        internal static readonly Dictionary<string, ConfigEntry<bool>> OverlaySectionCollapsedConfigs = new Dictionary<string, ConfigEntry<bool>>();
 
         internal static ConfigEntry<bool> IsModEnabled { get; private set; }
+        internal static ConfigEntry<bool> LogDepositChanges { get; private set; }
         internal static ConfigEntry<float> TrackingRange { get; private set; }
         internal static ConfigEntry<TrackingModeEnum> TrackingMode { get; private set; }
+        internal static ConfigEntry<bool> GroupCreaturePacks { get; private set; }
+        internal static ConfigEntry<float> CreaturePackRadius { get; private set; }
 
         internal static ConfigEntry<bool> HideDungeonLabels { get; private set; }
         internal static ConfigEntry<bool> HideDepositLabels { get; private set; }
@@ -70,31 +73,32 @@ namespace HexResourceTracker
             OverlayCollapsed = config.Bind(MapOverlaySection, "Overlay Collapsed", false, "Remember whether the entire map tracking overlay is collapsed.");
             OverlayCollapsed.SettingChanged += delegate { ResourceTrackerMapOverlay.ApplyCollapsedState(); };
 
-            foreach (string sectionName in new[] { "Resources", "Deposits", "Dungeons", "Creatures", "Locations" })
-            {
-                BindOverlaySection(config, sectionName);
-            }
-
-            foreach (string biomeName in TrackedResources.AllTrackedResources.Where(resource => !resource.ShowInLocations && resource.ResourceType != TrackedResourceTypeEnum.Deposit).Select(resource => resource.BiomeName).Distinct())
-            {
-                BindOverlaySection(config, biomeName);
-            }
-
             IsModEnabled = config.Bind(
                 GeneralSection,
                 "Enable",
                 true,
                 "Enable or disable the HexResourceTracker mod.");
 
-            foreach (var location in TrackedLocations.All)
+            LogDepositChanges = config.Bind(
+                DebugSection,
+                "Log Deposit Changes",
+                false,
+                "Write a line to the BepInEx log when you hit, break or mine out a mineable object: its prefab, name token, what it turns into and whether it has a pin. For finding the names of new deposits.");
+
+            foreach (var location in TrackedLocations.Groups())
             {
-                string prefabName = location.Key;
-                ConfigEntry<bool> entry = config.Bind(LocationsSection, $"Track {location.Value}", true,
-                    $"Enable or disable tracking for {location.Value}.");
-                LocationConfigs[prefabName] = entry;
+                string label = location.Key;
+                string firstPrefabName = location.Value[0];
+                ConfigEntry<bool> entry = config.Bind(LocationsSection, $"Track {label}", true,
+                    $"Enable or disable tracking for {label}.");
+                foreach (string prefabName in location.Value)
+                {
+                    LocationConfigs[prefabName] = entry;
+                }
+
                 entry.SettingChanged += delegate
                 {
-                    ResourceTrackerOverlayState.HandleLocationTrackingChanged(prefabName, entry.Value);
+                    ResourceTrackerOverlayState.HandleLocationTrackingChanged(firstPrefabName, entry.Value);
                     LocationPinManager.ReconcilePins();
                 };
             }
@@ -125,10 +129,14 @@ namespace HexResourceTracker
 
             HideDungeonLabels = BindHideLabels(config, DungeonLabelsSection, "Dungeon", "dungeon", DungeonPinManager.UpdateDungeonLabels);
             HideLocationLabels = BindHideLabels(config, LocationLabelsSection, "Location", "location", LocationPinManager.UpdateLocationLabels);
-            foreach (var location in TrackedLocations.All)
+            foreach (var location in TrackedLocations.Groups())
             {
-                LocationLabelConfigs[location.Key] = BindLabel(config, LocationLabelsSection, location.Value,
+                ConfigEntry<string> label = BindLabel(config, LocationLabelsSection, location.Key,
                     LocationPinManager.UpdateLocationLabels);
+                foreach (string prefabName in location.Value)
+                {
+                    LocationLabelConfigs[prefabName] = label;
+                }
             }
 
             foreach (TrackedDungeonDefinitionModel dungeon in TrackedDungeons.AllTrackedDungeons.OrderBy(dungeon => dungeon.SortOrder))
@@ -155,15 +163,22 @@ namespace HexResourceTracker
 
             foreach (TrackedCreatureDefinitionModel creature in TrackedCreatures.AllTrackedCreatures.OrderBy(creature => creature.SortOrder))
             {
-                BindCreature(config, creature.PrefabName, creature.DisplayName);
+                BindCreature(config, creature.PrefabName, creature.DisplayName, creature.EnabledByDefault);
             }
-        }
 
-        private static void BindOverlaySection(ConfigFile config, string sectionName)
-        {
-            ConfigEntry<bool> entry = config.Bind(MapOverlaySection, $"{sectionName} Collapsed", false, $"Remember whether the {sectionName} section is collapsed in the map overlay.");
-            OverlaySectionCollapsedConfigs[sectionName] = entry;
-            entry.SettingChanged += delegate { ResourceTrackerOverlayState.HandleSectionCollapsedChanged(sectionName); };
+            GroupCreaturePacks = config.Bind(
+                CreaturesSection,
+                "Group Packs",
+                true,
+                "Show creatures of one kind that stand close together (a pack, herd or school) as a single pin.");
+
+            CreaturePackRadius = config.Bind(
+                CreaturesSection,
+                "Pack Radius",
+                30f,
+                new ConfigDescription(
+                    "How close, in meters, creatures of one kind must be to share a pin when Group Packs is on.",
+                    new AcceptableValueRange<float>(5f, 200f)));
         }
 
         internal static bool IsLocationTrackingEnabled(string prefabName)
@@ -296,12 +311,12 @@ namespace HexResourceTracker
             DungeonConfigs[dungeon.Theme] = entry;
         }
 
-        private static void BindCreature(ConfigFile config, string prefabName, string displayName)
+        private static void BindCreature(ConfigFile config, string prefabName, string displayName, bool enabledByDefault)
         {
             ConfigEntry<bool> entry = config.Bind(
                 CreaturesSection,
                 $"Track {displayName}",
-                true,
+                enabledByDefault,
                 $"Enable or disable tracking for {displayName}.");
 
             entry.SettingChanged += delegate

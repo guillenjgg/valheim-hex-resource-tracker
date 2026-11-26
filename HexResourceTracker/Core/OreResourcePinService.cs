@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using HexResourceTracker.Core.PinManagers;
+using HexResourceTracker.Core.Tracking;
 using HexResourceTracker.Core.Tracking.Monoscripts;
 using HexResourceTracker.Models;
 using System.Reflection;
@@ -15,14 +16,23 @@ namespace HexResourceTracker.Core
 
         internal static bool TryAddResourcePinFromDestructibleOre(Component destructible)
         {
+            if (destructible == null)
+            {
+                return false;
+            }
+
+            return TryAddResourcePin(destructible, destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim());
+        }
+
+        // Pins an object as the deposit named by resourceKey (a prefab name, or a key such as the Yggdrasil root's).
+        internal static bool TryAddResourcePin(Component destructible, string resourceKey)
+        {
             if (destructible == null || Minimap.instance == null)
             {
                 return false;
             }
 
-            string prefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
-
-            if (!TrackedResources.TryGetByPrefabName(prefabName, out TrackedResourceDefinitionModel definition) ||
+            if (!TrackedResources.TryGetByPrefabName(resourceKey, out TrackedResourceDefinitionModel definition) ||
                 definition.ResourceType != TrackedResourceTypeEnum.Deposit)
             {
                 return false;
@@ -238,6 +248,34 @@ namespace HexResourceTracker.Core
             RescanLoadedBuildings(prefabName);
             RescanLoadedMineRock5(prefabName);
             RescanLoadedMineRock(prefabName);
+            RescanTrackedByKey(prefabName);
+        }
+
+        // Objects tracked under a key rather than found by their own components (Yggdrasil roots, the Leviathan).
+        private static void RescanTrackedByKey(string prefabName)
+        {
+            if (PluginConfig.TrackingMode.Value == TrackingModeEnum.RangeScanner)
+            {
+                return;
+            }
+
+            foreach (TrackedMapObject trackedObject in TrackedMapObject.GetTrackedObjects())
+            {
+                if (trackedObject != null && trackedObject.PrefabName == prefabName && IsTrackedByKey(trackedObject))
+                {
+                    TryAddResourcePin(trackedObject, prefabName);
+                }
+            }
+        }
+
+        private static bool IsTrackedByKey(TrackedMapObject trackedObject)
+        {
+            if (trackedObject.MineRock != null)
+            {
+                return !TrackedResources.TryGetByMineRock(trackedObject.MineRock.m_name, out TrackedResourceDefinitionModel _);
+            }
+
+            return trackedObject.WearNTear == null && trackedObject.Destructible == null && trackedObject.MineRock5 == null;
         }
 
         internal static void ReconcileTrackedOre(TrackedMapObject trackedObject)
@@ -305,7 +343,25 @@ namespace HexResourceTracker.Core
                     return;
                 }
 
+                if (IsTrackedByKey(trackedObject))
+                {
+                    TryAddResourcePin(trackedObject, trackedObject.PrefabName);
+                    return;
+                }
+
                 TryAddResourcePinFromMineRock(trackedObject.MineRock);
+                return;
+            }
+
+            if (IsTrackedByKey(trackedObject))
+            {
+                if (!trackedObject.IsInTrackingRange)
+                {
+                    ResourcePinManager.RemoveResourcePin(zdo.m_uid);
+                    return;
+                }
+
+                TryAddResourcePin(trackedObject, trackedObject.PrefabName);
             }
         }
 
@@ -344,7 +400,8 @@ namespace HexResourceTracker.Core
 
                 string destructiblePrefabName = destructible.gameObject.name.Replace("(Clone)", string.Empty).Trim();
 
-                if (destructiblePrefabName != prefabName)
+                if (!TrackedResources.TryGetByPrefabName(destructiblePrefabName, out TrackedResourceDefinitionModel definition) ||
+                    definition.ResourcePrefabName != prefabName)
                 {
                     continue;
                 }

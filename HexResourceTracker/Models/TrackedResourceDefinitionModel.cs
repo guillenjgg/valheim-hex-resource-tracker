@@ -11,8 +11,10 @@
         internal string MineRockName { get; }
         internal bool ShowInLocations { get; }
         internal string BiomeName { get; }
+        // Other prefab names for the same resource (variants); they share its toggle, config and label.
+        internal string[] AlsoPrefabNames { get; }
 
-        internal TrackedResourceDefinitionModel(string resourcePrefabName, string displayName, int sortOrder, TrackedResourceTypeEnum resourceType, string iconItemPrefabName = null, string mineRock5Name = null, string mineRockName = null, bool showInLocations = false, string biomeName = null)
+        internal TrackedResourceDefinitionModel(string resourcePrefabName, string displayName, int sortOrder, TrackedResourceTypeEnum resourceType, string iconItemPrefabName = null, string mineRock5Name = null, string mineRockName = null, bool showInLocations = false, string biomeName = null, string[] alsoPrefabNames = null)
         {
             ResourcePrefabName = resourcePrefabName;
             DisplayName = displayName;
@@ -23,6 +25,7 @@
             MineRockName = mineRockName;
             ShowInLocations = showInLocations;
             BiomeName = biomeName;
+            AlsoPrefabNames = alsoPrefabNames ?? new string[0];
         }
     }
 }

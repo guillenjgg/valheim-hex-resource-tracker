@@ -8,6 +8,8 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
     {
         private static readonly HashSet<TrackedCreature> TrackedCreatures = new HashSet<TrackedCreature>();
 
+        // The creature's own component: a Character for creatures, a Fish for fish.
+        internal Component Body { get; private set; }
         internal Character Character { get; private set; }
         internal string PrefabName { get; private set; }
         internal ZNetView ZNetView { get; private set; }
@@ -18,26 +20,27 @@ namespace HexResourceTracker.Core.Tracking.Monoscripts
             return TrackedCreatures;
         }
 
-        internal void Initialize(Character character, string prefabName)
+        internal void Initialize(Component body, string prefabName)
         {
-            Character = character;
+            Body = body;
+            Character = body as Character;
             PrefabName = prefabName;
-            ZNetView = character.GetComponent<ZNetView>();
+            ZNetView = body.GetComponent<ZNetView>();
 
             ZdoId = ZNetView != null && ZNetView.IsValid() ? ZNetView.GetZDO().m_uid : ZDOID.None;
 
             TrackedCreatures.Add(this);
         }
 
-        internal static void TryAdd(Character character, string prefabName)
+        internal static void TryAdd(Component body, string prefabName)
         {
-            if (character == null || character.TryGetComponent(out TrackedCreature _))
+            if (body == null || body.TryGetComponent(out TrackedCreature _))
             {
                 return;
             }
 
-            var trackedCreature = character.gameObject.AddComponent<TrackedCreature>();
-            trackedCreature.Initialize(character, prefabName);
+            var trackedCreature = body.gameObject.AddComponent<TrackedCreature>();
+            trackedCreature.Initialize(body, prefabName);
         }
 
         private void OnDestroy()
